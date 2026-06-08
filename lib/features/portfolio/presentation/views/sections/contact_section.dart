@@ -179,7 +179,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF1A1A1A),
+                color: BrandColors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
@@ -303,7 +303,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF3D2410),
+            color: BrandColors.warmBrown,
             letterSpacing: 0.5,
           ),
         ),
@@ -313,13 +313,13 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
           maxLines: maxLines,
           keyboardType: keyboardType,
           validator: validator,
-          style: const TextStyle(color: const Color(0xFF1A1A1A), fontSize: 14.5),
+          style: const TextStyle(color: BrandColors.textPrimary, fontSize: 14.5),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: const Color(0xFF8C5E28).withOpacity(0.5), fontSize: 14.5),
+            hintStyle: TextStyle(color: BrandColors.warmAccent.withOpacity(0.5), fontSize: 14.5),
             prefixIcon: Icon(icon, color: BrandColors.secondaryNeon.withOpacity(0.6), size: 18),
             filled: true,
-            fillColor: const Color(0xFF7A5232).withOpacity(0.70),
+            fillColor: BrandColors.warmMid.withOpacity(0.70),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -426,22 +426,22 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 12, color: Color(0xFF8C5E28), fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 12, color: BrandColors.warmAccent, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       value,
-                      style: const TextStyle(fontSize: 16, color: const Color(0xFF1A1A1A), fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, color: BrandColors.textPrimary, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: TextStyle(fontSize: 11, color: const Color(0xFF7A5232).withOpacity(0.70)),
+                      style: TextStyle(fontSize: 11, color: BrandColors.warmMid.withOpacity(0.70)),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_outward_rounded, color: const Color(0xFF7A5232).withOpacity(0.70), size: 18),
+              Icon(Icons.arrow_outward_rounded, color: BrandColors.warmMid.withOpacity(0.70), size: 18),
             ],
           ),
         ),

@@ -43,7 +43,7 @@ class _GlowBackgroundState extends State<GlowBackground> with SingleTickerProvid
       return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFF3F6FA), Color(0xFFEAF0F6)],
+            colors: [BrandColors.darkCard, BrandColors.darkSurface],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -56,6 +56,10 @@ class _GlowBackgroundState extends State<GlowBackground> with SingleTickerProvid
       backgroundColor: BrandColors.darkBackground,
       body: Stack(
         children: [
+          // Solid warm-dark base fill
+          Positioned.fill(
+            child: Container(color: BrandColors.darkBackground),
+          ),
           // Sphere 1, 2, 3: Animated Aurora Glow Spheres
           AnimatedBuilder(
             animation: _controller,
@@ -80,7 +84,7 @@ class _GlowBackgroundState extends State<GlowBackground> with SingleTickerProvid
 
               return Stack(
                 children: [
-                  // Sphere 1: Electric Indigo Glow
+                  // Sphere 1: Indigo Accent Glow
                   Positioned(
                     left: sphere1Offset.dx,
                     top: sphere1Offset.dy,
@@ -89,12 +93,12 @@ class _GlowBackgroundState extends State<GlowBackground> with SingleTickerProvid
                       height: size.width * 0.65,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BrandColors.primaryNeon.withOpacity(0.09),
+                        color: BrandColors.accentNeon.withOpacity(0.06),
                       ),
                     ),
                   ),
 
-                  // Sphere 2: Cyan Aurora Glow
+                  // Sphere 2: Primary Navy Glow
                   Positioned(
                     left: sphere2Offset.dx,
                     top: sphere2Offset.dy,
@@ -103,12 +107,12 @@ class _GlowBackgroundState extends State<GlowBackground> with SingleTickerProvid
                       height: size.width * 0.6,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BrandColors.secondaryNeon.withOpacity(0.08),
+                        color: BrandColors.primaryNeon.withOpacity(0.04),
                       ),
                     ),
                   ),
 
-                  // Sphere 3: Emerald Success Glow
+                  // Sphere 3: Lavender Hero Glow
                   Positioned(
                     left: sphere3Offset.dx,
                     top: sphere3Offset.dy,
@@ -117,7 +121,7 @@ class _GlowBackgroundState extends State<GlowBackground> with SingleTickerProvid
                       height: size.width * 0.55,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: BrandColors.successNeon.withOpacity(0.05),
+                        color: BrandColors.heroGlowAmber.withOpacity(0.12),
                       ),
                     ),
                   ),
@@ -207,7 +211,7 @@ class ParticlesPainter extends CustomPainter {
 
     for (var p in particles) {
       p.update(progress);
-      paint.color = Colors.white.withOpacity(p.opacity);
+      paint.color = BrandColors.accentNeon.withOpacity(p.opacity * 0.3);
       canvas.drawCircle(
         Offset(p.x * size.width, p.y * size.height),
         p.size,

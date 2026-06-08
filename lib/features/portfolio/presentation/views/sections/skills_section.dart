@@ -28,7 +28,7 @@ class SkillsSection extends StatelessWidget {
       {
         'name': 'Languages',
         'icon': Icons.terminal_rounded,
-        'color': const Color(0xFFFF5A1F), // Sunset Orange
+        'color': BrandColors.orangeFlame, // Sunset Orange
         'skills': groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('lang'), orElse: () => '') != ''
             ? groupedSkills[groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('lang'))]
             : <Skill>[],
@@ -36,7 +36,7 @@ class SkillsSection extends StatelessWidget {
       {
         'name': 'Mobile Platforms',
         'icon': Icons.phone_iphone_rounded,
-        'color': const Color(0xFFEF4444), // Neon Crimson
+        'color': BrandColors.errorRed, // Neon Crimson
         'skills': groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('mobile'), orElse: () => '') != ''
             ? groupedSkills[groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('mobile'))]
             : <Skill>[],
@@ -44,7 +44,7 @@ class SkillsSection extends StatelessWidget {
       {
         'name': 'Architecture',
         'icon': Icons.layers_rounded,
-        'color': const Color(0xFFFF8A00), // Deep Amber
+        'color': BrandColors.orangeNeon, // Deep Amber
         'skills': groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('arch'), orElse: () => '') != ''
             ? groupedSkills[groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('arch'))]
             : <Skill>[],
@@ -52,7 +52,7 @@ class SkillsSection extends StatelessWidget {
       {
         'name': 'State Flow',
         'icon': Icons.schema_rounded,
-        'color': const Color(0xFFE11D48), // Rose Crimson
+        'color': BrandColors.errorDark, // Rose Crimson
         'skills': groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('state'), orElse: () => '') != ''
             ? groupedSkills[groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('state'))]
             : <Skill>[],
@@ -60,7 +60,7 @@ class SkillsSection extends StatelessWidget {
       {
         'name': 'APIs & Sync',
         'icon': Icons.lan_rounded,
-        'color': const Color(0xFFF97316), // Light Orange
+        'color': BrandColors.orangeBright, // Light Orange
         'skills': groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('api'), orElse: () => '') != ''
             ? groupedSkills[groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('api'))]
             : <Skill>[],
@@ -68,7 +68,7 @@ class SkillsSection extends StatelessWidget {
       {
         'name': 'DevOps & Tooling',
         'icon': Icons.build_circle_rounded,
-        'color': const Color(0xFFF59E0B), // Amber Yellow
+        'color': BrandColors.orangeAccent, // Amber Yellow
         'skills': groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('tool'), orElse: () => '') != ''
             ? groupedSkills[groupedSkills.keys.firstWhere((k) => k.toLowerCase().contains('tool'))]
             : <Skill>[],
@@ -199,7 +199,7 @@ class _CategoryCardState extends State<_CategoryCard> {
           color: BrandColors.darkSurface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _isHovered ? color.withOpacity(0.4) : const Color(0xFF7A5232).withOpacity(0.70),
+            color: _isHovered ? color.withOpacity(0.4) : BrandColors.warmMid.withOpacity(0.70),
             width: 1.2,
           ),
           boxShadow: [
@@ -222,7 +222,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
-                    color: const Color(0xFF1A1A1A),
+                    color: BrandColors.textPrimary,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -304,7 +304,7 @@ class _SkillGaugeRowState extends State<_SkillGaugeRow> {
               style: TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.bold,
-                color: _isHovered ? Colors.white : const Color(0xFF3D2410),
+                color: _isHovered ? Colors.white : BrandColors.warmBrown,
               ),
             ),
             // Progress gauge track
@@ -314,7 +314,7 @@ class _SkillGaugeRowState extends State<_SkillGaugeRow> {
                   width: 50,
                   height: 4.5,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF7A5232).withOpacity(0.70),
+                    color: BrandColors.warmMid.withOpacity(0.70),
                     borderRadius: BorderRadius.circular(3),
                   ),
                   child: Stack(
@@ -348,7 +348,7 @@ class _SkillGaugeRowState extends State<_SkillGaugeRow> {
                     fontFamily: 'monospace',
                     fontSize: 9.5,
                     fontWeight: FontWeight.bold,
-                    color: _isHovered ? widget.color : const Color(0xFFC8973E).withOpacity(0.30),
+                    color: _isHovered ? widget.color : BrandColors.warmGold.withOpacity(0.30),
                   ),
                 ),
               ],

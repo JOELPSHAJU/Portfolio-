@@ -91,7 +91,7 @@ class DashboardScreen extends ConsumerWidget {
                           label: 'DECREMENT',
                           icon: Icons.remove,
                           gradient: const LinearGradient(
-                            colors: [Color(0xFF4A455E), Color(0xFF2E2A3A)],
+                            colors: [BrandColors.deepPurpleMuted, BrandColors.deepPurpleCard],
                           ),
                           glowColor: Colors.transparent,
                           onPressed: () => ref.read(dashboardControllerProvider.notifier).decrement(),

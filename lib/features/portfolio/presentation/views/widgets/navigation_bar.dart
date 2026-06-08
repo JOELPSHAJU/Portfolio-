@@ -45,7 +45,7 @@ class PortfolioHeader extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: 16,
-                          color: const Color(0xFF141010),
+                          color: BrandColors.textDark,
                           letterSpacing: 1.0,
                         ),
                       ),
@@ -60,7 +60,7 @@ class PortfolioHeader extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF141010),
+                            color: BrandColors.textDark,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -123,13 +123,13 @@ class PortfolioHeader extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF141010),
+                                    color: BrandColors.textDark,
                                   ),
                                 ),
                                 SizedBox(width: 6),
                                 Icon(
                                   Icons.arrow_forward_rounded,
-                                  color: const Color(0xFF141010),
+                                  color: BrandColors.textDark,
                                   size: 14,
                                 ),
                               ],
@@ -146,7 +146,7 @@ class PortfolioHeader extends StatelessWidget {
               IconButton(
                 icon: const Icon(
                   Icons.menu_rounded,
-                  color: const Color(0xFF141010),
+                  color: BrandColors.textDark,
                   size: 28,
                 ),
                 onPressed: () {
@@ -175,7 +175,7 @@ class PortfolioHeader extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  color: isActive ? Colors.white : const Color(0xFFA0743B),
+                  color: isActive ? Colors.white : BrandColors.warmLight,
                   fontWeight:
                       isActive ? FontWeight.bold : FontWeight.w500,
                   fontSize: 14.0,

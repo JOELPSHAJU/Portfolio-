@@ -37,7 +37,7 @@ class ExperienceSection extends StatelessWidget {
             const Center(
               child: Text(
                 'No experience data found.',
-                style: TextStyle(color: const Color(0xFF3D2410)),
+                style: TextStyle(color: BrandColors.warmBrown),
               ),
             )
           else
@@ -116,11 +116,11 @@ class ExperienceSection extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: index == 0
                       ? BrandColors.primaryGradient
-                      : const LinearGradient(colors: [Color(0xFF16092A), Color(0xFF0F051D)]),
+                      : const LinearGradient(colors: [BrandColors.deepPurple, BrandColors.deepPurple]),
                   border: Border.all(
                     color: index == 0
                         ? BrandColors.primaryNeon.withOpacity(0.5)
-                        : const Color(0xFFC8973E).withOpacity(0.30),
+                        : BrandColors.warmGold.withOpacity(0.30),
                     width: 2,
                   ),
                   boxShadow: index == 0
@@ -197,7 +197,7 @@ class ExperienceSection extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1A1A1A),
+                        color: BrandColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -225,7 +225,7 @@ class ExperienceSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF3D2410),
+                        color: BrandColors.warmBrown,
                         letterSpacing: 1.0,
                       ),
                     ),
@@ -260,7 +260,7 @@ class ExperienceSection extends StatelessWidget {
               point,
               style: const TextStyle(
                 fontSize: 13.5,
-                color: Color(0xFF3D2410),
+                color: BrandColors.warmBrown,
                 height: 1.5,
               ),
             ),
@@ -274,7 +274,7 @@ class ExperienceSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFF7A5232).withOpacity(0.70),
+        color: BrandColors.warmMid.withOpacity(0.70),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: BrandColors.glassBorder.withOpacity(0.06)),
       ),

@@ -161,7 +161,7 @@ class AboutSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF141010),
+                        color: BrandColors.textDark,
                       ),
                     ),
                     SizedBox(height: 2),
@@ -184,7 +184,7 @@ class AboutSection extends StatelessWidget {
             'I am an innovative Flutter Developer with 2+ years of experience constructing production-grade cross-platform apps for iOS and Android. My engineering philosophy revolves around creating codebase structures that are robust, testable, and highly responsive to end-user needs.',
             style: TextStyle(
               fontSize: 14.5,
-              color: Color(0xFFD4B896),
+              color: BrandColors.warmPale,
               height: 1.6,
             ),
           ),
@@ -193,7 +193,7 @@ class AboutSection extends StatelessWidget {
             'Having developed enterprise software like Kahramaa (Qatar Water & Electricity Corp) and Khadoom (ESS Portal), I specialize in architecting modular monorepos (via Melos), integrating secure authentication systems (Entra ID, biometric credentials), and managing complex API session states (token refreshes). I frequently leverage advanced AI-assisted editors (Cursor, Claude, Copilot) to accelerate coding speed, refine test coverage, and uphold clean code guidelines.',
             style: TextStyle(
               fontSize: 14.5,
-              color: Color(0xFFD4B896),
+              color: BrandColors.warmPale,
               height: 1.6,
             ),
           ),
@@ -202,7 +202,7 @@ class AboutSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF1C1008).withOpacity(0.02),
+              color: BrandColors.heroBg1.withOpacity(0.02),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: BrandColors.glassBorder.withOpacity(0.06),
@@ -225,7 +225,7 @@ class AboutSection extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF141010),
+                          color: BrandColors.textDark,
                         ),
                       ),
                       SizedBox(height: 2),
@@ -316,7 +316,7 @@ class AboutSection extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF141010),
+              color: BrandColors.textDark,
             ),
           ),
           const SizedBox(height: 6),

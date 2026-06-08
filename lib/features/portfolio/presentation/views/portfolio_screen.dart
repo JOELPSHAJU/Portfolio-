@@ -210,7 +210,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Error loading data: $err',
-                  style: const TextStyle(color: Color(0xFF141010)),
+                  style: const TextStyle(color: BrandColors.textDark),
                 ),
               ],
             ),
@@ -223,7 +223,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   Widget _buildFooter() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 24.0),
-      color: const Color(0xFF1C1008),
+      color: BrandColors.heroBg1,
       width: double.infinity,
       child: Column(
         children: [
@@ -241,7 +241,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
-                    color: const Color(0xFF141010),
+                    color: BrandColors.textDark,
                   ),
                 ),
               ),
@@ -249,7 +249,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               const Text(
                 'JOEL P SHAJU',
                 style: TextStyle(
-                  color: const Color(0xFF141010),
+                  color: BrandColors.textDark,
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                   letterSpacing: 1.0,
@@ -261,13 +261,13 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           const Text(
             'Designed & Engineered in Flutter with Riverpod Clean Architecture.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Color(0xFF8C5E28), fontSize: 12),
+            style: TextStyle(color: BrandColors.warmAccent, fontSize: 12),
           ),
           const SizedBox(height: 6),
           Text(
             '© ${DateTime.now().year} Joel P Shaju. All Rights Reserved.',
             style: TextStyle(
-              color: const Color(0xFF1C1008).withOpacity(0.3),
+              color: BrandColors.heroBg1.withOpacity(0.3),
               fontSize: 10,
             ),
           ),

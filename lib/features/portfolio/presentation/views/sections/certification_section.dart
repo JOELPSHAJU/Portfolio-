@@ -21,8 +21,8 @@ class CertificationsSection extends StatelessWidget {
             'Conducted technical workshops, spoke on cloud integrations, and mentored student developers across the region.',
         'accent': BrandColors.primaryNeon,
         'gradient': [
-          const Color(0xFF10B981).withOpacity(0.18),
-          const Color(0xFFF0FDF4).withOpacity(0.80),
+          BrandColors.emeraldGreen.withOpacity(0.18),
+          BrandColors.surfaceMint.withOpacity(0.80),
         ],
       },
       {
@@ -34,8 +34,8 @@ class CertificationsSection extends StatelessWidget {
             'Verified proficiency in state management, Clean Architecture, and performance optimization.',
         'accent': BrandColors.secondaryNeon,
         'gradient': [
-          const Color(0xFF06B6D4).withOpacity(0.18),
-          const Color(0xFFEFF6FF).withOpacity(0.80),
+          BrandColors.accentNeon.withOpacity(0.18),
+          BrandColors.surfaceBlue.withOpacity(0.80),
         ],
       },
       {
@@ -47,8 +47,8 @@ class CertificationsSection extends StatelessWidget {
             'Deep dive into Melos monorepos, Microsoft SSO, and multi-tenant authentication patterns.',
         'accent': BrandColors.accentNeon,
         'gradient': [
-          const Color(0xFF8C5E28).withOpacity(0.15),
-          const Color(0xFFF8FAFC).withOpacity(0.80),
+          BrandColors.warmAccent.withOpacity(0.15),
+          BrandColors.surfaceSlate.withOpacity(0.80),
         ],
       },
       {
@@ -60,8 +60,8 @@ class CertificationsSection extends StatelessWidget {
             'Shared deployment strategies for Flutter web nodes and server backends on AWS infrastructure.',
         'accent': BrandColors.primaryNeon,
         'gradient': [
-          const Color(0xFF10B981).withOpacity(0.18),
-          const Color(0xFFF0FDF4).withOpacity(0.80),
+          BrandColors.emeraldGreen.withOpacity(0.18),
+          BrandColors.surfaceMint.withOpacity(0.80),
         ],
       },
     ];
@@ -223,12 +223,12 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
           border: Border.all(
             color: _hovered
                 ? accent.withOpacity(0.5)
-                : const Color(0xFF1C1008).withOpacity(0.04),
+                : BrandColors.heroBg1.withOpacity(0.04),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: _hovered ? accent.withOpacity(0.12) : const Color(0xFF1C1008).withOpacity(0.06),
+              color: _hovered ? accent.withOpacity(0.12) : BrandColors.heroBg1.withOpacity(0.06),
               blurRadius: _hovered ? 40 : 15,
               offset: const Offset(0, 10),
             ),
@@ -239,7 +239,7 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
           child: Stack(
             children: [
               // Base dark layer
-              Container(color: const Color(0xFFF7F1E6)),
+              Container(color: BrandColors.surfaceWarm),
 
               // Diagonal gradient overlay
               Positioned.fill(
@@ -265,7 +265,7 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF1C1008).withOpacity(0.01),
+                        BrandColors.heroBg1.withOpacity(0.01),
                         Colors.transparent,
                       ],
                       begin: Alignment.topCenter,
@@ -290,7 +290,7 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 5),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1C1008).withOpacity(0.05),
+                            color: BrandColors.heroBg1.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(50),
                             border: Border.all(
                               color: accent.withOpacity(0.3),
@@ -311,7 +311,7 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1C1008).withOpacity(0.04),
+                            color: BrandColors.heroBg1.withOpacity(0.04),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: accent.withOpacity(0.2),
@@ -333,7 +333,7 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1A1A1A),
+                        color: BrandColors.textPrimary,
                         letterSpacing: -0.2,
                         height: 1.25,
                       ),
@@ -369,7 +369,7 @@ class _BentoFeaturedCardState extends State<_BentoFeaturedCard> {
                       widget.cert['description'] as String,
                       style: TextStyle(
                         fontSize: 13.5,
-                        color: const Color(0xFF1C1008).withOpacity(0.55),
+                        color: BrandColors.heroBg1.withOpacity(0.55),
                         height: 1.65,
                       ),
                     ),
@@ -415,12 +415,12 @@ class _BentoCompactCardState extends State<_BentoCompactCard> {
           border: Border.all(
             color: _hovered
                 ? accent.withOpacity(0.5)
-                : const Color(0xFFE8E0D8).withOpacity(0.60),
+                : BrandColors.warmCream.withOpacity(0.60),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: _hovered ? accent.withOpacity(0.10) : const Color(0xFF1C1008).withOpacity(0.06),
+              color: _hovered ? accent.withOpacity(0.10) : BrandColors.heroBg1.withOpacity(0.06),
               blurRadius: _hovered ? 35 : 12,
               offset: const Offset(0, 8),
             ),
@@ -431,7 +431,7 @@ class _BentoCompactCardState extends State<_BentoCompactCard> {
           child: Stack(
             children: [
               // Base
-              Container(color: const Color(0xFFF7F1E6)),
+              Container(color: BrandColors.surfaceWarm),
 
               // Diagonal gradient overlay
               Positioned.fill(
@@ -472,7 +472,7 @@ class _BentoCompactCardState extends State<_BentoCompactCard> {
                         Container(
                           padding: const EdgeInsets.all(9),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1C1008).withOpacity(0.04),
+                            color: BrandColors.heroBg1.withOpacity(0.04),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: accent.withOpacity(0.2),
@@ -506,7 +506,7 @@ class _BentoCompactCardState extends State<_BentoCompactCard> {
                       style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF1A1A1A),
+                        color: BrandColors.textPrimary,
                         height: 1.3,
                         letterSpacing: -0.1,
                       ),
@@ -527,7 +527,7 @@ class _BentoCompactCardState extends State<_BentoCompactCard> {
                       widget.cert['description'] as String,
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: const Color(0xFF1C1008).withOpacity(0.55),
+                        color: BrandColors.heroBg1.withOpacity(0.55),
                         height: 1.55,
                       ),
                     ),
@@ -572,12 +572,12 @@ class _BentoMobileCardState extends State<_BentoMobileCard> {
           border: Border.all(
             color: _hovered
                 ? accent.withOpacity(0.45)
-                : const Color(0xFFE8E0D8).withOpacity(0.60),
+                : BrandColors.warmCream.withOpacity(0.60),
             width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
-              color: _hovered ? accent.withOpacity(0.08) : const Color(0xFF1C1008).withOpacity(0.05),
+              color: _hovered ? accent.withOpacity(0.08) : BrandColors.heroBg1.withOpacity(0.05),
               blurRadius: _hovered ? 28 : 10,
               offset: const Offset(0, 6),
             ),
@@ -587,7 +587,7 @@ class _BentoMobileCardState extends State<_BentoMobileCard> {
           borderRadius: BorderRadius.circular(21),
           child: Stack(
             children: [
-              Container(color: const Color(0xFFF7F1E6)),
+              Container(color: BrandColors.surfaceWarm),
               Positioned.fill(
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 280),
@@ -611,7 +611,7 @@ class _BentoMobileCardState extends State<_BentoMobileCard> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1C1008).withOpacity(0.04),
+                        color: BrandColors.heroBg1.withOpacity(0.04),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: accent.withOpacity(0.2),
@@ -641,7 +641,7 @@ class _BentoMobileCardState extends State<_BentoMobileCard> {
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF1A1A1A),
+                              color: BrandColors.textPrimary,
                               height: 1.3,
                             ),
                           ),
@@ -659,7 +659,7 @@ class _BentoMobileCardState extends State<_BentoMobileCard> {
                             widget.cert['description'] as String,
                             style: TextStyle(
                               fontSize: 12.5,
-                              color: const Color(0xFF1C1008).withOpacity(0.55),
+                              color: BrandColors.heroBg1.withOpacity(0.55),
                               height: 1.5,
                             ),
                           ),

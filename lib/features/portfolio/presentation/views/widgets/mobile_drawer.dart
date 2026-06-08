@@ -47,7 +47,7 @@ class MobileDrawer extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: const Color(0xFF141010), size: 24),
+                  icon: const Icon(Icons.close_rounded, color: BrandColors.textDark, size: 24),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -72,7 +72,7 @@ class MobileDrawer extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
-                color: const Color(0xFF3D2410),
+                color: BrandColors.warmBrown,
                 letterSpacing: 1.5,
               ),
             ),
@@ -84,7 +84,7 @@ class MobileDrawer extends StatelessWidget {
             const SizedBox(height: 4),
             const SelectableText(
               '+91 8590182736',
-              style: TextStyle(color: const Color(0xFF3D2410), fontSize: 12),
+              style: TextStyle(color: BrandColors.warmBrown, fontSize: 12),
             ),
           ],
         ),
@@ -105,22 +105,22 @@ class MobileDrawer extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: isActive ? BrandColors.primaryGradient : null,
-        color: isActive ? const Color(0xFFC8973E).withOpacity(0.15) : const Color(0xFFF0E8D4),
+        color: isActive ? BrandColors.warmGold.withOpacity(0.15) : BrandColors.warmCream,
         border: isActive
-            ? Border.all(color: const Color(0xFFC8973E).withOpacity(0.35))
+            ? Border.all(color: BrandColors.warmGold.withOpacity(0.35))
             : Border.all(color: Colors.transparent),
       ),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         leading: Icon(
           icon,
-          color: isActive ? Colors.white : const Color(0xFF8C5E28),
+          color: isActive ? Colors.white : BrandColors.warmAccent,
           size: 20,
         ),
         title: Text(
           title,
           style: TextStyle(
-            color: isActive ? Colors.white : const Color(0xFF1C1008).withOpacity(0.9),
+            color: isActive ? Colors.white : BrandColors.heroBg1.withOpacity(0.9),
             fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
             fontSize: 15,
             letterSpacing: 0.5,

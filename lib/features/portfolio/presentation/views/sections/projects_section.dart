@@ -12,16 +12,16 @@ class ProjectsSection extends StatelessWidget {
   static const _projectMeta = {
     'kahramaa': {
       'icon': Icons.water_drop_rounded,
-      'gradient': [Color(0xFF0EA5E9), Color(0xFF0C4A6E)],
-      'accent': Color(0xFF38BDF8),
+      'gradient': [BrandColors.kahramaaMid, BrandColors.kahramaaDark],
+      'accent': BrandColors.kahramaaLight,
       'previewAssets': [
         {'label': 'Mobile App', 'asset': 'assets/kahramaa.png'},
       ],
     },
     'khadoom': {
       'icon': Icons.badge_rounded,
-      'gradient': [Color(0xFF10B981), Color(0xFF064E3B)],
-      'accent': Color(0xFF34D399),
+      'gradient': [BrandColors.khadoomMid, BrandColors.khadoomDark],
+      'accent': BrandColors.khadoomLight,
       'previewAssets': [
         {'label': 'Web App', 'asset': 'assets/khadoom.png'},
         {'label': 'Mobile App', 'asset': 'assets/khadoom_mobile.png'},
@@ -29,13 +29,13 @@ class ProjectsSection extends StatelessWidget {
     },
     'qsw': {
       'icon': Icons.supervised_user_circle_rounded,
-      'gradient': [Color(0xFF8B5CF6), Color(0xFF3B0764)],
-      'accent': Color(0xFFA78BFA),
+      'gradient': [BrandColors.qswMid, BrandColors.qswDark],
+      'accent': BrandColors.qswLight,
     },
     'qatar_museums': {
       'icon': Icons.museum_rounded,
-      'gradient': [Color(0xFFF59E0B), Color(0xFF78350F)],
-      'accent': Color(0xFFFBBF24),
+      'gradient': [BrandColors.museumMid, BrandColors.museumDark],
+      'accent': BrandColors.museumLight,
       'previewAssets': [
         {'label': 'Web App', 'asset': 'assets/qatar_museum_web.png'},
         {'label': 'Mobile App', 'asset': 'assets/qatar_museum.png'},
@@ -45,8 +45,8 @@ class ProjectsSection extends StatelessWidget {
 
   static const _defaultMeta = {
     'icon': Icons.bolt_rounded,
-    'gradient': [Color(0xFF06B6D4), Color(0xFF0C4A6E)],
-    'accent': Color(0xFF22D3EE),
+    'gradient': [BrandColors.warmAmber, BrandColors.qswMid],
+    'accent': BrandColors.warmAmber,
   };
 
   Map<String, dynamic> _meta(String id) =>
@@ -75,7 +75,7 @@ class ProjectsSection extends StatelessWidget {
             const Center(
               child: Text(
                 'No projects found.',
-                style: const TextStyle(color: Color(0xFF6B6B6B)),
+                style: const TextStyle(color: BrandColors.textSecondary),
               ),
             )
           else
@@ -204,14 +204,14 @@ class _CaseStudyBandState extends State<_CaseStudyBand> {
             border: Border.all(
               color: _hovered
                   ? accent.withOpacity(0.40)
-                  : const Color(0xFFE8E0D8).withOpacity(0.50),
+                  : BrandColors.warmCream.withOpacity(0.50),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
                 color: _hovered
                     ? accent.withOpacity(0.10)
-                    : const Color(0xFF141010).withOpacity(0.06),
+                    : BrandColors.textDark.withOpacity(0.06),
                 blurRadius: _hovered ? 40 : 12,
                 offset: const Offset(0, 8),
               ),
@@ -221,7 +221,7 @@ class _CaseStudyBandState extends State<_CaseStudyBand> {
             borderRadius: BorderRadius.circular(23),
             child: Stack(
               children: [
-                Container(color: const Color(0xFFFAF7F4)),
+                Container(color: BrandColors.warmWhite),
                 Positioned.fill(
                   child: AnimatedOpacity(
                     duration: const Duration(milliseconds: 280),
@@ -378,7 +378,7 @@ class _CaseStudyBandState extends State<_CaseStudyBand> {
                   BoxShadow(color: accent.withOpacity(0.3), blurRadius: 16),
                 ],
               ),
-              child: Icon(icon, color: const Color(0xFF1A1A1A), size: 26),
+              child: Icon(icon, color: BrandColors.textPrimary, size: 26),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -399,7 +399,7 @@ class _CaseStudyBandState extends State<_CaseStudyBand> {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF1A1A1A),
+                      color: BrandColors.textPrimary,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -421,7 +421,7 @@ class _CaseStudyBandState extends State<_CaseStudyBand> {
           widget.project.description,
           style: TextStyle(
             fontSize: 13,
-            color: const Color(0xFF6B6B6B).withOpacity(0.90),
+            color: BrandColors.textSecondary.withOpacity(0.90),
             height: 1.6,
           ),
         ),
@@ -474,7 +474,7 @@ class _IconBlock extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(icon, color: const Color(0xFF1A1A1A), size: 44),
+      child: Icon(icon, color: BrandColors.textPrimary, size: 44),
     );
   }
 }
@@ -519,7 +519,7 @@ class _ContentBlock extends StatelessWidget {
           style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF1A1A1A),
+            color: BrandColors.textPrimary,
             letterSpacing: -0.5,
             height: 1.2,
           ),
@@ -551,7 +551,7 @@ class _ContentBlock extends StatelessWidget {
           height: 1,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [const Color(0xFF1A1A1A).withOpacity(0.08), Colors.transparent],
+              colors: [BrandColors.textPrimary.withOpacity(0.08), Colors.transparent],
             ),
           ),
         ),
@@ -560,7 +560,7 @@ class _ContentBlock extends StatelessWidget {
           project.description,
           style: TextStyle(
             fontSize: 13.5,
-            color: const Color(0xFF6B6B6B).withOpacity(0.90),
+            color: BrandColors.textSecondary.withOpacity(0.90),
             height: 1.65,
           ),
         ),
@@ -589,7 +589,7 @@ class _ContentBlock extends StatelessWidget {
                         p,
                         style: TextStyle(
                           fontSize: 13,
-                          color: const Color(0xFF6B6B6B).withOpacity(0.90),
+                          color: BrandColors.textSecondary.withOpacity(0.90),
                           height: 1.5,
                         ),
                       ),
@@ -633,7 +633,7 @@ class _TechChip extends StatelessWidget {
         style: TextStyle(
           fontSize: 10.5,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF1A1A1A).withOpacity(0.90),
+          color: BrandColors.textPrimary.withOpacity(0.90),
         ),
       ),
     );
@@ -724,7 +724,7 @@ class _ProjectLightboxState extends State<_ProjectLightbox> {
           // Backdrop
           GestureDetector(
             onTap: () => Navigator.of(context).pop(),
-            child: Container(color: const Color(0xFF4A3728).withOpacity(0.45)),
+            child: Container(color: BrandColors.warmBrown.withOpacity(0.45)),
           ),
 
           Center(
@@ -761,7 +761,7 @@ class _ProjectLightboxState extends State<_ProjectLightbox> {
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1A1A1A),
+                            color: BrandColors.textPrimary,
                             letterSpacing: -0.3,
                           ),
                         ),
@@ -798,12 +798,12 @@ class _ProjectLightboxState extends State<_ProjectLightbox> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? widget.accent.withOpacity(0.15)
-                                    : const Color(0xFFE8E0D8).withOpacity(0.40),
+                                    : BrandColors.warmCream.withOpacity(0.40),
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
                                   color: isSelected
                                       ? widget.accent.withOpacity(0.50)
-                                      : const Color(0xFF1A1A1A).withOpacity(0.08),
+                                      : BrandColors.textPrimary.withOpacity(0.08),
                                   width: 1,
                                 ),
                                 boxShadow: isSelected
@@ -826,7 +826,7 @@ class _ProjectLightboxState extends State<_ProjectLightbox> {
                                         : Icons.smartphone_rounded,
                                     color: isSelected
                                         ? widget.accent
-                                        : const Color(0xFF6B6B6B).withOpacity(0.70),
+                                        : BrandColors.textSecondary.withOpacity(0.70),
                                     size: 13,
                                   ),
                                   const SizedBox(width: 6),
@@ -838,7 +838,7 @@ class _ProjectLightboxState extends State<_ProjectLightbox> {
                                       letterSpacing: 0.3,
                                       color: isSelected
                                           ? widget.accent
-                                          : const Color(0xFF6B6B6B).withOpacity(0.80),
+                                          : BrandColors.textSecondary.withOpacity(0.80),
                                     ),
                                   ),
                                 ],
@@ -881,7 +881,7 @@ class _ProjectLightboxState extends State<_ProjectLightbox> {
                       'Tap outside or press CLOSE to dismiss',
                       style: TextStyle(
                         fontSize: 11,
-                        color: const Color(0xFF1A1A1A).withOpacity(0.25),
+                        color: BrandColors.textPrimary.withOpacity(0.25),
                         letterSpacing: 0.4,
                       ),
                     ),
@@ -924,12 +924,12 @@ class _LightboxCloseButtonState extends State<_LightboxCloseButton> {
           decoration: BoxDecoration(
             color: _hovered
                 ? widget.accent.withOpacity(0.15)
-                : const Color(0xFFE8E0D8).withOpacity(0.50),
+                : BrandColors.warmCream.withOpacity(0.50),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _hovered
                   ? widget.accent.withOpacity(0.50)
-                  : const Color(0xFF1A1A1A).withOpacity(0.10),
+                  : BrandColors.textPrimary.withOpacity(0.10),
               width: 1,
             ),
             boxShadow: _hovered
@@ -948,7 +948,7 @@ class _LightboxCloseButtonState extends State<_LightboxCloseButton> {
                 Icons.close_rounded,
                 color: _hovered
                     ? widget.accent
-                    : const Color(0xFF6B6B6B).withOpacity(0.90),
+                    : BrandColors.textSecondary.withOpacity(0.90),
                 size: 16,
               ),
               const SizedBox(width: 6),
@@ -960,7 +960,7 @@ class _LightboxCloseButtonState extends State<_LightboxCloseButton> {
                   letterSpacing: 1.0,
                   color: _hovered
                       ? widget.accent
-                      : const Color(0xFF6B6B6B).withOpacity(0.90),
+                      : BrandColors.textSecondary.withOpacity(0.90),
                 ),
               ),
             ],

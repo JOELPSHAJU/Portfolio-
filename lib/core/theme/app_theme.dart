@@ -71,12 +71,12 @@ class AppTheme {
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
-          color: Color(0xFFE2E8F0), // Softer gray for readability
+          color: BrandColors.borderLight, // Softer gray for readability
           height: 1.5,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
-          color: Color(0xFF94A3B8),
+          color: BrandColors.textMuted,
           height: 1.4,
         ),
       ),
@@ -88,12 +88,12 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      scaffoldBackgroundColor: const Color(0xFFF7F9FC),
+      scaffoldBackgroundColor: BrandColors.surfaceAlt,
       colorScheme: const ColorScheme.light(
         primary: BrandColors.primaryNeon,
-        secondary: Color(0xFF0082FF),
+        secondary: BrandColors.linkBlue,
         surface: Colors.white,
-        background: Color(0xFFF7F9FC),
+        background: BrandColors.surfaceAlt,
         error: Colors.redAccent,
       ),
       cardTheme: CardThemeData(
@@ -101,7 +101,7 @@ class AppTheme {
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFFE8EEF5), width: 1),
+          side: const BorderSide(color: BrandColors.borderMuted, width: 1),
         ),
       ),
       appBarTheme: const AppBarTheme(
@@ -109,11 +109,11 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          color: Color(0xFF1E1736),
+          color: BrandColors.deepPurpleMid,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        iconTheme: IconThemeData(color: Color(0xFF1E1736)),
+        iconTheme: IconThemeData(color: BrandColors.deepPurpleMid),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

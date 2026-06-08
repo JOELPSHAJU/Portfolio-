@@ -78,9 +78,9 @@ class _HeroSectionState extends State<HeroSection>
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color(0xFFFAF6EE),
-                    Color(0xFFF0E8D4),
-                    Color(0xFFFAF6EE),
+                    BrandColors.deepIndigoBlack,
+                    BrandColors.deepViolet,
+                    BrandColors.deepIndigoBlack,
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -110,9 +110,10 @@ class _HeroSectionState extends State<HeroSection>
                       style: TextStyle(
                         fontSize: 200,
                         fontWeight: FontWeight.w900,
-                        color: const Color(0xFF1C1008).withOpacity(0.055),
+                        color: BrandColors.warmAmber,
                         letterSpacing: 8,
                         height: 1.0,
+                        shadows: [],
                       ),
                     ),
                   ),
@@ -128,15 +129,15 @@ class _HeroSectionState extends State<HeroSection>
             top: size.height * 0.05,
             child: Center(
               child: Container(
-                width: 360,
-                height: 360,
+                width: 400,
+                height: 400,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: BrandColors.primaryNeon.withOpacity(0.06),
-                      blurRadius: 160,
-                      spreadRadius: 60,
+                      color: BrandColors.warmAmber.withOpacity(0.10),
+                      blurRadius: 180,
+                      spreadRadius: 80,
                     ),
                   ],
                 ),
@@ -178,7 +179,7 @@ class _HeroSectionState extends State<HeroSection>
                 gradient: LinearGradient(
                   colors: [
                     Colors.transparent,
-                    const Color(0xFFFAF6EE).withOpacity(0.95),
+                    BrandColors.deepIndigoBlack.withOpacity(0.98),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -211,7 +212,7 @@ class _HeroSectionState extends State<HeroSection>
                         label: 'FLUTTER',
                         accent: BrandColors.secondaryNeon,
                       ),
-                      _PillTag(label: 'DART', accent: Color(0xFF60A5FA)),
+                      _PillTag(label: 'DART', accent: BrandColors.qswMid),
                     ],
                   ),
                 ),
@@ -251,8 +252,8 @@ class _HeroSectionState extends State<HeroSection>
                 const SizedBox(height: 12),
 
                 // Short bio
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 600),
+                const FadeInSlide(
+                  delay: Duration(milliseconds: 600),
                   direction: 20,
                   child: SizedBox(
                     width: 260,
@@ -260,7 +261,7 @@ class _HeroSectionState extends State<HeroSection>
                       'Building beautiful, scalable, production-ready Flutter apps.',
                       style: TextStyle(
                         fontSize: 14,
-                        color: const Color(0xFF1C1008).withOpacity(0.50),
+                        color: BrandColors.warmFaint,
                         height: 1.65,
                       ),
                     ),
@@ -366,10 +367,10 @@ class _HeroSectionState extends State<HeroSection>
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C1008).withOpacity(0.04),
+                      color: BrandColors.qswMid.withOpacity(0.06),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: BrandColors.primaryNeon.withOpacity(0.18),
+                        color: BrandColors.primaryNeon.withOpacity(0.22),
                         width: 1,
                       ),
                     ),
@@ -390,7 +391,7 @@ class _HeroSectionState extends State<HeroSection>
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 11,
-                            color: const Color(0xFF1C1008).withOpacity(0.50),
+                            color: Colors.white.withOpacity(0.45),
                             height: 1.4,
                           ),
                         ),
@@ -419,13 +420,13 @@ class _HeroSectionState extends State<HeroSection>
                       fontSize: 9.5,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 2.5,
-                      color: const Color(0xFF1C1008).withOpacity(0.25),
+                      color: Colors.white.withOpacity(0.25),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
-                    color: const Color(0xFF1C1008).withOpacity(0.20),
+                    color: Colors.white.withOpacity(0.22),
                     size: 18,
                   ),
                 ],
@@ -479,7 +480,7 @@ class _HeroSectionState extends State<HeroSection>
                           style: TextStyle(
                             fontSize: 160,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF1C1008).withOpacity(0.06),
+                            color: BrandColors.warmAmber.withOpacity(0.07),
                             letterSpacing: 4,
                           ),
                         ),
@@ -528,7 +529,7 @@ class _HeroSectionState extends State<HeroSection>
               'Building beautiful, scalable, production-ready Flutter apps.',
               style: TextStyle(
                 fontSize: 14,
-                color: const Color(0xFF1C1008).withOpacity(0.55),
+                color: Colors.white.withOpacity(0.55),
                 height: 1.65,
               ),
             ),
@@ -631,13 +632,13 @@ class _SocialPillState extends State<_SocialPill> {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             color: _hovered
-                ? const Color(0xFF1C1008).withOpacity(0.07)
-                : const Color(0xFF1C1008).withOpacity(0.03),
+                ? BrandColors.qswMid.withOpacity(0.10)
+                : Colors.white.withOpacity(0.03),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _hovered
-                  ? BrandColors.primaryNeon.withOpacity(0.3)
-                  : const Color(0xFF1C1008).withOpacity(0.06),
+                  ? BrandColors.primaryNeon.withOpacity(0.35)
+                  : Colors.white.withOpacity(0.08),
               width: 1,
             ),
           ),
@@ -648,7 +649,7 @@ class _SocialPillState extends State<_SocialPill> {
                 widget.icon,
                 color: _hovered
                     ? BrandColors.primaryNeon
-                    : const Color(0xFF1C1008).withOpacity(0.40),
+                    : Colors.white.withOpacity(0.35),
                 size: 14,
               ),
               const SizedBox(width: 8),
@@ -656,8 +657,8 @@ class _SocialPillState extends State<_SocialPill> {
                 widget.label,
                 style: TextStyle(
                   color: _hovered
-                      ? const Color(0xFF1C1008).withOpacity(0.85)
-                      : const Color(0xFF1C1008).withOpacity(0.45),
+                      ? Colors.white.withOpacity(0.90)
+                      : Colors.white.withOpacity(0.45),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
