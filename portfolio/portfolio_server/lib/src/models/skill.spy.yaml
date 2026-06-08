@@ -1,0 +1,5 @@
+class: Skill
+fields:
+  name: String
+  level: double
+  category: String

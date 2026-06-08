@@ -1,0 +1,5 @@
+class: PortfolioData
+fields:
+  experiences: List<Experience>
+  skills: List<Skill>
+  projects: List<Project>

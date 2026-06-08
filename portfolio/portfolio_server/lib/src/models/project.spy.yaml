@@ -1,0 +1,9 @@
+class: Project
+fields:
+  id: String
+  title: String
+  type: String
+  clientOrOrg: String
+  description: String
+  points: List<String>
+  technologies: List<String>
