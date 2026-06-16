@@ -110,7 +110,7 @@ class _HeroSectionState extends State<HeroSection>
                       style: TextStyle(
                         fontSize: 200,
                         fontWeight: FontWeight.w900,
-                        color: BrandColors.warmAmber,
+                        color: Colors.blueGrey.withValues(alpha: .2),
                         letterSpacing: 8,
                         height: 1.0,
                         shadows: [],
@@ -173,7 +173,7 @@ class _HeroSectionState extends State<HeroSection>
             bottom: 0,
             left: 0,
             right: 0,
-            height: 200,
+            height: 250,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -226,16 +226,31 @@ class _HeroSectionState extends State<HeroSection>
                     height: 32,
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 500),
-                      transitionBuilder: (child, anim) => FadeTransition(
-                        opacity: anim,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 0.3),
-                            end: Offset.zero,
-                          ).animate(anim),
-                          child: child,
-                        ),
-                      ),
+                      transitionBuilder: (child, anim) {
+                        final isEntering = child.key == ValueKey(_roleIndex);
+                        return FadeTransition(
+                          opacity: anim,
+                          child: SlideTransition(
+                            position: Tween<Offset>(
+                              begin: isEntering ? const Offset(0, -1.0) : const Offset(0, 1.0),
+                              end: Offset.zero,
+                            ).animate(CurvedAnimation(
+                              parent: anim,
+                              curve: Curves.easeOutCubic,
+                            )),
+                            child: child,
+                          ),
+                        );
+                      },
+                      layoutBuilder: (currentChild, previousChildren) {
+                        return Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
                       child: Text(
                         _roles[_roleIndex],
                         key: ValueKey(_roleIndex),
@@ -342,7 +357,7 @@ class _HeroSectionState extends State<HeroSection>
                   child: _SocialPill(
                     icon: Icons.link_rounded,
                     label: 'LinkedIn',
-                    onTap: () => _launchURL('https://linkedin.com'),
+                    onTap: () => _launchURL('https://www.linkedin.com/in/joel-p-shaju-b8aa1a292'),
                   ),
                 ),
                 const SizedBox(height: 12),

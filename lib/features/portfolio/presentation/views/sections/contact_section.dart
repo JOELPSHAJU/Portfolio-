@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../controllers/portfolio_controller.dart';
+import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/glass_container.dart';
 import 'package:clean_riverpod_template/core/widgets/premium_button.dart';
 import 'package:clean_riverpod_template/core/widgets/gradient_text.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
-
 
 class ContactSection extends ConsumerStatefulWidget {
   const ContactSection({super.key});
@@ -41,7 +41,9 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final success = await ref.read(portfolioControllerProvider.notifier).sendInquiry(
+      final success = await ref
+          .read(portfolioControllerProvider.notifier)
+          .sendInquiry(
             name: _nameController.text.trim(),
             email: _emailController.text.trim(),
             message: _messageController.text.trim(),
@@ -74,32 +76,37 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
           FadeInSlide(
             delay: const Duration(milliseconds: 100),
             direction: 25.0,
-            child: _buildSectionHeader('GET IN TOUCH', 'Let\'s Create Something Great'),
+            child: _buildSectionHeader(
+              'GET IN TOUCH',
+              'Let\'s Create Something Great',
+            ),
           ),
           const SizedBox(height: 24),
 
           isDesktop
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: FadeInSlide(
-                        delay: const Duration(milliseconds: 250),
-                        direction: 30.0,
-                        child: _buildFormCard(status),
+              ? IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: FadeInSlide(
+                          delay: const Duration(milliseconds: 250),
+                          direction: 30.0,
+                          child: _buildFormCard(context, status),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 48),
-                    Expanded(
-                      flex: 4,
-                      child: FadeInSlide(
-                        delay: const Duration(milliseconds: 400),
-                        direction: 30.0,
-                        child: _buildContactDetailsCard(),
+                      const SizedBox(width: 48),
+                      Expanded(
+                        flex: 4,
+                        child: FadeInSlide(
+                          delay: const Duration(milliseconds: 400),
+                          direction: 30.0,
+                          child: _buildContactDetailsCard(context),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,13 +114,13 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
                     FadeInSlide(
                       delay: const Duration(milliseconds: 250),
                       direction: 30.0,
-                      child: _buildFormCard(status),
+                      child: _buildFormCard(context, status),
                     ),
                     const SizedBox(height: 36),
                     FadeInSlide(
                       delay: const Duration(milliseconds: 400),
                       direction: 30.0,
-                      child: _buildContactDetailsCard(),
+                      child: _buildContactDetailsCard(context),
                     ),
                   ],
                 ),
@@ -158,7 +165,8 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
     );
   }
 
-  Widget _buildFormCard(ContactFormStatus status) {
+  Widget _buildFormCard(BuildContext context, ContactFormStatus status) {
+    final pal = context.palette;
     final isSubmitting = status == ContactFormStatus.submitting;
     final isSuccess = status == ContactFormStatus.success;
 
@@ -173,13 +181,14 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            const Text(
+            Text(
               'Send a Message',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: BrandColors.textPrimary,
+                color: pal.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
@@ -191,6 +200,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
 
             // Name Field
             _buildTextField(
+              context: context,
               controller: _nameController,
               label: 'Full Name',
               hint: 'John Doe',
@@ -206,6 +216,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
 
             // Email Field
             _buildTextField(
+              context: context,
               controller: _emailController,
               label: 'Email Address',
               hint: 'john@example.com',
@@ -215,7 +226,9 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
                 if (val == null || val.trim().isEmpty) {
                   return 'Please enter your email';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val.trim())) {
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(val.trim())) {
                   return 'Please enter a valid email address';
                 }
                 return null;
@@ -225,6 +238,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
 
             // Message Field
             _buildTextField(
+              context: context,
               controller: _messageController,
               label: 'Message',
               hint: 'Tell me about your product details...',
@@ -243,16 +257,25 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
             if (isSuccess)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: BrandColors.successNeon.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: BrandColors.successNeon.withOpacity(0.3)),
+                  border: Border.all(
+                    color: BrandColors.successNeon.withOpacity(0.3),
+                  ),
                 ),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check_circle_rounded, color: BrandColors.successNeon, size: 20),
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: BrandColors.successNeon,
+                      size: 20,
+                    ),
                     SizedBox(width: 12),
                     Text(
                       'Message sent successfully! Thank you.',
@@ -270,7 +293,9 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
                 children: [
                   Expanded(
                     child: PremiumButton(
-                      label: isSubmitting ? 'SENDING INQUIRY...' : 'SUBMIT MESSAGE',
+                      label: isSubmitting
+                          ? 'SENDING INQUIRY...'
+                          : 'SUBMIT MESSAGE',
                       icon: Icons.send_rounded,
                       gradient: BrandColors.primaryGradient,
                       glowColor: BrandColors.primaryNeon,
@@ -287,6 +312,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String label,
     required String hint,
@@ -295,15 +321,16 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
+    final pal = context.palette;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: BrandColors.warmBrown,
+            color: pal.warmBrown,
             letterSpacing: 0.5,
           ),
         ),
@@ -313,84 +340,125 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
           maxLines: maxLines,
           keyboardType: keyboardType,
           validator: validator,
-          style: const TextStyle(color: BrandColors.textPrimary, fontSize: 14.5),
+          style: TextStyle(
+            color: pal.textPrimary,
+            fontSize: 14.5,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: BrandColors.warmAccent.withOpacity(0.5), fontSize: 14.5),
-            prefixIcon: Icon(icon, color: BrandColors.secondaryNeon.withOpacity(0.6), size: 18),
+            hintStyle: TextStyle(
+              color: BrandColors.warmAccent.withOpacity(0.5),
+              fontSize: 14.5,
+            ),
+            prefixIcon: Icon(
+              icon,
+              color: BrandColors.secondaryNeon.withOpacity(0.6),
+              size: 18,
+            ),
             filled: true,
             fillColor: BrandColors.warmMid.withOpacity(0.70),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: BrandColors.glassBorder.withOpacity(0.1)),
+              borderSide: BorderSide(
+                color: BrandColors.glassBorder.withOpacity(0.1),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: BrandColors.glassBorder.withOpacity(0.08)),
+              borderSide: BorderSide(
+                color: BrandColors.glassBorder.withOpacity(0.08),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: BrandColors.primaryNeon, width: 1.5),
+              borderSide: const BorderSide(
+                color: BrandColors.primaryNeon,
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: BrandColors.accentNeon, width: 1.0),
+              borderSide: const BorderSide(
+                color: BrandColors.accentNeon,
+                width: 1.0,
+              ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: BrandColors.accentNeon, width: 1.5),
+              borderSide: const BorderSide(
+                color: BrandColors.accentNeon,
+                width: 1.5,
+              ),
             ),
-            errorStyle: const TextStyle(color: BrandColors.accentNeon, fontSize: 12),
+            errorStyle: const TextStyle(
+              color: BrandColors.accentNeon,
+              fontSize: 12,
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildContactDetailsCard() {
-    return Column(
-      children: [
-        _buildInfoCard(
-          icon: Icons.alternate_email_rounded,
-          title: 'Email Direct',
-          value: 'joelpshaju@gmail.com',
-          subtitle: 'Responses within 24 hours',
-          accentColor: BrandColors.secondaryNeon,
-          onTap: () => _launchURL('mailto:joelpshaju@gmail.com'),
-        ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          icon: Icons.phone_iphone_rounded,
-          title: 'Phone & WhatsApp',
-          value: '+91 8590182736',
-          subtitle: 'Available for client discussions',
-          accentColor: BrandColors.successNeon,
-          onTap: () => _launchURL('tel:+918590182736'),
-        ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          icon: Icons.link_rounded,
-          title: 'Professional Networking',
-          value: 'LinkedIn Profile',
-          subtitle: 'Read reviews and references',
-          accentColor: BrandColors.primaryNeon,
-          onTap: () => _launchURL('https://linkedin.com'), // Launch linkedin
-        ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          icon: Icons.terminal_rounded,
-          title: 'Open Source Projects',
-          value: 'GitHub Hub',
-          subtitle: 'Check repository codebase activity',
-          accentColor: BrandColors.accentNeon,
-          onTap: () => _launchURL('https://github.com/joelpshaju'),
-        ),
-      ],
+  Widget _buildContactDetailsCard(BuildContext context) {
+    return GlassContainer(
+      borderRadius: 24.0,
+      padding: const EdgeInsets.all(28.0),
+      customBorder: Border.all(
+        color: BrandColors.secondaryNeon.withOpacity(0.15),
+        width: 1.5,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildInfoCard(
+            context: context,
+            icon: Icons.alternate_email_rounded,
+            title: 'Email Direct',
+            value: 'joelpshaju@gmail.com',
+            subtitle: 'Responses within 24 hours',
+            accentColor: BrandColors.secondaryNeon,
+            onTap: () => _launchURL('mailto:joelpshaju@gmail.com'),
+          ),
+          _buildInfoCard(
+            context: context,
+            icon: Icons.phone_iphone_rounded,
+            title: 'Phone & WhatsApp',
+            value: '+91 8590182736',
+            subtitle: 'Available for client discussions',
+            accentColor: BrandColors.successNeon,
+            onTap: () => _launchURL('tel:+918590182736'),
+          ),
+          _buildInfoCard(
+            context: context,
+            icon: Icons.link_rounded,
+            title: 'Professional Networking',
+            value: 'LinkedIn Profile',
+            subtitle: 'Read reviews and references',
+            accentColor: BrandColors.primaryNeon,
+            onTap: () => _launchURL('https://www.linkedin.com/in/joel-p-shaju-b8aa1a292'),
+          ),
+          _buildInfoCard(
+            context: context,
+            icon: Icons.terminal_rounded,
+            title: 'Open Source Projects',
+            value: 'GitHub Hub',
+            subtitle: 'Check repository codebase activity',
+            accentColor: BrandColors.accentNeon,
+            onTap: () => _launchURL('https://github.com/joelpshaju'),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildInfoCard({
+    required BuildContext context,
     required IconData icon,
     required String title,
     required String value,
@@ -398,6 +466,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
     required Color accentColor,
     required VoidCallback onTap,
   }) {
+    final pal = context.palette;
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -426,22 +495,37 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 12, color: BrandColors.warmAccent, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: BrandColors.warmAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       value,
-                      style: const TextStyle(fontSize: 16, color: BrandColors.textPrimary, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: pal.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: TextStyle(fontSize: 11, color: BrandColors.warmMid.withOpacity(0.70)),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: BrandColors.warmMid.withOpacity(0.70),
+                      ),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_outward_rounded, color: BrandColors.warmMid.withOpacity(0.70), size: 18),
+              Icon(
+                Icons.arrow_outward_rounded,
+                color: BrandColors.warmMid.withOpacity(0.70),
+                size: 18,
+              ),
             ],
           ),
         ),

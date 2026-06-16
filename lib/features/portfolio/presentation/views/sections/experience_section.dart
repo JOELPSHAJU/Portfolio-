@@ -1,10 +1,164 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../domain/entities/experience.dart';
+import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/glass_container.dart';
 import 'package:clean_riverpod_template/core/widgets/gradient_text.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
 
+// ─── Mathematical Clipper: Angled Corners ────────────────────────────────────
+
+class _AngledClipper extends CustomClipper<Path> {
+  final double cutSize;
+  _AngledClipper({this.cutSize = 30.0});
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    // Top-left
+    path.moveTo(0, 0);
+    // Top-right (cut)
+    path.lineTo(size.width - cutSize, 0);
+    path.lineTo(size.width, cutSize);
+    // Bottom-right
+    path.lineTo(size.width, size.height);
+    // Bottom-left (cut)
+    path.lineTo(cutSize, size.height);
+    path.lineTo(0, size.height - cutSize);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(_AngledClipper old) => old.cutSize != cutSize;
+}
+
+// ─── Angled Border Painter ───────────────────────────────────────────────────
+
+class _AngledBorderPainter extends CustomPainter {
+  final Color color;
+  final double cutSize;
+  _AngledBorderPainter({required this.color, required this.cutSize});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    
+    final path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(size.width - cutSize, 0);
+    path.lineTo(size.width, cutSize);
+    path.lineTo(size.width, size.height);
+    path.lineTo(cutSize, size.height);
+    path.lineTo(0, size.height - cutSize);
+    path.close();
+    
+    // Draw accents on the cuts
+    final accentPaint = Paint()
+      ..color = color.withOpacity(1.0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0;
+      
+    final topRightCut = Path()
+      ..moveTo(size.width - cutSize, 0)
+      ..lineTo(size.width, cutSize);
+      
+    final bottomLeftCut = Path()
+      ..moveTo(cutSize, size.height)
+      ..lineTo(0, size.height - cutSize);
+
+    canvas.drawPath(path, paint);
+    canvas.drawPath(topRightCut, accentPaint);
+    canvas.drawPath(bottomLeftCut, accentPaint);
+  }
+
+  @override
+  bool shouldRepaint(_AngledBorderPainter old) => old.color != color || old.cutSize != cutSize;
+}
+
+// ─── Hexagonal & Geometric Painters ──────────────────────────────────────────
+
+class _HexPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final bool isFilled;
+  
+  _HexPainter(this.color, {this.strokeWidth = 2.0, this.isFilled = false});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = isFilled ? PaintingStyle.fill : PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = math.min(cx, cy) - (isFilled ? 0 : strokeWidth / 2);
+    final path = Path();
+    for (var i = 0; i < 6; i++) {
+      // Flat-top hexagon
+      final angle = i * 60 * math.pi / 180;
+      final x = cx + r * math.cos(angle);
+      final y = cy + r * math.sin(angle);
+      i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_HexPainter old) => 
+    old.color != color || old.strokeWidth != strokeWidth || old.isFilled != isFilled;
+}
+
+class _GeoPatternPainter extends CustomPainter {
+  final Color color;
+  _GeoPatternPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+    
+    const spacing = 18.0;
+    const r = 1.0;
+    for (double x = 0; x < size.width; x += spacing) {
+      for (double y = 0; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), r, paint);
+      }
+    }
+    
+    // Decorative pentagon watermark
+    final pentaPaint = Paint()
+      ..color = color.withOpacity(0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8;
+    _drawPolygon(canvas, pentaPaint, Offset(size.width - 35, 60), 90, 5);
+    _drawPolygon(canvas, pentaPaint, Offset(size.width + 20, 150), 60, 5);
+  }
+
+  void _drawPolygon(Canvas canvas, Paint paint, Offset center, double r, int sides) {
+    final path = Path();
+    for (var i = 0; i < sides; i++) {
+      final angle = (i * 360 / sides - 90) * math.pi / 180;
+      final x = center.dx + r * math.cos(angle);
+      final y = center.dy + r * math.sin(angle);
+      i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_GeoPatternPainter old) => old.color != color;
+}
+
+// ─── Experience Section ──────────────────────────────────────────────────────
 
 class ExperienceSection extends StatelessWidget {
   final List<Experience> experiences;
@@ -28,16 +182,19 @@ class ExperienceSection extends StatelessWidget {
           FadeInSlide(
             delay: const Duration(milliseconds: 100),
             direction: 25.0,
-            child: _buildSectionHeader('CAREER PATH', 'Professional Experience'),
+            child: _buildSectionHeader(
+              'CAREER PATH',
+              'Professional Experience',
+            ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
 
           // Timeline layout
           if (experiences.isEmpty)
-            const Center(
+            Center(
               child: Text(
                 'No experience data found.',
-                style: TextStyle(color: BrandColors.warmBrown),
+                style: TextStyle(color: context.palette.warmBrown),
               ),
             )
           else
@@ -101,141 +258,207 @@ class ExperienceSection extends StatelessWidget {
     int index,
     bool isDesktop,
   ) {
+    final accentColor = index == 0 ? BrandColors.primaryNeon : BrandColors.secondaryNeon;
+    final double cutSize = isDesktop ? 55.0 : 35.0;
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Timeline indicator column
+          // ── Mathematical Timeline node ──
           Column(
             children: [
-              // Glowing Node
-              Container(
-                width: 18,
-                height: 18,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: index == 0
-                      ? BrandColors.primaryGradient
-                      : const LinearGradient(colors: [BrandColors.deepPurple, BrandColors.deepPurple]),
-                  border: Border.all(
-                    color: index == 0
-                        ? BrandColors.primaryNeon.withOpacity(0.5)
-                        : BrandColors.warmGold.withOpacity(0.30),
-                    width: 2,
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: CustomPaint(
+                  painter: _HexPainter(
+                    index == 0 ? BrandColors.primaryNeon : BrandColors.glassBorder,
+                    strokeWidth: 2.5,
+                    isFilled: index == 0,
                   ),
-                  boxShadow: index == 0
-                      ? [
-                          BoxShadow(
-                            color: BrandColors.primaryNeon.withOpacity(0.5),
-                            blurRadius: 10,
-                          )
-                        ]
+                  child: index == 0
+                      ? Center(
+                          child: Container(
+                            width: 14,
+                            height: 14,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        )
                       : null,
                 ),
               ),
-              // Line connector
               Expanded(
                 child: Container(
                   width: 2,
-                  color: BrandColors.glassBorder.withOpacity(0.15),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        accentColor.withOpacity(0.5),
+                        BrandColors.glassBorder.withOpacity(0.2),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(width: 24),
+          const SizedBox(width: 20),
 
-          // Main Card column
+          // ── Geometric Card ──
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 32.0),
-              child: GlassContainer(
-                borderRadius: 20.0,
-                padding: const EdgeInsets.all(24.0),
-                customBorder: Border.all(
-                  color: (index == 0 ? BrandColors.primaryNeon : BrandColors.secondaryNeon).withOpacity(0.18),
-                  width: 1.5,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Duration & Location Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.only(bottom: 40.0),
+              child: ClipPath(
+                clipper: _AngledClipper(cutSize: cutSize),
+                child: CustomPaint(
+                  foregroundPainter: _AngledBorderPainter(
+                    color: accentColor.withOpacity(0.4),
+                    cutSize: cutSize,
+                  ),
+                  child: Container(
+                    color: BrandColors.darkCard,
+                    child: Stack(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: (index == 0 ? BrandColors.primaryNeon : BrandColors.secondaryNeon).withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            exp.duration,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: index == 0 ? BrandColors.primaryNeon : BrandColors.secondaryNeon,
-                            ),
+                        // Background Pattern
+                        Positioned.fill(
+                          child: CustomPaint(
+                            painter: _GeoPatternPainter(accentColor.withOpacity(0.04)),
                           ),
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on_rounded, color: BrandColors.accentNeon, size: 14),
-                            const SizedBox(width: 4),
-                            Text(
-                              exp.location,
-                              style: const TextStyle(fontSize: 12, color: BrandColors.accentNeon),
-                            ),
-                          ],
+                        // Content
+                        Padding(
+                          padding: const EdgeInsets.all(28.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // Angled Duration Badge
+                                  ClipPath(
+                                    clipper: _AngledClipper(cutSize: 8.0),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 6,
+                                      ),
+                                      color: accentColor.withOpacity(0.12),
+                                      child: Text(
+                                        exp.duration,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: accentColor,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.share_location_rounded,
+                                        color: accentColor,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        exp.location,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: accentColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Title
+                              Text(
+                                exp.role,
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: context.palette.textPrimary,
+                                  letterSpacing: -0.3,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 3,
+                                    height: 14,
+                                    decoration: BoxDecoration(color: accentColor),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    exp.company,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: accentColor,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+
+                              // Points
+                              Column(
+                                children: exp.points
+                                    .map((pt) => _buildAccomplishmentPoint(pt, context.palette, accentColor))
+                                    .toList(),
+                              ),
+                              const SizedBox(height: 24),
+
+                              // Tech Stack Line
+                              Container(
+                                height: 1,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      accentColor.withOpacity(0.3),
+                                      Colors.transparent,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'SYSTEMS & ARCHITECTURE',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color: accentColor.withOpacity(0.8),
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: exp.technologies
+                                    .map((tech) => _buildTechTag(tech, accentColor))
+                                    .toList(),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-
-                    // Job Title & Company
-                    Text(
-                      exp.role,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: BrandColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      exp.company,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: BrandColors.secondaryNeon,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-
-                    // Accomplishment points
-                    Column(
-                      children: exp.points.map((pt) => _buildAccomplishmentPoint(pt)).toList(),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Tech Stack Tags used
-                    const Divider(color: BrandColors.glassBorder, height: 1),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'KEY ARCHITECTURE & TOOLING:',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: BrandColors.warmBrown,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: exp.technologies.map((tech) => _buildTechTag(tech)).toList(),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -245,23 +468,29 @@ class ExperienceSection extends StatelessWidget {
     );
   }
 
-  Widget _buildAccomplishmentPoint(String point) {
+  Widget _buildAccomplishmentPoint(String point, AppPalette pal, Color accentColor) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 6.0, right: 10.0),
-            child: Icon(Icons.lens, color: BrandColors.primaryNeon, size: 6),
+          Padding(
+            padding: const EdgeInsets.only(top: 6.0, right: 12.0),
+            child: SizedBox(
+              width: 8,
+              height: 8,
+              child: CustomPaint(
+                painter: _HexPainter(accentColor, isFilled: true),
+              ),
+            ),
           ),
           Expanded(
             child: Text(
               point,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13.5,
-                color: BrandColors.warmBrown,
-                height: 1.5,
+                color: pal.warmBrown,
+                height: 1.6,
               ),
             ),
           ),
@@ -270,20 +499,23 @@ class ExperienceSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTechTag(String name) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: BrandColors.warmMid.withOpacity(0.70),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: BrandColors.glassBorder.withOpacity(0.06)),
-      ),
-      child: Text(
-        name,
-        style: const TextStyle(
-          color: BrandColors.accentNeon,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
+  Widget _buildTechTag(String name, Color accentColor) {
+    return ClipPath(
+      clipper: _AngledClipper(cutSize: 12.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: BrandColors.glassBorder.withOpacity(0.08),
+          border: Border.all(color: accentColor.withOpacity(0.2)),
+        ),
+        child: Text(
+          name,
+          style: TextStyle(
+            color: accentColor,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
         ),
       ),
     );

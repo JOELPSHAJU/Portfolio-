@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../dashboard/presentation/controllers/dashboard_controller.dart'; // sharing sharedPreferencesProvider
@@ -131,6 +133,41 @@ class PortfolioController extends _$PortfolioController {
     state = AsyncValue.data(currentVal.copyWith(contactStatus: ContactFormStatus.submitting));
 
     try {
+      // --- BACKGROUND EMAIL SENDING (Formspree API) ---
+      bool emailSent = false;
+      try {
+        // We are using Formspree because Web3Forms is being blocked by your Gmail.
+        final response = await http.post(
+          Uri.parse('https://formspree.io/f/xojzlwgv'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: jsonEncode({
+            'name': name,
+            'email': email,
+            'message': message,
+          }),
+        );
+        
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          emailSent = true;
+        } else {
+          print('Formspree Error: ${response.statusCode} - ${response.body}');
+        }
+      } catch (e) {
+        print('Background email sending failed: $e');
+      }
+      
+      if (!emailSent) {
+        state = AsyncValue.data(state.value!.copyWith(
+          contactStatus: ContactFormStatus.error,
+          errorMessage: 'Could not send email. Please try again later.',
+        ));
+        return false;
+      }
+      // ------------------------------------------------
+
       final success = await _submitContactUseCase(
         ContactMessage(name: name, email: email, message: message),
       );

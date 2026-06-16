@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 import '../theme/brand_colors.dart';
 
 /// A premium, customizable glassmorphic container widget.
@@ -31,6 +32,9 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pal = context.palette;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
@@ -42,17 +46,24 @@ class GlassContainer extends StatelessWidget {
           padding: padding,
           alignment: alignment,
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(borderRadius),
-            gradient: customGradient ?? BrandColors.glassGradient,
-            border: customBorder ?? Border.all(
-              color: BrandColors.primaryNeon.withOpacity(0.08),
-              width: 1.5,
-            ),
+            gradient: customGradient ?? pal.glassGradient,
+            border:
+                customBorder ??
+                Border.all(
+                  color: isDark
+                      ? BrandColors.primaryNeon.withOpacity(0.10)
+                      : BrandColors.primaryNeon.withOpacity(0.12),
+                  width: 1.5,
+                ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: isDark
+                    ? Colors.black.withOpacity(0.25)
+                    : BrandColors.primaryNeon.withOpacity(0.06),
                 blurRadius: 20,
-                offset: const Offset(0, 10),
+                offset: const Offset(0, 8),
               ),
             ],
           ),

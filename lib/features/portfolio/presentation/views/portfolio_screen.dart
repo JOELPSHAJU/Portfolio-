@@ -11,6 +11,8 @@ import 'sections/skills_section.dart';
 import 'widgets/glow_background.dart';
 import 'widgets/mobile_drawer.dart';
 import 'widgets/navigation_bar.dart';
+import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 
 class PortfolioScreen extends ConsumerStatefulWidget {
@@ -127,57 +129,98 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 // ── Scrollable content — full viewport ──
                 NotificationListener<ScrollNotification>(
                   onNotification: _onScrollNotification,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        // Home Section
-                        Container(
-                          key: _sectionKeys['home'],
-                          child: HeroSection(
-                            onExploreWorkPressed: () =>
-                                _scrollToSection('projects'),
-                            onContactPressed: () => _scrollToSection('contact'),
-                          ),
+                  child: ScrollConfiguration(
+                    // Remove the default overscroll glow/stretch on web
+                    behavior: const _NoOverscrollBehavior(),
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      // ClampingScrollPhysics is correct for web —
+                      // BouncingScrollPhysics adds rubber-band latency that
+                      // makes every scroll feel sluggish.
+                      physics: const ClampingScrollPhysics(),
+                      child: RepaintBoundary(
+                        child: Column(
+                          children: [
+                            // Home Section
+                            Container(
+                              key: _sectionKeys['home'],
+                              child: FadeInSlide(
+                                direction: -35,
+                                child: HeroSection(
+                                  onExploreWorkPressed: () =>
+                                      _scrollToSection('projects'),
+                                  onContactPressed: () => _scrollToSection('contact'),
+                                ),
+                              ),
+                            ),
+
+                            // About Section
+                            Container(
+                              key: _sectionKeys['about'],
+                              child: const FadeInSlide(
+                                delay: Duration(milliseconds: 80),
+                                direction: 35,
+                                child: AboutSection(),
+                              ),
+                            ),
+
+                            // Experience Section
+                            Container(
+                              key: _sectionKeys['experience'],
+                              child: FadeInSlide(
+                                delay: const Duration(milliseconds: 100),
+                                direction: -35,
+                                child: ExperienceSection(
+                                  experiences: state.experiences,
+                                ),
+                              ),
+                            ),
+
+                            // Skills Section
+                            Container(
+                              key: _sectionKeys['skills'],
+                              child: FadeInSlide(
+                                delay: const Duration(milliseconds: 100),
+                                direction: 35,
+                                child: SkillsSection(skills: state.skills),
+                              ),
+                            ),
+
+                            // Certification Section
+                            const FadeInSlide(
+                              delay: Duration(milliseconds: 100),
+                              direction: -35,
+                              child: CertificationsSection(),
+                            ),
+
+                            // Projects Section
+                            Container(
+                              key: _sectionKeys['projects'],
+                              child: FadeInSlide(
+                                delay: const Duration(milliseconds: 100),
+                                direction: 35,
+                                child: ProjectsSection(projects: state.projects),
+                              ),
+                            ),
+
+                            // Contact Section
+                            Container(
+                              key: _sectionKeys['contact'],
+                              child: const FadeInSlide(
+                                delay: Duration(milliseconds: 100),
+                                direction: -35,
+                                child: ContactSection(),
+                              ),
+                            ),
+
+                            // Footer
+                            FadeInSlide(
+                              delay: const Duration(milliseconds: 100),
+                              child: _buildFooter(context),
+                            ),
+                          ],
                         ),
-
-                        // About Section
-                        Container(
-                          key: _sectionKeys['about'],
-                          child: const AboutSection(),
-                        ),
-
-                        // Experience Section
-                        Container(
-                          key: _sectionKeys['experience'],
-                          child: ExperienceSection(experiences: state.experiences),
-                        ),
-
-                        // Skills Section
-                        Container(
-                          key: _sectionKeys['skills'],
-                          child: SkillsSection(skills: state.skills),
-                        ),
-
-                        // Certification Section
-                        const CertificationsSection(),
-
-                        // Projects Section
-                        Container(
-                          key: _sectionKeys['projects'],
-                          child: ProjectsSection(projects: state.projects),
-                        ),
-
-                        // Contact Section
-                        Container(
-                          key: _sectionKeys['contact'],
-                          child: const ContactSection(),
-                        ),
-
-                        // Footer
-                        _buildFooter(),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -210,7 +253,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Error loading data: $err',
-                  style: const TextStyle(color: BrandColors.textDark),
+                  style: TextStyle(color: context.palette.textPrimary),
                 ),
               ],
             ),
@@ -220,10 +263,20 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Light: pure white bg, near-black title, mid-grey text
+    // Dark: dark grey (not black) bg, silver title, dim grey text
+    final bgColor    = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    final titleColor = isDark ? const Color(0xFFD1D1D6) : BrandColors.textPrimary;
+    final subColor   = isDark ? const Color(0xFF8E8E93) : BrandColors.warmAccent;
+    final muteColor  = isDark ? const Color(0xFF636366) : BrandColors.textMuted;
+    final logoText   = isDark ? BrandColors.darkBackground : Colors.white;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 24.0),
-      color: BrandColors.heroBg1,
+      color: bgColor,
       width: double.infinity,
       child: Column(
         children: [
@@ -236,20 +289,20 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                   gradient: BrandColors.primaryGradient,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
+                child: Text(
                   'JS',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
-                    color: BrandColors.textDark,
+                    color: logoText,
                   ),
                 ),
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'JOEL P SHAJU',
                 style: TextStyle(
-                  color: BrandColors.textDark,
+                  color: titleColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 13,
                   letterSpacing: 1.0,
@@ -258,21 +311,36 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Designed & Engineered in Flutter with Riverpod Clean Architecture.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: BrandColors.warmAccent, fontSize: 12),
+            style: TextStyle(color: subColor, fontSize: 12),
           ),
           const SizedBox(height: 6),
           Text(
-            '© ${DateTime.now().year} Joel P Shaju. All Rights Reserved.',
-            style: TextStyle(
-              color: BrandColors.heroBg1.withOpacity(0.3),
-              fontSize: 10,
-            ),
+            '\u00a9 ${DateTime.now().year} Joel P Shaju. All Rights Reserved.',
+            style: TextStyle(color: muteColor, fontSize: 10),
           ),
         ],
       ),
     );
   }
+}
+
+/// Removes the default overscroll glow and stretch on Flutter web.
+/// BouncingScrollPhysics + the default indicator both add perceived latency.
+class _NoOverscrollBehavior extends ScrollBehavior {
+  const _NoOverscrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) =>
+      child; // no glow, no stretch
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
 }
