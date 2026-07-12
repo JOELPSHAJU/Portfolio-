@@ -1,9 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/theme/theme_controller.dart';
-import 'package:clean_riverpod_template/core/widgets/glass_container.dart';
+import 'package:clean_riverpod_template/core/utils/fullscreen.dart';
 
 class PortfolioHeader extends ConsumerWidget {
   final String activeSection;
@@ -22,106 +23,88 @@ class PortfolioHeader extends ConsumerWidget {
     final pal = context.palette;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final accent = isDark ? const Color(0xFF00E5FF) : const Color(0xFF0F172A);
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: GlassContainer(
-        borderRadius: 16,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 13),
-        blur: 20,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // ── Logo / Branding ─────────────────────────────────
-            GestureDetector(
-              onTap: () => onSectionSelected('home'),
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: BrandColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        'JS',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 15,
-                          color: isDark ? BrandColors.darkBackground : Colors.white,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+      margin: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(60),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? accent.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.06),
+            blurRadius: 40,
+            spreadRadius: -5,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(60),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: Container(
+            color: isDark ? const Color(0xFF0B0F19).withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.6),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // ── Logo / Branding ─────────────────────────────────
+                GestureDetector(
+                  onTap: () => onSectionSelected('home'),
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Row(
                       children: [
-                        Text(
-                          'JOEL P SHAJU',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: pal.textPrimary,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                        Text(
-                          'Flutter Architect',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: BrandColors.primaryNeon,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.4,
-                          ),
+                        Image.asset(
+                          'assets/logo.png',
+                          height: 36,
+                          fit: BoxFit.contain,
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            // ── Desktop Nav ─────────────────────────────────────
-            if (isDesktop)
-              Row(
-                children: [
-                  _NavLink('Home', 'home', activeSection, onSectionSelected, pal),
-                  _NavLink('About', 'about', activeSection, onSectionSelected, pal),
-                  _NavLink('Experience', 'experience', activeSection, onSectionSelected, pal),
-                  _NavLink('Skills', 'skills', activeSection, onSectionSelected, pal),
-                  _NavLink('Projects', 'projects', activeSection, onSectionSelected, pal),
-                  _NavLink('Contact', 'contact', activeSection, onSectionSelected, pal),
-                  const SizedBox(width: 8),
-                  _ThemeToggle(isDark: isDark, ref: ref),
-                  const SizedBox(width: 12),
-                  _HireMeButton(
-                    isDark: isDark,
-                    onTap: () => onSectionSelected('contact'),
+                // ── Desktop Nav ─────────────────────────────────────
+                if (isDesktop)
+                  Row(
+                    children: [
+                      _NavLink('HOME',       'home',       activeSection, onSectionSelected, pal),
+                      _NavLink('ABOUT',      'about',      activeSection, onSectionSelected, pal),
+                      _NavLink('EXPERIENCE', 'experience', activeSection, onSectionSelected, pal),
+                      _NavLink('SKILLS',     'skills',     activeSection, onSectionSelected, pal),
+                      _NavLink('PROJECTS',   'projects',   activeSection, onSectionSelected, pal),
+                      _NavLink('CONTACT',    'contact',    activeSection, onSectionSelected, pal),
+                      const SizedBox(width: 24),
+                      const _FullscreenToggle(),
+                      const SizedBox(width: 10),
+                      _ThemeToggle(isDark: isDark, ref: ref),
+                      const SizedBox(width: 16),
+                      _HireMeButton(onTap: () => onSectionSelected('contact')),
+                    ],
+                  )
+                else
+                  Row(
+                    children: [
+                      const _FullscreenToggle(),
+                      const SizedBox(width: 10),
+                      _ThemeToggle(isDark: isDark, ref: ref),
+                    ],
                   ),
-                ],
-              )
-            else
-              Row(
-                children: [
-                  _ThemeToggle(isDark: isDark, ref: ref),
-                  const SizedBox(width: 6),
-                  IconButton(
-                    icon: Icon(Icons.menu_rounded, color: pal.textPrimary, size: 26),
-                    onPressed: () => Scaffold.of(context).openEndDrawer(),
-                  ),
-                ],
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-// ── Nav Link ──────────────────────────────────────────────────────────────────
+// ── Nav Link (Holographic Pill) ───────────────────────────────────────────────
 class _NavLink extends StatefulWidget {
   final String title;
   final String sectionId;
@@ -147,11 +130,9 @@ class _NavLinkState extends State<_NavLink> {
   @override
   Widget build(BuildContext context) {
     final isActive = widget.activeSection == widget.sectionId;
-    final color = isActive
-        ? BrandColors.primaryNeon
-        : _hovered
-            ? BrandColors.primaryNeon.withOpacity(0.8)
-            : widget.pal.warmBrown;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    final accentColor = isDark ? const Color(0xFF00E5FF) : const Color(0xFF0F172A);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -159,32 +140,29 @@ class _NavLinkState extends State<_NavLink> {
       onExit: (_) => setState(() => _hovered = false),
       child: GestureDetector(
         onTap: () => widget.onTap(widget.sectionId),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                widget.title,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-                  fontSize: 13.5,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const SizedBox(height: 3),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                height: 2,
-                width: isActive ? 20 : 0,
-                decoration: BoxDecoration(
-                  color: BrandColors.primaryNeon,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ],
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: _hovered
+                ? (isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.02))
+                : Colors.transparent,
+          ),
+          child: Text(
+            widget.title,
+            style: GoogleFonts.outfit(
+              fontSize: 13,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+              color: isActive 
+                  ? accentColor 
+                  : (isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7)),
+              letterSpacing: 1.2,
+            ),
           ),
         ),
       ),
@@ -192,11 +170,10 @@ class _NavLinkState extends State<_NavLink> {
   }
 }
 
-// ── Hire Me Button ────────────────────────────────────────────────────────────
+// ── Hire Me Button (Liquid Gradient Pill) ─────────────────────────────────────
 class _HireMeButton extends StatefulWidget {
-  final bool isDark;
   final VoidCallback onTap;
-  const _HireMeButton({required this.isDark, required this.onTap});
+  const _HireMeButton({required this.onTap});
 
   @override
   State<_HireMeButton> createState() => _HireMeButtonState();
@@ -207,6 +184,8 @@ class _HireMeButtonState extends State<_HireMeButton> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
@@ -214,46 +193,44 @@ class _HireMeButtonState extends State<_HireMeButton> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            gradient: BrandColors.primaryGradient,
-            boxShadow: [
+            borderRadius: BorderRadius.circular(30),
+            gradient: LinearGradient(
+              colors: isDark 
+                  ? [const Color(0xFF00E5FF), const Color(0xFF007AFF)]
+                  : [const Color(0xFF0F172A), const Color(0xFF334155)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: _hovered ? [
               BoxShadow(
-                color: BrandColors.primaryNeon.withOpacity(_hovered ? 0.4 : 0.2),
-                blurRadius: _hovered ? 14 : 8,
+                color: (isDark ? const Color(0xFF00E5FF) : Colors.black).withValues(alpha: 0.3),
+                blurRadius: 16,
                 offset: const Offset(0, 4),
-              ),
-            ],
+              )
+            ] : [],
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: widget.onTap,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Hire Me',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: widget.isDark ? BrandColors.darkBackground : Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      color: widget.isDark ? BrandColors.darkBackground : Colors.white,
-                      size: 13,
-                    ),
-                  ],
+          child: Row(
+            children: [
+              Text(
+                'Let\'s Talk',
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
                 ),
               ),
-            ),
+              const SizedBox(width: 8),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                transform: Matrix4.translationValues(_hovered ? 4.0 : 0.0, 0.0, 0.0),
+                child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 14),
+              ),
+            ],
           ),
         ),
       ),
@@ -261,7 +238,7 @@ class _HireMeButtonState extends State<_HireMeButton> {
   }
 }
 
-// ── Theme Toggle Button ───────────────────────────────────────────────────────
+// ── Theme Toggle Button (Frosted Circle) ──────────────────────────────────────
 class _ThemeToggle extends StatefulWidget {
   final bool isDark;
   final WidgetRef ref;
@@ -297,6 +274,8 @@ class _ThemeToggleState extends State<_ThemeToggle>
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
@@ -308,25 +287,64 @@ class _ThemeToggleState extends State<_ThemeToggle>
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(9),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
+            shape: BoxShape.circle,
             color: _hovered
-                ? BrandColors.primaryNeon.withOpacity(0.15)
-                : BrandColors.primaryNeon.withOpacity(0.07),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: _hovered
-                  ? BrandColors.primaryNeon.withOpacity(0.45)
-                  : BrandColors.primaryNeon.withOpacity(0.18),
-            ),
+                ? primaryColor.withValues(alpha: 0.12)
+                : primaryColor.withValues(alpha: 0.05),
           ),
           child: RotationTransition(
             turns: _spinAnim,
             child: Icon(
-              widget.isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              color: BrandColors.primaryNeon,
-              size: 17,
+              widget.isDark ? Icons.wb_sunny_rounded : Icons.nightlight_round,
+              color: primaryColor,
+              size: 18,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Fullscreen Toggle Button (Frosted Circle) ─────────────────────────────────
+class _FullscreenToggle extends StatefulWidget {
+  const _FullscreenToggle();
+
+  @override
+  State<_FullscreenToggle> createState() => _FullscreenToggleState();
+}
+
+class _FullscreenToggleState extends State<_FullscreenToggle> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () {
+          toggleFullscreen();
+          setState(() {});
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: _hovered
+                ? primaryColor.withValues(alpha: 0.12)
+                : primaryColor.withValues(alpha: 0.05),
+          ),
+          child: Icon(
+            Icons.fullscreen_rounded,
+            color: primaryColor,
+            size: 18,
           ),
         ),
       ),

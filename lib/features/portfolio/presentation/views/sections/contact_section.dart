@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/portfolio_controller.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/glass_container.dart';
-import 'package:clean_riverpod_template/core/widgets/premium_button.dart';
-import 'package:clean_riverpod_template/core/widgets/gradient_text.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
 
 class ContactSection extends ConsumerStatefulWidget {
   const ContactSection({super.key});
-
   @override
   ConsumerState<ContactSection> createState() => _ContactSectionState();
 }
@@ -21,6 +18,7 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
+  bool _isHoveringSubmit = false;
 
   @override
   void dispose() {
@@ -60,122 +58,161 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isDesktop = size.width >= 900;
+    final isDesktop = size.width >= 1024;
+    final isTablet = size.width >= 768 && size.width < 1024;
+    final sidePadding = isDesktop
+        ? size.width * 0.08
+        : (isTablet ? 40.0 : 24.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pal = context.palette;
     final portfolioState = ref.watch(portfolioControllerProvider).value;
     final status = portfolioState?.contactStatus ?? ContactFormStatus.idle;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 40.0 : 20.0,
-        vertical: 30.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      color: pal.surface,
+      width: double.infinity,
+      child: Stack(
         children: [
-          // Section Title
-          FadeInSlide(
-            delay: const Duration(milliseconds: 100),
-            direction: 25.0,
-            child: _buildSectionHeader(
-              'GET IN TOUCH',
-              'Let\'s Create Something Great',
+          // Background Matrix / Kinetic Typography
+          Positioned(
+            bottom: 40,
+            right: 10,
+            child: Text(
+              'COMM_LINK',
+              style: GoogleFonts.anton(
+                fontSize: isDesktop ? 220 : 120,
+                color: pal.textPrimary.withValues(alpha: 0.02),
+                letterSpacing: -4,
+              ),
             ),
           ),
-          const SizedBox(height: 24),
 
-          isDesktop
-              ? IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: 5,
-                        child: FadeInSlide(
-                          delay: const Duration(milliseconds: 250),
-                          direction: 30.0,
-                          child: _buildFormCard(context, status),
-                        ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: sidePadding,
+              vertical: 140.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeInSlide(direction: 15.0, child: _buildEditorialHeader(pal)),
+                const SizedBox(height: 80),
+                isDesktop
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: FadeInSlide(
+                              delay: const Duration(milliseconds: 100),
+                              direction: 15.0,
+                              child: _buildFormCard(context, status, isDark),
+                            ),
+                          ),
+                          const SizedBox(width: 80),
+                          Expanded(
+                            flex: 4,
+                            child: FadeInSlide(
+                              delay: const Duration(milliseconds: 200),
+                              direction: 15.0,
+                              child: _buildContactDetailsCard(context, isDark),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          FadeInSlide(
+                            delay: const Duration(milliseconds: 100),
+                            direction: 15.0,
+                            child: _buildFormCard(context, status, isDark),
+                          ),
+                          const SizedBox(height: 80),
+                          FadeInSlide(
+                            delay: const Duration(milliseconds: 200),
+                            direction: 15.0,
+                            child: _buildContactDetailsCard(context, isDark),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 48),
-                      Expanded(
-                        flex: 4,
-                        child: FadeInSlide(
-                          delay: const Duration(milliseconds: 400),
-                          direction: 30.0,
-                          child: _buildContactDetailsCard(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadeInSlide(
-                      delay: const Duration(milliseconds: 250),
-                      direction: 30.0,
-                      child: _buildFormCard(context, status),
-                    ),
-                    const SizedBox(height: 36),
-                    FadeInSlide(
-                      delay: const Duration(milliseconds: 400),
-                      direction: 30.0,
-                      child: _buildContactDetailsCard(context),
-                    ),
-                  ],
-                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String overtitle, String title) {
-    return Column(
+  Widget _buildEditorialHeader(AppPalette pal) {
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          overtitle,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
-            color: BrandColors.secondaryNeon,
-            letterSpacing: 2.0,
-          ),
-        ),
-        const SizedBox(height: 8),
-        GradientText(
-          title,
-          gradient: BrandColors.primaryGradient,
-          style: const TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 8),
         Container(
-          width: 60,
-          height: 3,
-          decoration: BoxDecoration(
-            gradient: BrandColors.primaryGradient,
-            borderRadius: BorderRadius.circular(2),
+          width: 48,
+          height: 2,
+          color: BrandColors.warmBrown,
+          margin: const EdgeInsets.only(top: 10),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '04 / CONTACT_SYS',
+                style: GoogleFonts.spaceMono(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: BrandColors.warmBrown,
+                  letterSpacing: 4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'CONTACT ME.\nLET\'S BUILD THE FUTURE.',
+                style: GoogleFonts.anton(
+                  fontSize: 48,
+                  height: 1.1,
+                  color: pal.textPrimary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildFormCard(BuildContext context, ContactFormStatus status) {
+  Widget _buildFormCard(
+    BuildContext context,
+    ContactFormStatus status,
+    bool isDark,
+  ) {
     final pal = context.palette;
     final isSubmitting = status == ContactFormStatus.submitting;
     final isSuccess = status == ContactFormStatus.success;
 
-    return GlassContainer(
-      borderRadius: 24.0,
-      padding: const EdgeInsets.all(28.0),
-      customBorder: Border.all(
-        color: BrandColors.primaryNeon.withOpacity(0.18),
-        width: 1.5,
+    return Container(
+      padding: const EdgeInsets.all(40),
+      decoration: BoxDecoration(
+        color: pal.card.withValues(alpha: 0.3),
+        border: Border(
+          left: const BorderSide(color: BrandColors.warmBrown, width: 4),
+          top: BorderSide(
+            color: pal.textPrimary.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          right: BorderSide(
+            color: pal.textPrimary.withValues(alpha: 0.1),
+            width: 1,
+          ),
+          bottom: BorderSide(
+            color: pal.textPrimary.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
       ),
       child: Form(
         key: _formKey,
@@ -184,126 +221,142 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Text(
-              'Send a Message',
-              style: TextStyle(
-                fontSize: 20,
+              '// DIRECT_MESSAGE',
+              style: GoogleFonts.spaceMono(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: pal.textPrimary,
+                color: pal.textPrimary.withValues(alpha: 0.4),
+                letterSpacing: 2,
               ),
             ),
-            const SizedBox(height: 6),
-            const Text(
-              'Have a project in mind or want to collaborate? Write me a line.',
-              style: TextStyle(fontSize: 13, color: BrandColors.accentNeon),
-            ),
-            const SizedBox(height: 24),
-
-            // Name Field
+            const SizedBox(height: 32),
             _buildTextField(
               context: context,
               controller: _nameController,
-              label: 'Full Name',
+              label: 'FULL NAME',
               hint: 'John Doe',
-              icon: Icons.person_outline_rounded,
-              validator: (val) {
-                if (val == null || val.trim().isEmpty) {
-                  return 'Please enter your name';
-                }
-                return null;
-              },
+              isDark: isDark,
+              validator: (val) =>
+                  (val == null || val.trim().isEmpty) ? 'REQUIRED_FIELD' : null,
             ),
-            const SizedBox(height: 20),
-
-            // Email Field
+            const SizedBox(height: 24),
             _buildTextField(
               context: context,
               controller: _emailController,
-              label: 'Email Address',
+              label: 'EMAIL ADDRESS',
               hint: 'john@example.com',
-              icon: Icons.alternate_email_rounded,
+              isDark: isDark,
               keyboardType: TextInputType.emailAddress,
               validator: (val) {
-                if (val == null || val.trim().isEmpty) {
-                  return 'Please enter your email';
-                }
+                if (val == null || val.trim().isEmpty) return 'REQUIRED_FIELD';
                 if (!RegExp(
                   r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(val.trim())) {
-                  return 'Please enter a valid email address';
-                }
+                ).hasMatch(val.trim()))
+                  return 'INVALID_FORMAT';
                 return null;
               },
             ),
-            const SizedBox(height: 20),
-
-            // Message Field
+            const SizedBox(height: 24),
             _buildTextField(
               context: context,
               controller: _messageController,
-              label: 'Message',
-              hint: 'Tell me about your product details...',
-              icon: Icons.chat_bubble_outline_rounded,
+              label: 'MESSAGE',
+              hint: 'Describe the project requirements...',
+              isDark: isDark,
               maxLines: 5,
-              validator: (val) {
-                if (val == null || val.trim().isEmpty) {
-                  return 'Please enter your message';
-                }
-                return null;
-              },
+              validator: (val) =>
+                  (val == null || val.trim().isEmpty) ? 'REQUIRED_FIELD' : null,
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 40),
 
-            // Submission controls
             if (isSuccess)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                  vertical: 14,
+                  vertical: 20,
                   horizontal: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: BrandColors.successNeon.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(16),
+                  color: BrandColors.warmBrown.withValues(alpha: 0.10),
                   border: Border.all(
-                    color: BrandColors.successNeon.withOpacity(0.3),
+                    color: BrandColors.warmBrown.withValues(alpha: 0.5),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.check_circle_rounded,
-                      color: BrandColors.successNeon,
-                      size: 20,
+                    const Icon(
+                      Icons.check_circle_outline_rounded,
+                      color: BrandColors.warmBrown,
+                      size: 24,
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Text(
-                      'Message sent successfully! Thank you.',
-                      style: TextStyle(
-                        color: BrandColors.successNeon,
+                      'TRANSMISSION_SUCCESSFUL',
+                      style: GoogleFonts.spaceMono(
+                        color: BrandColors.warmBrown,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
                       ),
                     ),
                   ],
                 ),
               )
             else
-              Row(
-                children: [
-                  Expanded(
-                    child: PremiumButton(
-                      label: isSubmitting
-                          ? 'SENDING INQUIRY...'
-                          : 'SUBMIT MESSAGE',
-                      icon: Icons.send_rounded,
-                      gradient: BrandColors.primaryGradient,
-                      glowColor: BrandColors.primaryNeon,
-                      isLoading: isSubmitting,
-                      onPressed: _submitForm,
+              MouseRegion(
+                onEnter: (_) => setState(() => _isHoveringSubmit = true),
+                onExit: (_) => setState(() => _isHoveringSubmit = false),
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: isSubmitting ? null : _submitForm,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      gradient: _isHoveringSubmit
+                          ? LinearGradient(
+                              colors: isDark
+                                  ? [
+                                      const Color(0xFF00E5FF),
+                                      const Color(0xFF007AFF),
+                                    ]
+                                  : [
+                                      const Color(0xFF0F172A),
+                                      const Color(0xFF334155),
+                                    ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : null,
+                      color: _isHoveringSubmit ? null : Colors.transparent,
+                      border: _isHoveringSubmit
+                          ? null
+                          : Border.all(
+                              color: isDark
+                                  ? const Color(0xFF00E5FF)
+                                  : const Color(0xFF0F172A),
+                              width: 2,
+                            ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        isSubmitting ? 'SENDING MESSAGE...' : 'SUBMIT MESSAGE',
+                        style: GoogleFonts.spaceMono(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _isHoveringSubmit
+                              ? Colors.white
+                              : (isDark
+                                    ? const Color(0xFF00E5FF)
+                                    : const Color(0xFF0F172A)),
+                          letterSpacing: 2,
+                        ),
+                      ),
                     ),
                   ),
-                ],
+                ),
               ),
           ],
         ),
@@ -316,87 +369,74 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
     required TextEditingController controller,
     required String label,
     required String hint,
-    required IconData icon,
+    required bool isDark,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
     final pal = context.palette;
+    final fillColor = Colors.transparent;
+    final bdrNormal = pal.textPrimary.withValues(alpha: 0.2);
+    final bdrFocused = BrandColors.warmBrown;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.spaceMono(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: pal.warmBrown,
-            letterSpacing: 0.5,
+            color: pal.textPrimary.withValues(alpha: 0.6),
+            letterSpacing: 1.5,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         TextFormField(
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboardType,
           validator: validator,
-          style: TextStyle(
+          style: GoogleFonts.outfit(
             color: pal.textPrimary,
-            fontSize: 14.5,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
           ),
+          cursorColor: BrandColors.warmBrown,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(
-              color: BrandColors.warmAccent.withOpacity(0.5),
-              fontSize: 14.5,
-            ),
-            prefixIcon: Icon(
-              icon,
-              color: BrandColors.secondaryNeon.withOpacity(0.6),
-              size: 18,
+            hintStyle: GoogleFonts.outfit(
+              color: pal.textPrimary.withValues(alpha: 0.3),
+              fontSize: 16,
             ),
             filled: true,
-            fillColor: BrandColors.warmMid.withOpacity(0.70),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
+            fillColor: fillColor,
+            contentPadding: const EdgeInsets.all(20),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(
-                color: BrandColors.glassBorder.withOpacity(0.1),
-              ),
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: bdrNormal, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(
-                color: BrandColors.glassBorder.withOpacity(0.08),
-              ),
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: bdrNormal, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: BrandColors.primaryNeon,
-                width: 1.5,
-              ),
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: bdrFocused, width: 2),
             ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: BrandColors.accentNeon,
-                width: 1.0,
-              ),
+            errorBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: Colors.redAccent, width: 1),
             ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: BrandColors.accentNeon,
-                width: 1.5,
-              ),
+            focusedErrorBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
+              borderSide: BorderSide(color: Colors.redAccent, width: 2),
             ),
-            errorStyle: const TextStyle(
-              color: BrandColors.accentNeon,
-              fontSize: 12,
+            errorStyle: GoogleFonts.spaceMono(
+              color: Colors.redAccent,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
             ),
           ),
         ),
@@ -404,130 +444,174 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
     );
   }
 
-  Widget _buildContactDetailsCard(BuildContext context) {
-    return GlassContainer(
-      borderRadius: 24.0,
-      padding: const EdgeInsets.all(28.0),
-      customBorder: Border.all(
-        color: BrandColors.secondaryNeon.withOpacity(0.15),
-        width: 1.5,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildInfoCard(
-            context: context,
-            icon: Icons.alternate_email_rounded,
-            title: 'Email Direct',
-            value: 'joelpshaju@gmail.com',
-            subtitle: 'Responses within 24 hours',
-            accentColor: BrandColors.secondaryNeon,
-            onTap: () => _launchURL('mailto:joelpshaju@gmail.com'),
+  Widget _buildContactDetailsCard(BuildContext context, bool isDark) {
+    final pal = context.palette;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '// NODE_ENDPOINTS',
+          style: GoogleFonts.spaceMono(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: pal.textPrimary.withValues(alpha: 0.4),
+            letterSpacing: 2,
           ),
-          _buildInfoCard(
-            context: context,
-            icon: Icons.phone_iphone_rounded,
-            title: 'Phone & WhatsApp',
-            value: '+91 8590182736',
-            subtitle: 'Available for client discussions',
-            accentColor: BrandColors.successNeon,
-            onTap: () => _launchURL('tel:+918590182736'),
-          ),
-          _buildInfoCard(
-            context: context,
-            icon: Icons.link_rounded,
-            title: 'Professional Networking',
-            value: 'LinkedIn Profile',
-            subtitle: 'Read reviews and references',
-            accentColor: BrandColors.primaryNeon,
-            onTap: () => _launchURL('https://www.linkedin.com/in/joel-p-shaju-b8aa1a292'),
-          ),
-          _buildInfoCard(
-            context: context,
-            icon: Icons.terminal_rounded,
-            title: 'Open Source Projects',
-            value: 'GitHub Hub',
-            subtitle: 'Check repository codebase activity',
-            accentColor: BrandColors.accentNeon,
-            onTap: () => _launchURL('https://github.com/joelpshaju'),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 32),
+        const _ContactImageHover(),
+        const SizedBox(height: 40),
+        _buildInfoNode(
+          context: context,
+          title: 'EMAIL_SECURE_LINE',
+          value: 'joelpshaju@gmail.com',
+          onTap: () => _launchURL('mailto:joelpshaju@gmail.com'),
+        ),
+        _buildInfoNode(
+          context: context,
+          title: 'DIRECT_AUDIO_LINK',
+          value: '+91 8590182736',
+          onTap: () => _launchURL('tel:+918590182736'),
+        ),
+        _buildInfoNode(
+          context: context,
+          title: 'PROFESSIONAL_LEDGER',
+          value: 'LINKEDIN_PROFILE',
+          onTap: () =>
+              _launchURL('https://www.linkedin.com/in/joel-p-shaju-b8aa1a292'),
+        ),
+        _buildInfoNode(
+          context: context,
+          title: 'SOURCE_CODE_VAULT',
+          value: 'GITHUB_REPOSITORY',
+          onTap: () => _launchURL('https://github.com/joelpshaju'),
+        ),
+      ],
     );
   }
 
-  Widget _buildInfoCard({
+  Widget _buildInfoNode({
     required BuildContext context,
-    required IconData icon,
     required String title,
     required String value,
-    required String subtitle,
-    required Color accentColor,
     required VoidCallback onTap,
   }) {
     final pal = context.palette;
+
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onTap,
-        child: GlassContainer(
-          borderRadius: 20.0,
-          padding: const EdgeInsets.all(20.0),
-          customBorder: Border.all(
-            color: accentColor.withOpacity(0.18),
-            width: 1.5,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.only(left: 24),
+          decoration: BoxDecoration(
+            border: Border(
+              left: BorderSide(
+                color: BrandColors.warmBrown.withValues(alpha: 0.5),
+                width: 2,
+              ),
+            ),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(icon, color: accentColor, size: 24),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: BrandColors.warmAccent,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: pal.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: BrandColors.warmMid.withOpacity(0.70),
-                      ),
-                    ),
-                  ],
+              Text(
+                title,
+                style: GoogleFonts.spaceMono(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: pal.textPrimary.withValues(alpha: 0.5),
+                  letterSpacing: 1.5,
                 ),
               ),
-              Icon(
-                Icons.arrow_outward_rounded,
-                color: BrandColors.warmMid.withOpacity(0.70),
-                size: 18,
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    value,
+                    style: GoogleFonts.anton(
+                      fontSize: 24,
+                      color: pal.textPrimary,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    Icons.arrow_outward_rounded,
+                    color: BrandColors.warmBrown,
+                    size: 16,
+                  ),
+                ],
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Contact Image Hover Effect ──────────────────────────────────────────────
+class _ContactImageHover extends StatefulWidget {
+  const _ContactImageHover();
+
+  @override
+  State<_ContactImageHover> createState() => _ContactImageHoverState();
+}
+
+class _ContactImageHoverState extends State<_ContactImageHover> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: Container(
+        height: 220,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: context.palette.textPrimary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: AnimatedScale(
+                duration: const Duration(milliseconds: 400),
+                scale: _hovered ? 1.05 : 1.0,
+                curve: Curves.easeOutCubic,
+                child: Image.asset(
+                  'assets/joel_bw.jpg',
+                  fit: BoxFit.cover,
+                  alignment: const Alignment(0, -0.2),
+                ),
+              ),
+            ),
+            // Interactive dark/brand color gradient sweep
+            Positioned.fill(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      BrandColors.warmBrown.withValues(
+                        alpha: _hovered ? 0.2 : 0.0,
+                      ),
+                      context.palette.surface.withValues(
+                        alpha: _hovered ? 0.8 : 0.4,
+                      ),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

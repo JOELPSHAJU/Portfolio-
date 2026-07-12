@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Dual-palette token system — access via `context.palette`.
 ///
-/// Fixed brand accents (terracotta, sage, etc.) live in [BrandColors].
+/// Fixed brand accents live in [BrandColors].
 /// This class holds only tokens that differ between dark and light mode.
 @immutable
 class AppPalette {
@@ -24,34 +24,34 @@ class AppPalette {
     required this.glassBorder,
   });
 
-  // ── Dark Mode: Mono Charcoal ─────────────────────────────────────────────
-  static const dark = AppPalette(
-    textPrimary: Color(0xFFFFFFFF),       // pure white headings
-    warmBrown: Color(0xFFA1A1A1),          // light grey body
-    card: Color(0xFF1C1C1C),              // charcoal card
-    surface: Color(0xFF141414),           // content surface
-    warmCream: Color(0xFF242424),         // elevated container
-    glassGradient: LinearGradient(
-      colors: [Color(0x14FFFFFF), Color(0x05FFFFFF)],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    ),
-    glassBorder: Color(0x14FFFFFF),
-  );
-
-  // ── Light Mode: Mono Paper ───────────────────────────────────────────────
+  // ── Light Mode: Carbon & Slate ─────────────────────────────────────────────
   static const light = AppPalette(
-    textPrimary: Color(0xFF0A0A0A),       // near-black ink
-    warmBrown: Color(0xFF5C5C5C),          // mid grey
+    textPrimary: Color(0xFF0F172A),       // Slate-900 (near-black warm ink)
+    warmBrown: Color(0xFF334155),          // Slate-700 (warm charcoal body)
     card: Color(0xFFFFFFFF),              // white card
-    surface: Color(0xFFF2F2F2),           // section surface
-    warmCream: Color(0xFFEBEBEB),         // subtle container / divider
+    surface: Color(0xFFF1F5F9),           // Slate-100 surface
+    warmCream: Color(0xFFE2E8F0),         // Slate-200 container
     glassGradient: LinearGradient(
-      colors: [Color(0xFFFFFFFF), Color(0xFFF2F2F2)],
+      colors: [Color(0xEEFFFFFF), Color(0xCCF8FAFC)],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ),
-    glassBorder: Color(0x14FFFFFF),       // subtle lime border
+    glassBorder: Color(0x18000000),       // subtle dark border
+  );
+
+  // ── Dark Mode: Carbon Slate ───────────────────────────────────────────────
+  static const dark = AppPalette(
+    textPrimary: Color(0xFFF8FAFC),       // Slate-50 off-white headings
+    warmBrown: Color(0xFFCBD5E1),          // Slate-300 warm grey body
+    card: Color(0xFF1E293B),              // Slate-800 dark card
+    surface: Color(0xFF0B0F19),           // deep slate/black surface
+    warmCream: Color(0xFF0F172A),         // Slate-900 container
+    glassGradient: LinearGradient(
+      colors: [Color(0x1AFFFFFF), Color(0x08FFFFFF)],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    ),
+    glassBorder: Color(0x1AFFFFFF),       // subtle white border
   );
 }
 

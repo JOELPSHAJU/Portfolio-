@@ -79,7 +79,7 @@ class PortfolioEndpoint extends Endpoint {
       ),
       Experience(
         role: 'Flutter Developer',
-        company: 'Freelancer',
+        company: 'Independent Developer',
         duration: '2023 – 2024',
         location: 'Remote',
         technologies: ['Flutter', 'Firebase SDK', 'REST APIs', 'Provider', 'Hive', 'Shared Preferences'],

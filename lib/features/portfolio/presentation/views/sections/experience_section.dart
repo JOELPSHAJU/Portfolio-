@@ -1,164 +1,9 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../domain/entities/experience.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/gradient_text.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
-
-// ─── Mathematical Clipper: Angled Corners ────────────────────────────────────
-
-class _AngledClipper extends CustomClipper<Path> {
-  final double cutSize;
-  _AngledClipper({this.cutSize = 30.0});
-
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    // Top-left
-    path.moveTo(0, 0);
-    // Top-right (cut)
-    path.lineTo(size.width - cutSize, 0);
-    path.lineTo(size.width, cutSize);
-    // Bottom-right
-    path.lineTo(size.width, size.height);
-    // Bottom-left (cut)
-    path.lineTo(cutSize, size.height);
-    path.lineTo(0, size.height - cutSize);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(_AngledClipper old) => old.cutSize != cutSize;
-}
-
-// ─── Angled Border Painter ───────────────────────────────────────────────────
-
-class _AngledBorderPainter extends CustomPainter {
-  final Color color;
-  final double cutSize;
-  _AngledBorderPainter({required this.color, required this.cutSize});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    
-    final path = Path();
-    path.moveTo(0, 0);
-    path.lineTo(size.width - cutSize, 0);
-    path.lineTo(size.width, cutSize);
-    path.lineTo(size.width, size.height);
-    path.lineTo(cutSize, size.height);
-    path.lineTo(0, size.height - cutSize);
-    path.close();
-    
-    // Draw accents on the cuts
-    final accentPaint = Paint()
-      ..color = color.withOpacity(1.0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0;
-      
-    final topRightCut = Path()
-      ..moveTo(size.width - cutSize, 0)
-      ..lineTo(size.width, cutSize);
-      
-    final bottomLeftCut = Path()
-      ..moveTo(cutSize, size.height)
-      ..lineTo(0, size.height - cutSize);
-
-    canvas.drawPath(path, paint);
-    canvas.drawPath(topRightCut, accentPaint);
-    canvas.drawPath(bottomLeftCut, accentPaint);
-  }
-
-  @override
-  bool shouldRepaint(_AngledBorderPainter old) => old.color != color || old.cutSize != cutSize;
-}
-
-// ─── Hexagonal & Geometric Painters ──────────────────────────────────────────
-
-class _HexPainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-  final bool isFilled;
-  
-  _HexPainter(this.color, {this.strokeWidth = 2.0, this.isFilled = false});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = isFilled ? PaintingStyle.fill : PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final r = math.min(cx, cy) - (isFilled ? 0 : strokeWidth / 2);
-    final path = Path();
-    for (var i = 0; i < 6; i++) {
-      // Flat-top hexagon
-      final angle = i * 60 * math.pi / 180;
-      final x = cx + r * math.cos(angle);
-      final y = cy + r * math.sin(angle);
-      i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
-    }
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_HexPainter old) => 
-    old.color != color || old.strokeWidth != strokeWidth || old.isFilled != isFilled;
-}
-
-class _GeoPatternPainter extends CustomPainter {
-  final Color color;
-  _GeoPatternPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    
-    const spacing = 18.0;
-    const r = 1.0;
-    for (double x = 0; x < size.width; x += spacing) {
-      for (double y = 0; y < size.height; y += spacing) {
-        canvas.drawCircle(Offset(x, y), r, paint);
-      }
-    }
-    
-    // Decorative pentagon watermark
-    final pentaPaint = Paint()
-      ..color = color.withOpacity(0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.8;
-    _drawPolygon(canvas, pentaPaint, Offset(size.width - 35, 60), 90, 5);
-    _drawPolygon(canvas, pentaPaint, Offset(size.width + 20, 150), 60, 5);
-  }
-
-  void _drawPolygon(Canvas canvas, Paint paint, Offset center, double r, int sides) {
-    final path = Path();
-    for (var i = 0; i < sides; i++) {
-      final angle = (i * 360 / sides - 90) * math.pi / 180;
-      final x = center.dx + r * math.cos(angle);
-      final y = center.dy + r * math.sin(angle);
-      i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
-    }
-    path.close();
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_GeoPatternPainter old) => old.color != color;
-}
-
-// ─── Experience Section ──────────────────────────────────────────────────────
 
 class ExperienceSection extends StatelessWidget {
   final List<Experience> experiences;
@@ -169,328 +14,310 @@ class ExperienceSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDesktop = size.width >= 900;
+    final isTablet = size.width >= 600 && size.width < 900;
+
+    final sidePadding = isDesktop
+        ? size.width * 0.08
+        : (isTablet ? 40.0 : 24.0);
+    final pal = context.palette;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 40.0 : 20.0,
-        vertical: 30.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      color: pal.surface,
+      width: double.infinity,
+      child: Stack(
         children: [
-          // Section Header
-          FadeInSlide(
-            delay: const Duration(milliseconds: 100),
-            direction: 25.0,
-            child: _buildSectionHeader(
-              'CAREER PATH',
-              'Professional Experience',
+          // Background Matrix / Kinetic Typography
+          Positioned(
+            top: 40,
+            left: 10,
+            child: Text(
+              'CAREER.SYS',
+              style: GoogleFonts.anton(
+                fontSize: isDesktop ? 220 : 120,
+                color: pal.textPrimary.withValues(alpha: 0.02),
+                letterSpacing: -4,
+              ),
             ),
           ),
-          const SizedBox(height: 32),
 
-          // Timeline layout
-          if (experiences.isEmpty)
-            Center(
-              child: Text(
-                'No experience data found.',
-                style: TextStyle(color: context.palette.warmBrown),
-              ),
-            )
-          else
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: experiences.length,
-              itemBuilder: (context, index) {
-                final exp = experiences[index];
-                return FadeInSlide(
-                  delay: Duration(milliseconds: 200 + (index * 150)),
-                  direction: 30.0,
-                  child: _buildTimelineItem(context, exp, index, isDesktop),
-                );
-              },
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: sidePadding,
+              vertical: 100,
             ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                FadeInSlide(
+                  delay: const Duration(milliseconds: 100),
+                  direction: 25.0,
+                  child: _buildEditorialHeader(pal),
+                ),
+
+                const SizedBox(height: 60),
+
+                if (experiences.isEmpty)
+                  Center(
+                    child: Text(
+                      '// NO_DATA_FOUND',
+                      style: GoogleFonts.spaceMono(
+                        color: BrandColors.warmBrown,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: experiences.length,
+                    itemBuilder: (context, index) {
+                      final exp = experiences[index];
+                      return FadeInSlide(
+                        delay: Duration(milliseconds: 200 + (index * 150)),
+                        direction: 30.0,
+                        child: _ExperienceEditorialCard(
+                          exp: exp,
+                          index: index,
+                          isDesktop: isDesktop,
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String overtitle, String title) {
-    return Column(
+  Widget _buildEditorialHeader(AppPalette pal) {
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          overtitle,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
-            color: BrandColors.secondaryNeon,
-            letterSpacing: 2.0,
-          ),
-        ),
-        const SizedBox(height: 8),
-        GradientText(
-          title,
-          gradient: BrandColors.primaryGradient,
-          style: const TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 8),
         Container(
-          width: 60,
-          height: 3,
-          decoration: BoxDecoration(
-            gradient: BrandColors.primaryGradient,
-            borderRadius: BorderRadius.circular(2),
+          width: 48,
+          height: 2,
+          color: BrandColors.warmBrown,
+          margin: const EdgeInsets.only(top: 10),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '02 / EXPERIENCE_SYS',
+                style: GoogleFonts.spaceMono(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: BrandColors.warmBrown,
+                  letterSpacing: 4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'BUILDING ENTERPRISE\nDIGITAL ECOSYSTEMS.',
+                style: GoogleFonts.anton(
+                  fontSize: 48,
+                  height: 1.1,
+                  color: pal.textPrimary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildTimelineItem(
-    BuildContext context,
-    Experience exp,
-    int index,
-    bool isDesktop,
-  ) {
-    final accentColor = index == 0 ? BrandColors.primaryNeon : BrandColors.secondaryNeon;
-    final double cutSize = isDesktop ? 55.0 : 35.0;
+class _ExperienceEditorialCard extends StatefulWidget {
+  final Experience exp;
+  final int index;
+  final bool isDesktop;
 
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Mathematical Timeline node ──
-          Column(
-            children: [
-              SizedBox(
-                width: 36,
-                height: 36,
-                child: CustomPaint(
-                  painter: _HexPainter(
-                    index == 0 ? BrandColors.primaryNeon : BrandColors.glassBorder,
-                    strokeWidth: 2.5,
-                    isFilled: index == 0,
-                  ),
-                  child: index == 0
-                      ? Center(
-                          child: Container(
-                            width: 14,
-                            height: 14,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        )
-                      : null,
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  width: 2,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        accentColor.withOpacity(0.5),
-                        BrandColors.glassBorder.withOpacity(0.2),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(width: 20),
+  const _ExperienceEditorialCard({
+    required this.exp,
+    required this.index,
+    required this.isDesktop,
+  });
 
-          // ── Geometric Card ──
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 40.0),
-              child: ClipPath(
-                clipper: _AngledClipper(cutSize: cutSize),
-                child: CustomPaint(
-                  foregroundPainter: _AngledBorderPainter(
-                    color: accentColor.withOpacity(0.4),
-                    cutSize: cutSize,
-                  ),
-                  child: Container(
-                    color: BrandColors.darkCard,
-                    child: Stack(
-                      children: [
-                        // Background Pattern
-                        Positioned.fill(
-                          child: CustomPaint(
-                            painter: _GeoPatternPainter(accentColor.withOpacity(0.04)),
-                          ),
-                        ),
-                        // Content
-                        Padding(
-                          padding: const EdgeInsets.all(28.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Header
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  // Angled Duration Badge
-                                  ClipPath(
-                                    clipper: _AngledClipper(cutSize: 8.0),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 14,
-                                        vertical: 6,
-                                      ),
-                                      color: accentColor.withOpacity(0.12),
-                                      child: Text(
-                                        exp.duration,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: accentColor,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.share_location_rounded,
-                                        color: accentColor,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        exp.location,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: accentColor,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
+  @override
+  State<_ExperienceEditorialCard> createState() =>
+      _ExperienceEditorialCardState();
+}
 
-                              // Title
-                              Text(
-                                exp.role,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: context.palette.textPrimary,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 3,
-                                    height: 14,
-                                    decoration: BoxDecoration(color: accentColor),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    exp.company,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: accentColor,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 24),
+class _ExperienceEditorialCardState extends State<_ExperienceEditorialCard> {
+  bool _hovered = false;
 
-                              // Points
-                              Column(
-                                children: exp.points
-                                    .map((pt) => _buildAccomplishmentPoint(pt, context.palette, accentColor))
-                                    .toList(),
-                              ),
-                              const SizedBox(height: 24),
+  @override
+  Widget build(BuildContext context) {
+    final pal = context.palette;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isAppStation = widget.exp.company.toLowerCase().contains(
+      'appstation',
+    );
 
-                              // Tech Stack Line
-                              Container(
-                                height: 1,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      accentColor.withOpacity(0.3),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'SYSTEMS & ARCHITECTURE',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  color: accentColor.withOpacity(0.8),
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: exp.technologies
-                                    .map((tech) => _buildTechTag(tech, accentColor))
-                                    .toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        margin: const EdgeInsets.only(bottom: 32),
+        padding: EdgeInsets.all(widget.isDesktop ? 40 : 24),
+        decoration: BoxDecoration(
+          color: _hovered
+              ? pal.card.withValues(alpha: 0.6)
+              : pal.card.withValues(alpha: 0.3),
+          border: Border(
+            left: BorderSide(
+              color: _hovered ? pal.textPrimary : BrandColors.warmBrown,
+              width: 4,
+            ),
+            top: BorderSide(
+              color: pal.textPrimary.withValues(alpha: 0.1),
+              width: 1,
+            ),
+            right: BorderSide(
+              color: pal.textPrimary.withValues(alpha: 0.1),
+              width: 1,
+            ),
+            bottom: BorderSide(
+              color: pal.textPrimary.withValues(alpha: 0.1),
+              width: 1,
             ),
           ),
-        ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Over-title (Duration & Location)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '// ${widget.exp.duration.toUpperCase()}',
+                  style: GoogleFonts.spaceMono(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: pal.textPrimary.withValues(alpha: 0.5),
+                    letterSpacing: 2,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: pal.textPrimary.withValues(alpha: 0.5),
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      widget.exp.location.toUpperCase(),
+                      style: GoogleFonts.spaceMono(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: pal.textPrimary.withValues(alpha: 0.5),
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+
+            // Header Row: Role & Company Logo
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.exp.role.toUpperCase(),
+                        style: GoogleFonts.anton(
+                          fontSize: widget.isDesktop ? 36 : 28,
+                          height: 1.1,
+                          color: pal.textPrimary,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.exp.company.toUpperCase(),
+                        style: GoogleFonts.spaceMono(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: BrandColors.warmBrown,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isAppStation) ...[
+                  const SizedBox(width: 16),
+                  Image.asset(
+                    'assets/appstation_logo.png',
+                    height: widget.isDesktop ? 80 : 36,
+                    fit: BoxFit.contain,
+                  ),
+                ],
+              ],
+            ),
+
+            const SizedBox(height: 32),
+
+            // Bullet Points
+            ...widget.exp.points.map((pt) => _buildPoint(pt, pal)).toList(),
+
+            const SizedBox(height: 32),
+
+            // Tech Stack
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: widget.exp.technologies
+                  .map((t) => _buildTechTag(t, pal))
+                  .toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildAccomplishmentPoint(String point, AppPalette pal, Color accentColor) {
+  Widget _buildPoint(String point, AppPalette pal) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 6.0, right: 12.0),
-            child: SizedBox(
-              width: 8,
-              height: 8,
-              child: CustomPaint(
-                painter: _HexPainter(accentColor, isFilled: true),
-              ),
+          Text(
+            '—',
+            style: GoogleFonts.outfit(
+              color: BrandColors.warmBrown,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
               point,
-              style: TextStyle(
-                fontSize: 13.5,
-                color: pal.warmBrown,
-                height: 1.6,
+              style: GoogleFonts.outfit(
+                fontSize: 15,
+                height: 1.8,
+                color: pal.textPrimary.withValues(alpha: 0.75),
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
@@ -499,23 +326,20 @@ class ExperienceSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTechTag(String name, Color accentColor) {
-    return ClipPath(
-      clipper: _AngledClipper(cutSize: 12.0),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: BrandColors.glassBorder.withOpacity(0.08),
-          border: Border.all(color: accentColor.withOpacity(0.2)),
-        ),
-        child: Text(
-          name,
-          style: TextStyle(
-            color: accentColor,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.3,
-          ),
+  Widget _buildTechTag(String name, AppPalette pal) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: pal.textPrimary.withValues(alpha: 0.03),
+        border: Border.all(color: pal.textPrimary.withValues(alpha: 0.1)),
+      ),
+      child: Text(
+        name.toUpperCase(),
+        style: GoogleFonts.spaceMono(
+          color: pal.textPrimary.withValues(alpha: 0.7),
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
         ),
       ),
     );

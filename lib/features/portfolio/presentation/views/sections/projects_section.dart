@@ -1,52 +1,71 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../domain/entities/project.dart';
+import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/gradient_text.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class ProjectsSection extends StatelessWidget {
+class ProjectsSection extends StatefulWidget {
   final List<Project> projects;
   const ProjectsSection({super.key, required this.projects});
 
-  // previewAssets: list of {label, asset} maps
+  @override
+  State<ProjectsSection> createState() => _ProjectsSectionState();
+}
+
+class _ProjectsSectionState extends State<ProjectsSection> {
   static const _projectMeta = {
     'kahramaa': {
       'icon': Icons.water_drop_rounded,
-      'gradient': [BrandColors.kahramaaMid, BrandColors.kahramaaDark],
-      'accent': BrandColors.kahramaaLight,
+      'file': 'kahramaa.dart',
       'previewAssets': [
-        {'label': 'Mobile App', 'asset': 'assets/kahramaa.png'},
+        {
+          'label': 'Mobile Client',
+          'asset': 'assets/kahramaa.png',
+          'type': 'mobile',
+        },
       ],
     },
     'khadoom': {
       'icon': Icons.badge_rounded,
-      'gradient': [BrandColors.khadoomMid, BrandColors.khadoomDark],
-      'accent': BrandColors.khadoomLight,
+      'file': 'khadoom.dart',
       'previewAssets': [
-        {'label': 'Web App', 'asset': 'assets/khadoom.png'},
-        {'label': 'Mobile App', 'asset': 'assets/khadoom_mobile.png'},
+        {'label': 'Web Portal', 'asset': 'assets/khadoom.png', 'type': 'web'},
+        {
+          'label': 'Mobile Client',
+          'asset': 'assets/khadoom_mobile.png',
+          'type': 'mobile',
+        },
       ],
     },
     'qsw': {
       'icon': Icons.supervised_user_circle_rounded,
-      'gradient': [BrandColors.qswMid, BrandColors.qswDark],
-      'accent': BrandColors.qswLight,
+      'file': 'qsw_mobile.dart',
+      'previewAssets': <Map<String, String>>[],
     },
     'qatar_museums': {
       'icon': Icons.museum_rounded,
-      'gradient': [BrandColors.museumMid, BrandColors.museumDark],
-      'accent': BrandColors.museumLight,
+      'file': 'qatar_museums.dart',
       'previewAssets': [
-        {'label': 'Web App', 'asset': 'assets/qatar_museum_web.png'},
-        {'label': 'Mobile App', 'asset': 'assets/qatar_museum.png'},
+        {
+          'label': 'Web Portal',
+          'asset': 'assets/qatar_museum_web.png',
+          'type': 'web',
+        },
+        {
+          'label': 'Mobile Client',
+          'asset': 'assets/qatar_museum.png',
+          'type': 'mobile',
+        },
       ],
     },
   };
 
   static const _defaultMeta = {
-    'icon': Icons.bolt_rounded,
-    'gradient': [BrandColors.warmAmber, BrandColors.qswMid],
-    'accent': BrandColors.warmAmber,
+    'icon': Icons.insert_drive_file_rounded,
+    'file': 'unknown_project.dart',
+    'previewAssets': <Map<String, String>>[],
   };
 
   Map<String, dynamic> _meta(String id) =>
@@ -54,95 +73,139 @@ class ProjectsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final isDesktop = size.width >= 900;
+    final width = MediaQuery.of(context).size.width;
+    final isDesktop = width >= 1024;
+    final isTablet = width >= 768 && width < 1024;
+    final sidePadding = isDesktop ? width * 0.08 : (isTablet ? 40.0 : 24.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pal = context.palette;
+
+    if (widget.projects.isEmpty) {
+      return Container(
+        color: pal.surface,
+        padding: EdgeInsets.symmetric(horizontal: sidePadding, vertical: 100),
+        child: Center(
+          child: Text(
+            'No projects found.',
+            style: GoogleFonts.outfit(
+              color: pal.textPrimary.withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 40.0 : 20.0,
-        vertical: 30.0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      color: pal.surface,
+      width: double.infinity,
+      child: Stack(
         children: [
-          FadeInSlide(
-            delay: const Duration(milliseconds: 100),
-            direction: 25.0,
-            child: _buildSectionHeader('MY PORTFOLIO', 'Featured Projects'),
-          ),
-          const SizedBox(height: 40),
-          if (projects.isEmpty)
-            const Center(
-              child: Text(
-                'No projects found.',
-                style: const TextStyle(color: BrandColors.textSecondary),
+          // Background Kinetic Typography
+          Positioned(
+            top: 40,
+            left: 10,
+            child: Text(
+              'CASE.STUDIES',
+              style: GoogleFonts.anton(
+                fontSize: isDesktop ? 220 : 120,
+                color: pal.textPrimary.withValues(alpha: 0.02),
+                letterSpacing: -4,
               ),
-            )
-          else
-            Column(
-              children: List.generate(projects.length, (index) {
-                final project = projects[index];
-                final meta = _meta(project.id);
-                final isEven = index.isEven;
-                // Cast safely — may be null for projects without previews
-                final rawList = (meta['previewAssets'] as List?)
-                    ?.map((e) => Map<String, String>.from(e as Map))
-                    .toList();
-
-                return FadeInSlide(
-                  delay: Duration(milliseconds: 180 + (index * 100)),
-                  direction: 28.0,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index < projects.length - 1 ? 20 : 0,
-                    ),
-                    child: _CaseStudyBand(
-                      project: project,
-                      meta: meta,
-                      index: index,
-                      flipLayout: !isEven && isDesktop,
-                      isDesktop: isDesktop,
-                      previewAssets: rawList,
-                    ),
-                  ),
-                );
-              }),
             ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: sidePadding,
+              vertical: 140.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeInSlide(
+                  delay: const Duration(milliseconds: 100),
+                  direction: 15.0,
+                  child: _buildEditorialHeader(pal),
+                ),
+                const SizedBox(height: 80),
+
+                // Manifesto Project Grid
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final crossCount = constraints.maxWidth < 768 ? 1 : 2;
+                    final spacing = 24.0;
+                    final cardWidth =
+                        (constraints.maxWidth - (crossCount - 1) * spacing) /
+                        crossCount;
+
+                    return Wrap(
+                      spacing: spacing,
+                      runSpacing: spacing,
+                      children: widget.projects.asMap().entries.map((entry) {
+                        final idx = entry.key;
+                        final project = entry.value;
+                        final meta = _meta(project.id);
+                        return FadeInSlide(
+                          delay: Duration(milliseconds: 150 + (idx * 50)),
+                          direction: 20,
+                          child: SizedBox(
+                            width: cardWidth,
+                            height: 380,
+                            child: _ProjectManifestoCard(
+                              project: project,
+                              meta: meta,
+                              pal: pal,
+                              isDark: isDark,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String overtitle, String title) {
-    return Column(
+  Widget _buildEditorialHeader(AppPalette pal) {
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          overtitle,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
-            color: BrandColors.secondaryNeon,
-            letterSpacing: 2.0,
-          ),
-        ),
-        const SizedBox(height: 8),
-        GradientText(
-          title,
-          gradient: BrandColors.primaryGradient,
-          style: const TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5,
-          ),
-        ),
-        const SizedBox(height: 8),
         Container(
-          width: 60,
-          height: 3,
-          decoration: BoxDecoration(
-            gradient: BrandColors.primaryGradient,
-            borderRadius: BorderRadius.circular(2),
+          width: 48,
+          height: 2,
+          color: BrandColors.warmBrown,
+          margin: const EdgeInsets.only(top: 10),
+        ),
+        const SizedBox(width: 24),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '04 / PROJECT_SYS',
+                style: GoogleFonts.spaceMono(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: BrandColors.warmBrown,
+                  letterSpacing: 4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'ARCHITECTING ENTERPRISE SCALE\nDIGITAL REALITIES.',
+                style: GoogleFonts.anton(
+                  fontSize: 48,
+                  height: 1.1,
+                  color: pal.textPrimary,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -150,835 +213,589 @@ class ProjectsSection extends StatelessWidget {
   }
 }
 
-// ─── Case Study Band ──────────────────────
-class _CaseStudyBand extends StatefulWidget {
+// ─── Project Manifesto Card Widget ─────────────────────────────────────────────
+class _ProjectManifestoCard extends StatefulWidget {
   final Project project;
   final Map<String, dynamic> meta;
-  final int index;
-  final bool flipLayout;
-  final bool isDesktop;
-  final List<Map<String, String>>? previewAssets;
+  final AppPalette pal;
+  final bool isDark;
 
-  const _CaseStudyBand({
+  const _ProjectManifestoCard({
     required this.project,
     required this.meta,
-    required this.index,
-    required this.flipLayout,
-    required this.isDesktop,
-    this.previewAssets,
+    required this.pal,
+    required this.isDark,
   });
 
   @override
-  State<_CaseStudyBand> createState() => _CaseStudyBandState();
+  State<_ProjectManifestoCard> createState() => _ProjectManifestoCardState();
 }
 
-class _CaseStudyBandState extends State<_CaseStudyBand> {
+class _ProjectManifestoCardState extends State<_ProjectManifestoCard> {
   bool _hovered = false;
 
+  Color _getAccent(String id) {
+    switch (id) {
+      case 'kahramaa':
+        return const Color(0xFF007AFF);
+      case 'khadoom':
+        return const Color(0xFFFF9500);
+      case 'qatar_museums':
+        return const Color(0xFFAF52DE);
+      case 'qsw':
+        return const Color(0xFF34C759);
+      default:
+        return Colors.blueGrey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final accent = widget.meta['accent'] as Color;
-    final gradColors = widget.meta['gradient'] as List<Color>;
-    final icon = widget.meta['icon'] as IconData;
-    final num = (widget.index + 1).toString().padLeft(2, '0');
-    final hasPreview = widget.previewAssets != null;
+    final p = widget.project;
+    final pal = widget.pal;
+    final previews =
+        (widget.meta['previewAssets'] as List?)
+            ?.map((e) => Map<String, String>.from(e as Map))
+            .toList() ??
+        [];
+
+    final hasImages = previews.isNotEmpty;
+    final accent = _getAccent(p.id);
 
     return MouseRegion(
-      cursor: hasPreview ? SystemMouseCursors.click : MouseCursor.defer,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
+      cursor: hasImages ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
-        onTap: hasPreview
-            ? () => _ProjectLightbox.show(
-                context,
-                previews: widget.previewAssets!,
-                title: widget.project.title,
-                accent: accent,
-              )
-            : null,
+        onTap: () {
+          if (hasImages) {
+            _MinimalLightbox.show(
+              context,
+              previews: previews,
+              projectTitle: p.title,
+            );
+          }
+        },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 280),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: _hovered
-                  ? accent.withOpacity(0.40)
-                  : BrandColors.warmCream.withOpacity(0.50),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _hovered
-                    ? accent.withOpacity(0.10)
-                    : BrandColors.textDark.withOpacity(0.06),
-                blurRadius: _hovered ? 40 : 12,
-                offset: const Offset(0, 8),
+            color: _hovered
+                ? pal.card.withValues(alpha: 0.6)
+                : pal.card.withValues(alpha: 0.3),
+            border: Border(
+              left: BorderSide(
+                color: _hovered ? accent : BrandColors.warmBrown,
+                width: 4,
               ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(23),
-            child: Stack(
-              children: [
-                Container(color: BrandColors.warmWhite),
-                Positioned.fill(
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 280),
-                    opacity: _hovered ? 0.7 : 0.25,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            gradColors[0].withOpacity(0.15),
-                            gradColors[1].withOpacity(0.30),
-                          ],
-                          begin: widget.flipLayout
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          end: widget.flipLayout
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Watermark number
-                Positioned(
-                  right: widget.flipLayout ? null : -10,
-                  left: widget.flipLayout ? -10 : null,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 280),
-                      opacity: _hovered ? 0.07 : 0.035,
-                      child: Text(
-                        num,
-                        style: TextStyle(
-                          fontSize: 180,
-                          fontWeight: FontWeight.w900,
-                          color: accent,
-                          height: 1.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // "View Screens" hover badge
-                if (hasPreview)
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 250),
-                      opacity: _hovered ? 1.0 : 0.0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: accent.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: accent.withOpacity(0.35),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.photo_library_rounded,
-                              color: accent,
-                              size: 12,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              widget.previewAssets!.length > 1
-                                  ? 'VIEW ${widget.previewAssets!.length} SCREENS'
-                                  : 'VIEW SCREENS',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.8,
-                                color: accent,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                // Content
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: widget.isDesktop
-                      ? _desktopContent(context, accent, gradColors, icon)
-                      : _mobileContent(context, accent, icon),
-                ),
-              ],
+              top: BorderSide(
+                color: pal.textPrimary.withValues(alpha: 0.1),
+                width: 1,
+              ),
+              right: BorderSide(
+                color: pal.textPrimary.withValues(alpha: 0.1),
+                width: 1,
+              ),
+              bottom: BorderSide(
+                color: pal.textPrimary.withValues(alpha: 0.1),
+                width: 1,
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _desktopContent(
-    BuildContext context,
-    Color accent,
-    List<Color> gradColors,
-    IconData icon,
-  ) {
-    final iconBlock = _IconBlock(
-      icon: icon,
-      accent: accent,
-      gradColors: gradColors,
-      hovered: _hovered,
-    );
-    final contentBlock = _ContentBlock(
-      project: widget.project,
-      accent: accent,
-      hovered: _hovered,
-    );
-    return widget.flipLayout
-        ? Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
-              Expanded(flex: 3, child: contentBlock),
-              const SizedBox(width: 40),
-              iconBlock,
-            ],
-          )
-        : Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              iconBlock,
-              const SizedBox(width: 40),
-              Expanded(flex: 3, child: contentBlock),
-            ],
-          );
-  }
-
-  Widget _mobileContent(BuildContext context, Color accent, IconData icon) {
-    final gradColors = widget.meta['gradient'] as List<Color>;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: gradColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(color: accent.withOpacity(0.3), blurRadius: 16),
-                ],
-              ),
-              child: Icon(icon, color: Colors.white.withOpacity(0.9), size: 26),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
+              // Top Data row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.project.type.toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w800,
-                      color: accent,
-                      letterSpacing: 1.2,
+                  Expanded(
+                    child: Text(
+                      '// CLIENT: ${p.clientOrOrg.toUpperCase()}',
+                      style: GoogleFonts.spaceMono(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: pal.textPrimary.withValues(alpha: 0.5),
+                        letterSpacing: 2,
+                      ),
                     ),
                   ),
-                  Text(
-                    widget.project.title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: BrandColors.textOnDark,
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                  Text(
-                    widget.project.clientOrOrg,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: accent,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Icon(
+                    widget.meta['icon'] as IconData? ??
+                        Icons.folder_open_rounded,
+                    color: _hovered
+                        ? accent
+                        : pal.textPrimary.withValues(alpha: 0.4),
+                    size: 20,
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          widget.project.description,
-          style: TextStyle(
-            fontSize: 13,
-            color: BrandColors.textSecondary.withOpacity(0.90),
-            height: 1.6,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: widget.project.technologies
-              .take(5)
-              .map((t) => _TechChip(label: t, accent: accent))
-              .toList(),
-        ),
-      ],
-    );
-  }
-}
+              const SizedBox(height: 20),
 
-// ─── Icon Block ───────────────────────────
-class _IconBlock extends StatelessWidget {
-  final IconData icon;
-  final Color accent;
-  final List<Color> gradColors;
-  final bool hovered;
-
-  const _IconBlock({
-    required this.icon,
-    required this.accent,
-    required this.gradColors,
-    required this.hovered,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 280),
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: accent.withOpacity(hovered ? 0.45 : 0.20),
-            blurRadius: hovered ? 32 : 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Icon(icon, color: Colors.white.withOpacity(0.9), size: 44),
-    );
-  }
-}
-
-// ─── Content Block ────────────────────────
-class _ContentBlock extends StatelessWidget {
-  final Project project;
-  final Color accent;
-  final bool hovered;
-
-  const _ContentBlock({
-    required this.project,
-    required this.accent,
-    required this.hovered,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-          decoration: BoxDecoration(
-            color: accent.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: accent.withOpacity(0.25), width: 1),
-          ),
-          child: Text(
-            project.type.toUpperCase(),
-            style: TextStyle(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w800,
-              color: accent,
-              letterSpacing: 1.2,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          project.title,
-          style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: BrandColors.textOnDark,
-            letterSpacing: -0.5,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            Container(
-              width: 3,
-              height: 14,
-              decoration: BoxDecoration(
-                color: accent,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              project.clientOrOrg,
-              style: TextStyle(
-                fontSize: 13,
-                color: accent,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        Container(
-          height: 1,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                BrandColors.textOnDark.withOpacity(0.10),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Text(
-          project.description,
-          style: TextStyle(
-            fontSize: 13.5,
-            color: BrandColors.textSecondary.withOpacity(0.90),
-            height: 1.65,
-          ),
-        ),
-        const SizedBox(height: 16),
-        ...project.points
-            .take(2)
-            .map(
-              (p) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 6, right: 10),
-                      child: Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: accent,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        p,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: BrandColors.textSecondary.withOpacity(0.90),
-                          height: 1.5,
-                        ),
-                      ),
-                    ),
-                  ],
+              // Massive Title
+              Text(
+                p.title.toUpperCase(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.anton(
+                  fontSize: 28,
+                  height: 1.1,
+                  color: pal.textPrimary,
+                  letterSpacing: 1.0,
                 ),
               ),
-            ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: project.technologies
-              .take(5)
-              .map((t) => _TechChip(label: t, accent: accent))
-              .toList(),
-        ),
-      ],
-    );
-  }
-}
+              const SizedBox(height: 12),
 
-// ─── Tech Chip ────────────────────────────
-class _TechChip extends StatelessWidget {
-  final String label;
-  final Color accent;
-
-  const _TechChip({required this.label, required this.accent});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: accent.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: accent.withOpacity(0.2), width: 1),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10.5,
-          fontWeight: FontWeight.w700,
-          color: BrandColors.textOnDark.withOpacity(0.90),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Project Lightbox ─────────────────────
-// Tabbed full-screen overlay — supports
-// multiple screenshots (e.g. Web / Mobile)
-// ─────────────────────────────────────────
-class _ProjectLightbox extends StatefulWidget {
-  final List<Map<String, String>> previews;
-  final String title;
-  final Color accent;
-
-  const _ProjectLightbox({
-    required this.previews,
-    required this.title,
-    required this.accent,
-  });
-
-  static Future<void> show(
-    BuildContext context, {
-    required List<Map<String, String>> previews,
-    required String title,
-    required Color accent,
-  }) {
-    return showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Close preview',
-      barrierColor: Colors.black87,
-      transitionDuration: const Duration(milliseconds: 320),
-      pageBuilder: (_, __, ___) =>
-          _ProjectLightbox(previews: previews, title: title, accent: accent),
-      transitionBuilder: (_, anim, __, child) => FadeTransition(
-        opacity: anim,
-        child: ScaleTransition(
-          scale: Tween<double>(
-            begin: 0.94,
-            end: 1.0,
-          ).animate(CurvedAnimation(parent: anim, curve: Curves.easeOutCubic)),
-          child: child,
-        ),
-      ),
-    );
-  }
-
-  @override
-  State<_ProjectLightbox> createState() => _ProjectLightboxState();
-}
-
-class _ProjectLightboxState extends State<_ProjectLightbox> {
-  int _tab = 0;
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _switchTab(int i) {
-    setState(() => _tab = i);
-    _pageController.animateToPage(
-      i,
-      duration: const Duration(milliseconds: 420),
-      curve: Curves.easeInOutCubic,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final multiTab = widget.previews.length > 1;
-
-    return Material(
-      color: Colors.transparent,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Backdrop — deep dark room for image viewing
-          GestureDetector(
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(color: const Color(0xFF000000).withOpacity(0.88)),
-          ),
-
-          Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxWidth: size.width * 0.92,
-                maxHeight: size.height * 0.92,
+              // Description
+              Expanded(
+                child: Text(
+                  p.description,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.outfit(
+                    fontSize: 14.5,
+                    height: 1.5,
+                    color: pal.textPrimary.withValues(alpha: 0.75),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              const SizedBox(height: 10),
+
+              // Tech Stack Header
+              Text(
+                '// ARCHITECTURE',
+                style: GoogleFonts.spaceMono(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                  color: pal.textPrimary.withValues(alpha: 0.4),
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Tech Stack & Button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  // Header
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 14),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 4,
-                          height: 22,
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: p.technologies.take(3).map((tech) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: widget.accent,
-                            borderRadius: BorderRadius.circular(2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: widget.accent.withOpacity(0.5),
-                                blurRadius: 10,
-                              ),
-                            ],
+                            color: pal.textPrimary.withValues(alpha: 0.03),
+                            border: Border.all(
+                              color: pal.textPrimary.withValues(alpha: 0.1),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
+                          child: Text(
+                            tech.toUpperCase(),
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.bold,
+                              color: pal.textPrimary.withValues(alpha: 0.7),
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  if (hasImages) ...[
+                    const SizedBox(width: 16),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                         Text(
-                          widget.title,
-                          style: TextStyle(
-                            fontSize: 18,
+                          'VIEW BLUEPRINTS',
+                          style: GoogleFonts.spaceMono(
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: BrandColors.textOnDark,
-                            letterSpacing: -0.3,
+                            color: _hovered
+                                ? accent
+                                : pal.textPrimary.withValues(alpha: 0.4),
+                            letterSpacing: 1.5,
                           ),
                         ),
-                        const Spacer(),
-                        _LightboxCloseButton(
-                          accent: widget.accent,
-                          onTap: () => Navigator.of(context).pop(),
+                        const SizedBox(width: 6),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: _hovered
+                              ? accent
+                              : pal.textPrimary.withValues(alpha: 0.4),
                         ),
                       ],
                     ),
-                  ),
-
-                  // Tab bar
-                  if (multiTab)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 14),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(widget.previews.length, (i) {
-                          final isSelected = _tab == i;
-                          final label =
-                              widget.previews[i]['label'] ?? 'Screen ${i + 1}';
-                          return GestureDetector(
-                            onTap: () => _switchTab(i),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              margin: EdgeInsets.only(
-                                right: i < widget.previews.length - 1 ? 8 : 0,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? widget.accent.withOpacity(0.15)
-                                    : BrandColors.warmCream.withOpacity(0.40),
-                                borderRadius: BorderRadius.circular(50),
-                                border: Border.all(
-                                  color: isSelected
-                                      ? widget.accent.withOpacity(0.50)
-                                      : BrandColors.textOnDark.withOpacity(
-                                          0.10,
-                                        ),
-                                  width: 1,
-                                ),
-                                boxShadow: isSelected
-                                    ? [
-                                        BoxShadow(
-                                          color: widget.accent.withOpacity(
-                                            0.15,
-                                          ),
-                                          blurRadius: 14,
-                                        ),
-                                      ]
-                                    : [],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    i == 0
-                                        ? Icons.computer_rounded
-                                        : Icons.smartphone_rounded,
-                                    color: isSelected
-                                        ? widget.accent
-                                        : BrandColors.textSecondary.withOpacity(
-                                            0.70,
-                                          ),
-                                    size: 13,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    label,
-                                    style: TextStyle(
-                                      fontSize: 11.5,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.3,
-                                      color: isSelected
-                                          ? widget.accent
-                                          : BrandColors.textSecondary
-                                                .withOpacity(0.80),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-
-                  // Image — PageView for smooth directional sliding
-                  Flexible(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(19),
-                        child: PageView.builder(
-                          controller: _pageController,
-                          physics: const BouncingScrollPhysics(),
-                          onPageChanged: (i) => setState(() => _tab = i),
-                          itemCount: widget.previews.length,
-                          itemBuilder: (_, i) => ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              widget.previews[i]['asset']!,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Hint
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(
-                      'Tap outside or press CLOSE to dismiss',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: BrandColors.textOnDark.withOpacity(0.45),
-                        letterSpacing: 0.4,
-                      ),
-                    ),
-                  ),
+                  ],
                 ],
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
-// ─── Lightbox Close Button ────────────────
-class _LightboxCloseButton extends StatefulWidget {
-  final Color accent;
-  final VoidCallback onTap;
+// ─── Minimal Fullscreen Black Lightbox Overlay ──────────────────────────────
+class _MinimalLightbox extends StatefulWidget {
+  final List<Map<String, String>> previews;
+  final String projectTitle;
 
-  const _LightboxCloseButton({required this.accent, required this.onTap});
+  const _MinimalLightbox({required this.previews, required this.projectTitle});
+
+  static void show(
+    BuildContext context, {
+    required List<Map<String, String>> previews,
+    required String projectTitle,
+  }) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss View',
+      barrierColor: Colors.transparent,
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (_, __, ___) =>
+          _MinimalLightbox(previews: previews, projectTitle: projectTitle),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+
+        return AnimatedBuilder(
+          animation: curvedAnimation,
+          builder: (context, _) {
+            final progress = curvedAnimation.value;
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: 12.0 * progress,
+                        sigmaY: 12.0 * progress,
+                      ),
+                      child: Container(
+                        color: Colors.black.withValues(alpha: 0.85 * progress),
+                      ),
+                    ),
+                  ),
+                ),
+                SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.0, 1.0),
+                    end: Offset.zero,
+                  ).animate(curvedAnimation),
+                  child: child,
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
-  State<_LightboxCloseButton> createState() => _LightboxCloseButtonState();
+  State<_MinimalLightbox> createState() => _MinimalLightboxState();
 }
 
-class _LightboxCloseButtonState extends State<_LightboxCloseButton> {
+class _MinimalLightboxState extends State<_MinimalLightbox> {
+  int _activeTabIdx = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final previews = widget.previews;
+
+    // Filter screens to match tabs: "web" or "mobile"
+    final webScreens = previews.where((e) => e['type'] == 'web').toList();
+    final mobileScreens = previews.where((e) => e['type'] == 'mobile').toList();
+
+    final hasWeb = webScreens.isNotEmpty;
+    final hasMobile = mobileScreens.isNotEmpty;
+
+    // Setup active viewport list based on tab
+    List<Map<String, String>> activeScreens = [];
+    if (_activeTabIdx == 0) {
+      activeScreens = hasWeb ? webScreens : mobileScreens;
+    } else {
+      activeScreens = mobileScreens;
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: Column(
+            children: [
+              // Top control bar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Tabs for Web vs Mobile
+                  Expanded(
+                    child: Wrap(
+                      spacing: 16,
+                      runSpacing: 12,
+                      children: [
+                        if (hasWeb)
+                          _TabBtn(
+                            label: 'WEB PREVIEW',
+                            isActive: _activeTabIdx == 0,
+                            onTap: () => setState(() => _activeTabIdx = 0),
+                          ),
+                        if (hasMobile)
+                          _TabBtn(
+                            label: 'MOBILE PREVIEW',
+                            isActive: hasWeb
+                                ? _activeTabIdx == 1
+                                : _activeTabIdx == 0,
+                            onTap: () =>
+                                setState(() => _activeTabIdx = hasWeb ? 1 : 0),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Close button
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '✕ CLOSE',
+                        style: GoogleFonts.spaceMono(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Image display viewport with futuristic switcher
+              Expanded(
+                child: Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 600),
+                    switchInCurve: Curves.easeOutQuart,
+                    switchOutCurve: Curves.easeInQuart,
+                    layoutBuilder:
+                        (Widget? currentChild, List<Widget> previousChildren) {
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              ...previousChildren,
+                              if (currentChild != null) currentChild,
+                            ],
+                          );
+                        },
+                    transitionBuilder: (child, animation) {
+                      final isEntering =
+                          child.key == ValueKey('active_tab_$_activeTabIdx');
+
+                      return AnimatedBuilder(
+                        animation: animation,
+                        child: child,
+                        builder: (context, child) {
+                          final progress = animation.value;
+
+                          // entering: scales from 0.82 up to 1.0, tilts back and tilts forward
+                          // exiting: scales down from 1.0 to 0.82, tilts back
+                          final scale = isEntering
+                              ? 0.82 + (0.18 * progress)
+                              : 1.0 - (0.18 * (1.0 - progress));
+
+                          final tilt = isEntering
+                              ? -0.15 * (1.0 - progress)
+                              : -0.15 * (1.0 - progress);
+
+                          final opacity = progress.clamp(0.0, 1.0);
+
+                          return Transform(
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, 0.001) // perspective
+                              ..rotateX(tilt)
+                              ..multiply(
+                                Matrix4.diagonal3Values(scale, scale, 1.0),
+                              ),
+                            alignment: Alignment.center,
+                            child: Opacity(opacity: opacity, child: child),
+                          );
+                        },
+                      );
+                    },
+                    child: activeScreens.isEmpty
+                        ? const Text(
+                            'No screen available for this format.',
+                            key: ValueKey('empty'),
+                            style: TextStyle(color: Colors.white60),
+                          )
+                        : PageView.builder(
+                            key: ValueKey('active_tab_$_activeTabIdx'),
+                            itemCount: activeScreens.length,
+                            itemBuilder: (context, idx) {
+                              return InteractiveViewer(
+                                maxScale: 3.0,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.asset(
+                                    activeScreens[idx]['asset']!,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TabBtn extends StatefulWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _TabBtn({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  State<_TabBtn> createState() => _TabBtnState();
+}
+
+class _TabBtnState extends State<_TabBtn> {
   bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
+    final bool isWeb = widget.label.contains('WEB');
+    final IconData icon = isWeb
+        ? Icons.desktop_windows_rounded
+        : Icons.phone_android_rounded;
+    final accentColor = isWeb
+        ? const Color(0xFF00E5FF)
+        : const Color(0xFFFF2A5F);
+
     return MouseRegion(
-      cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutExpo,
+          height: 44,
+          padding: EdgeInsets.only(
+            left: widget.isActive ? 20 : 16,
+            right: widget.isActive ? 24 : 16,
+          ),
           decoration: BoxDecoration(
-            color: _hovered
-                ? widget.accent.withOpacity(0.15)
-                : BrandColors.warmCream.withOpacity(0.50),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: _hovered
-                  ? widget.accent.withOpacity(0.50)
-                  : BrandColors.textOnDark.withOpacity(0.12),
-              width: 1,
+            color: widget.isActive
+                ? accentColor.withValues(alpha: 0.12)
+                : (_hovered
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.transparent),
+            border: Border(
+              bottom: BorderSide(
+                color: widget.isActive
+                    ? accentColor
+                    : (_hovered
+                          ? Colors.white.withValues(alpha: 0.3)
+                          : Colors.white.withValues(alpha: 0.1)),
+                width: widget.isActive ? 3 : 1,
+              ),
+              left: BorderSide(
+                color: widget.isActive
+                    ? accentColor.withValues(alpha: 0.6)
+                    : Colors.transparent,
+                width: widget.isActive ? 1 : 0,
+              ),
             ),
-            boxShadow: _hovered
-                ? [
-                    BoxShadow(
-                      color: widget.accent.withOpacity(0.20),
-                      blurRadius: 16,
-                    ),
-                  ]
-                : [],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.close_rounded,
-                color: _hovered
-                    ? widget.accent
-                    : BrandColors.textSecondary.withOpacity(0.90),
+                icon,
                 size: 16,
+                color: widget.isActive ? accentColor : Colors.white54,
+                shadows: widget.isActive
+                    ? [Shadow(color: accentColor, blurRadius: 12)]
+                    : null,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 10),
               Text(
-                'CLOSE',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1.0,
-                  color: _hovered
-                      ? widget.accent
-                      : BrandColors.textSecondary.withOpacity(0.90),
+                widget.label,
+                style: GoogleFonts.spaceMono(
+                  fontSize: 11.5,
+                  fontWeight: widget.isActive
+                      ? FontWeight.bold
+                      : FontWeight.w500,
+                  color: widget.isActive ? Colors.white : Colors.white54,
+                  letterSpacing: 2.0,
                 ),
               ),
+              if (widget.isActive) ...[
+                const SizedBox(width: 12),
+                Row(
+                  children: [
+                    _buildDot(accentColor, 1.0),
+                    const SizedBox(width: 4),
+                    _buildDot(accentColor, 0.5),
+                    const SizedBox(width: 4),
+                    _buildDot(accentColor, 0.2),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDot(Color color, double opacity) {
+    return Container(
+      width: 4,
+      height: 4,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: opacity),
+        shape: BoxShape.rectangle,
       ),
     );
   }

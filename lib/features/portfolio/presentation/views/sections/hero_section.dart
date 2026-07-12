@@ -1,9 +1,10 @@
-import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/premium_button.dart';
-import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// ─── Hero Section ────────────────────────────────────────────────────────────
 
 class HeroSection extends StatefulWidget {
   final VoidCallback onExploreWorkPressed;
@@ -19,433 +20,273 @@ class HeroSection extends StatefulWidget {
   State<HeroSection> createState() => _HeroSectionState();
 }
 
-class _HeroSectionState extends State<HeroSection>
-    with SingleTickerProviderStateMixin {
-  final List<String> _roles = [
-    'Flutter Developer',
-    'Mobile Architect',
-    'Clean Code Specialist',
-    'AI-Assisted Builder',
-  ];
-  int _roleIndex = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
-      if (mounted) {
-        setState(() => _roleIndex = (_roleIndex + 1) % _roles.length);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  Future<void> _launchURL(String urlString) async {
-    final Uri url = Uri.parse(urlString);
-    try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      }
-    } catch (_) {}
-  }
-
+class _HeroSectionState extends State<HeroSection> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isDesktop = size.width >= 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return isDesktop ? _buildDesktop(size) : _buildMobile(size);
+    return isDesktop ? _buildDesktop(size, isDark) : _buildMobile(size, isDark);
   }
 
   // ─────────────────────────────────────────
-  // DESKTOP — cinematic poster layout
+  // DESKTOP layout
   // ─────────────────────────────────────────
-  Widget _buildDesktop(Size size) {
-    return SizedBox(
+  Widget _buildDesktop(Size size, bool isDark) {
+    final pal = context.palette;
+    final bgColor = isDark ? const Color(0xFF070B13) : const Color(0xFFE2E8F0);
+
+    return Container(
       width: size.width,
-      height: size.height * 0.92,
+      height: size.height,
+      color: bgColor,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // ── Background: deep dark gradient ──
+          // 1. Background Image
           Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    BrandColors.deepIndigoBlack,
-                    BrandColors.deepViolet,
-                    BrandColors.deepIndigoBlack,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+            child: Opacity(
+              opacity: isDark ? 1.0 : 0.15,
+              child: Image.asset(
+                'assets/joel_coding.jpg',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                color: isDark ? null : Colors.black,
+                colorBlendMode: isDark ? null : BlendMode.saturation,
               ),
             ),
           ),
 
-          // ── Giant name watermark — bottom layer ──
+          // 2. High-end Editorial Vignette Scrim Overlay
           Positioned.fill(
-            child: FadeInSlide(
-              delay: const Duration(milliseconds: 100),
-              direction: 0,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 200,
-                      left: 24,
-                      right: 24,
-                    ),
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      'JOEL P SHAJU\n FLUTTER DEVELOPER',
-                      style: TextStyle(
-                        fontSize: 200,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.blueGrey.withValues(alpha: .2),
-                        letterSpacing: 8,
-                        height: 1.0,
-                        shadows: [],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // ── Subtle neon glow behind portrait ──
-          Positioned(
-            left: 0,
-            right: 0,
-            top: size.height * 0.05,
-            child: Center(
-              child: Container(
-                width: 400,
-                height: 400,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: BrandColors.warmAmber.withOpacity(0.10),
-                      blurRadius: 180,
-                      spreadRadius: 80,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // ── Portrait image — center ──
-          Positioned(
-            left: 0,
-            right: 0,
-            top: size.height * 0.02,
-            bottom: 0,
-            child: FadeInSlide(
-              delay: const Duration(milliseconds: 300),
-              direction: 20,
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: SizedBox(
-                  height: size.height * 0.82,
-                  child: Image.asset(
-                    'assets/joel_p_shaju.png',
-                    fit: BoxFit.contain,
-                    alignment: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // ── Dark gradient at bottom to blend portrait into bg ──
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 250,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.transparent,
-                    BrandColors.deepIndigoBlack.withOpacity(0.98),
-                  ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
+                  colors: isDark
+                      ? [
+                          bgColor.withOpacity(0.60),
+                          bgColor.withOpacity(0.85),
+                          bgColor,
+                        ]
+                      : [
+                          bgColor.withOpacity(0.0),
+                          bgColor.withOpacity(0.50),
+                          bgColor,
+                        ],
+                  stops: const [0.0, 0.60, 1.0],
                 ),
               ),
             ),
           ),
 
-          // ── Left side: role tags + subtitle ──
-          Positioned(
-            left: 40,
-            top: 0,
-            bottom: 0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Category pills
-                const FadeInSlide(
-                  delay: Duration(milliseconds: 400),
-                  direction: 25,
-                  child: Wrap(
-                    spacing: 8,
-                    children: [
-                      _PillTag(
-                        label: 'MOBILE',
-                        accent: BrandColors.primaryNeon,
-                      ),
-                      _PillTag(
-                        label: 'FLUTTER',
-                        accent: BrandColors.secondaryNeon,
-                      ),
-                      _PillTag(label: 'DART', accent: BrandColors.qswMid),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // Animated role
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 500),
-                  direction: 20,
-                  child: SizedBox(
-                    height: 32,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      transitionBuilder: (child, anim) {
-                        final isEntering = child.key == ValueKey(_roleIndex);
-                        return FadeTransition(
-                          opacity: anim,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: isEntering ? const Offset(0, -1.0) : const Offset(0, 1.0),
-                              end: Offset.zero,
-                            ).animate(CurvedAnimation(
-                              parent: anim,
-                              curve: Curves.easeOutCubic,
-                            )),
-                            child: child,
-                          ),
-                        );
-                      },
-                      layoutBuilder: (currentChild, previousChildren) {
-                        return Stack(
-                          alignment: Alignment.centerLeft,
-                          children: [
-                            ...previousChildren,
-                            if (currentChild != null) currentChild,
-                          ],
-                        );
-                      },
-                      child: Text(
-                        _roles[_roleIndex],
-                        key: ValueKey(_roleIndex),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: BrandColors.secondaryNeon,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Short bio
-                const FadeInSlide(
-                  delay: Duration(milliseconds: 600),
-                  direction: 20,
-                  child: SizedBox(
-                    width: 260,
-                    child: Text(
-                      'Building beautiful, scalable, production-ready Flutter apps.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: BrandColors.warmFaint,
-                        height: 1.65,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 28),
-
-                // CTA
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 700),
-                  direction: 20,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      PremiumButton(
-                        label: 'HIRE ME',
-                        icon: Icons.send_rounded,
-                        gradient: BrandColors.primaryGradient,
-                        glowColor: BrandColors.primaryNeon,
-                        onPressed: widget.onContactPressed,
-                      ),
-                      const SizedBox(height: 12),
-                      PremiumButton(
-                        label: 'DOWNLOAD RESUME',
-                        icon: Icons.download_rounded,
-                        gradient: const LinearGradient(
-                          colors: [
-                            BrandColors.darkCard,
-                            BrandColors.darkSurface,
-                          ],
-                        ),
-                        glowColor: Colors.transparent,
-                        onPressed: () => _launchURL(
-                          'https://joelpshaju.github.io/resume.pdf',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-
-          // ── Right side: contact info + socials ──
-          Positioned(
-            right: 40,
-            top: 0,
-            bottom: 0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 450),
-                  direction: -25,
-                  child: _SocialPill(
-                    icon: Icons.phone_rounded,
-                    label: '+91 8590182736',
-                    onTap: () => _launchURL('tel:+918590182736'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 520),
-                  direction: -25,
-                  child: _SocialPill(
-                    icon: Icons.email_rounded,
-                    label: 'joelpshaju@gmail.com',
-                    onTap: () => _launchURL('mailto:joelpshaju@gmail.com'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 590),
-                  direction: -25,
-                  child: _SocialPill(
-                    icon: Icons.link_rounded,
-                    label: 'LinkedIn',
-                    onTap: () => _launchURL('https://www.linkedin.com/in/joel-p-shaju-b8aa1a292'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 660),
-                  direction: -25,
-                  child: _SocialPill(
-                    icon: Icons.code_rounded,
-                    label: 'GitHub',
-                    onTap: () => _launchURL('https://github.com/joelpshaju'),
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Experience badge
-                FadeInSlide(
-                  delay: const Duration(milliseconds: 750),
-                  direction: -25,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: BrandColors.qswMid.withOpacity(0.06),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: BrandColors.primaryNeon.withOpacity(0.22),
-                        width: 1,
-                      ),
-                    ),
+          // 5. Main Center Row (asymmetrical content layout)
+          Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.08),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Left side editorial info column
+                  Expanded(
+                    flex: 7,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          '2+',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.w900,
-                            color: BrandColors.primaryNeon,
-                            height: 1.0,
+                        // Monospace Badge Tag
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.06)
+                                : Colors.black.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.12)
+                                  : Colors.black.withOpacity(0.1),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: Colors.greenAccent,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'SYSTEMS ARCHITECT & FLUTTER SPECIALIST',
+                                style: GoogleFonts.spaceMono(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: pal.textPrimary.withOpacity(0.85),
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                        const SizedBox(height: 24),
                         Text(
-                          'Years of\nExperience',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.white.withOpacity(0.45),
-                            height: 1.4,
+                          'JOEL P SHAJU',
+                          style: GoogleFonts.outfit(
+                            textStyle: TextStyle(
+                              fontSize: (size.width * 0.055).clamp(52.0, 96.0),
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1.5,
+                              color: pal.textPrimary,
+                              height: 1.05,
+                            ),
                           ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Building world-class production mobile apps.',
+                          style: GoogleFonts.outfit(
+                            textStyle: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w500,
+                              color: pal.textPrimary.withOpacity(0.8),
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 540),
+                          child: Text(
+                            'Focused on Clean Architecture, Riverpod state models, and high-fidelity interaction design to deliver scalable enterprise systems.',
+                            style: GoogleFonts.outfit(
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: pal.textPrimary.withOpacity(0.6),
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 36),
+                        Row(
+                          children: [
+                            OutlinedButton(
+                              onPressed: widget.onExploreWorkPressed,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: pal.textPrimary,
+                                side: BorderSide(
+                                  color: pal.textPrimary.withOpacity(0.35),
+                                  width: 1.5,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                  vertical: 18,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Explore Work',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.arrow_forward_rounded,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            TextButton(
+                              onPressed: widget.onContactPressed,
+                              style: TextButton.styleFrom(
+                                foregroundColor: pal.textPrimary.withOpacity(
+                                  0.8,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 18,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Let\'s Connect',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-
-          // ── Bottom centre: scroll hint ──
-          Positioned(
-            bottom: 16,
-            left: 0,
-            right: 0,
-            child: FadeInSlide(
-              delay: const Duration(milliseconds: 900),
-              direction: 10,
-              child: Column(
-                children: [
-                  Text(
-                    'SCROLL TO EXPLORE',
-                    style: TextStyle(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 2.5,
-                      color: Colors.white.withOpacity(0.25),
+                  const SizedBox(width: 40),
+                  // Right side interactive hud/metrics card
+                  Flexible(
+                    flex: 5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _DeveloperDashboardCard(isDark: isDark, pal: pal),
+                        SizedBox(height: 40),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: Colors.white.withOpacity(0.22),
-                    size: 18,
                   ),
                 ],
               ),
+            ),
+          ),
+
+          // 6. Right Side Scroll Down Hint
+          Positioned(
+            right: size.width * 0.08,
+            bottom: size.height * 0.08,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Scroll down',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: pal.textPrimary.withOpacity(0.7),
+                    fontFamily: 'Outfit',
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Icon(
+                  Icons.arrow_downward_rounded,
+                  size: 20,
+                  color: pal.textPrimary.withOpacity(0.7),
+                ),
+              ],
             ),
           ),
         ],
@@ -456,125 +297,216 @@ class _HeroSectionState extends State<HeroSection>
   // ─────────────────────────────────────────
   // MOBILE layout
   // ─────────────────────────────────────────
-  Widget _buildMobile(Size size) {
+  Widget _buildMobile(Size size, bool isDark) {
+    final pal = context.palette;
+    final bgColor = isDark ? const Color(0xFF070B13) : const Color(0xFFE2E8F0);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      width: size.width,
+      height: size.height,
+      color: bgColor,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // Category pills
-          const FadeInSlide(
-            delay: Duration(milliseconds: 100),
-            direction: 20,
-            child: Wrap(
-              spacing: 8,
-              children: [
-                _PillTag(label: 'MOBILE', accent: BrandColors.primaryNeon),
-                _PillTag(label: 'FLUTTER', accent: BrandColors.secondaryNeon),
-              ],
+          // 1. Background Image
+          Positioned.fill(
+            child: Opacity(
+              opacity: isDark ? 1.0 : 0.15,
+              child: Image.asset(
+                'assets/joel_coding.jpg',
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                color: isDark ? null : Colors.black,
+                colorBlendMode: isDark ? null : BlendMode.saturation,
+              ),
             ),
           ),
-          const SizedBox(height: 20),
 
-          // Portrait with name watermark behind
-          FadeInSlide(
-            delay: const Duration(milliseconds: 200),
-            direction: 20,
-            child: SizedBox(
-              height: size.height * 0.45,
-              child: Stack(
+          // 2. High-end Scrim Overlay
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: isDark
+                      ? [
+                          bgColor.withOpacity(0.65),
+                          bgColor.withOpacity(0.85),
+                          bgColor,
+                        ]
+                      : [
+                          bgColor.withOpacity(0.0),
+                          bgColor.withOpacity(0.60),
+                          bgColor,
+                        ],
+                  stops: const [0.0, 0.60, 1.0],
+                ),
+              ),
+            ),
+          ),
+
+          // 4. Content column
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Name watermark
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Text(
-                          'JOEL',
-                          style: TextStyle(
-                            fontSize: 160,
-                            fontWeight: FontWeight.w900,
-                            color: BrandColors.warmAmber.withOpacity(0.07),
-                            letterSpacing: 4,
+                  // Monospace Tag
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.06)
+                          : Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.12)
+                            : Colors.black.withOpacity(0.1),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: const BoxDecoration(
+                            color: Colors.greenAccent,
+                            shape: BoxShape.circle,
                           ),
                         ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'SYSTEMS ARCHITECT & DEV',
+                          style: GoogleFonts.spaceMono(
+                            fontSize: 8.5,
+                            fontWeight: FontWeight.bold,
+                            color: pal.textPrimary.withOpacity(0.85),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Text(
+                    'JOEL P SHAJU',
+                    style: GoogleFonts.outfit(
+                      textStyle: TextStyle(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.0,
+                        color: pal.textPrimary,
+                        height: 1.1,
                       ),
                     ),
                   ),
-                  // Portrait
-                  Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.asset(
-                        'assets/joel_p_+shaju.png',
-                        height: size.height * 0.42,
-                        fit: BoxFit.cover,
+                  const SizedBox(height: 8),
+                  Text(
+                    'Building world-class production mobile apps.',
+                    style: GoogleFonts.outfit(
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: pal.textPrimary.withOpacity(0.85),
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Focused on Clean Architecture, Riverpod state models, and high-fidelity interaction design.',
+                    style: GoogleFonts.outfit(
+                      textStyle: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w400,
+                        color: pal.textPrimary.withOpacity(0.65),
+                        height: 1.45,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      OutlinedButton(
+                        onPressed: widget.onExploreWorkPressed,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: pal.textPrimary,
+                          side: BorderSide(
+                            color: pal.textPrimary.withOpacity(0.35),
+                            width: 1.5,
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Explore Work',
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_forward_rounded, size: 14),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextButton(
+                        onPressed: widget.onContactPressed,
+                        style: TextButton.styleFrom(
+                          foregroundColor: pal.textPrimary.withOpacity(0.8),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: Text(
+                          'Let\'s Connect',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.bold,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: 24),
 
-          // Role + bio
-          FadeInSlide(
-            delay: const Duration(milliseconds: 300),
-            direction: 20,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              child: Text(
-                _roles[_roleIndex],
-                key: ValueKey(_roleIndex),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: BrandColors.secondaryNeon,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          FadeInSlide(
-            delay: const Duration(milliseconds: 380),
-            direction: 20,
-            child: Text(
-              'Building beautiful, scalable, production-ready Flutter apps.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white.withOpacity(0.55),
-                height: 1.65,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // CTAs
-          FadeInSlide(
-            delay: const Duration(milliseconds: 460),
-            direction: 20,
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
+          // 5. Scroll Down Hint
+          Positioned(
+            right: 24,
+            bottom: 24,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                PremiumButton(
-                  label: 'HIRE ME',
-                  icon: Icons.send_rounded,
-                  gradient: BrandColors.primaryGradient,
-                  glowColor: BrandColors.primaryNeon,
-                  onPressed: widget.onContactPressed,
-                ),
-                PremiumButton(
-                  label: 'RESUME',
-                  icon: Icons.download_rounded,
-                  gradient: const LinearGradient(
-                    colors: [BrandColors.darkCard, BrandColors.darkSurface],
+                Text(
+                  'Scroll down',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: pal.textPrimary.withOpacity(0.6),
+                    fontFamily: 'Outfit',
                   ),
-                  glowColor: Colors.transparent,
-                  onPressed: () =>
-                      _launchURL('https://joelpshaju.github.io/resume.pdf'),
+                ),
+                const SizedBox(width: 6),
+                Icon(
+                  Icons.arrow_downward_rounded,
+                  size: 14,
+                  color: pal.textPrimary.withOpacity(0.6),
                 ),
               ],
             ),
@@ -585,102 +517,200 @@ class _HeroSectionState extends State<HeroSection>
   }
 }
 
-// ─────────────────────────────────────────
-// SHARED MICRO WIDGETS
-// ─────────────────────────────────────────
-class _PillTag extends StatelessWidget {
-  final String label;
-  final Color accent;
+// ─── Infinite Name Ticker Widget ──────────────────────────────────────────────
 
-  const _PillTag({required this.label, required this.accent});
+class InfiniteNameTicker extends StatefulWidget {
+  final String text;
+  final TextStyle style;
+  final Duration duration;
+
+  const InfiniteNameTicker({
+    super.key,
+    required this.text,
+    required this.style,
+    this.duration = const Duration(seconds: 20),
+  });
+
+  @override
+  State<InfiniteNameTicker> createState() => _InfiniteNameTickerState();
+}
+
+class _InfiniteNameTickerState extends State<InfiniteNameTicker>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-      decoration: BoxDecoration(
-        color: accent.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: accent.withOpacity(0.25), width: 1),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w800,
-          color: accent,
-          letterSpacing: 1.2,
+    // Repeated text block
+    final String repeatedText = '${widget.text}   •   ' * 8;
+
+    return ClipRect(
+      child: OverflowBox(
+        maxWidth: double.infinity,
+        alignment: Alignment.centerLeft,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return FractionalTranslation(
+              translation: Offset(-_controller.value * 0.5, 0.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    repeatedText,
+                    style: widget.style,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                  Text(
+                    repeatedText,
+                    style: widget.style,
+                    maxLines: 1,
+                    softWrap: false,
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class _SocialPill extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
+// ─── Glassmorphic Developer Dashboard HUD Card ───────────────────────────────
 
-  const _SocialPill({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+class _DeveloperDashboardCard extends StatelessWidget {
+  final bool isDark;
+  final AppPalette pal;
 
-  @override
-  State<_SocialPill> createState() => _SocialPillState();
-}
-
-class _SocialPillState extends State<_SocialPill> {
-  bool _hovered = false;
+  const _DeveloperDashboardCard({required this.isDark, required this.pal});
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
-            color: _hovered
-                ? BrandColors.qswMid.withOpacity(0.10)
-                : Colors.white.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: _hovered
-                  ? BrandColors.primaryNeon.withOpacity(0.35)
-                  : Colors.white.withOpacity(0.08),
-              width: 1,
-            ),
+    final cardBg = isDark
+        ? Colors.black.withOpacity(0.4)
+        : Colors.white.withOpacity(0.55);
+    final borderCol = isDark
+        ? Colors.white.withOpacity(0.12)
+        : Colors.black.withOpacity(0.12);
+    final textMuted = isDark ? Colors.white54 : Colors.black54;
+
+    return Container(
+      width: 380,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: borderCol, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.25 : 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
             children: [
-              Icon(
-                widget.icon,
-                color: _hovered
-                    ? BrandColors.primaryNeon
-                    : Colors.white.withOpacity(0.35),
-                size: 14,
-              ),
-              const SizedBox(width: 8),
+              _buildCircle(Colors.redAccent.withOpacity(0.7)),
+              const SizedBox(width: 6),
+              _buildCircle(Colors.amberAccent.withOpacity(0.7)),
+              const SizedBox(width: 6),
+              _buildCircle(Colors.greenAccent.withOpacity(0.7)),
+              const Spacer(),
               Text(
-                widget.label,
-                style: TextStyle(
-                  color: _hovered
-                      ? Colors.white.withOpacity(0.90)
-                      : Colors.white.withOpacity(0.45),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                'SYSTEM_METRICS.sh',
+                style: GoogleFonts.spaceMono(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: textMuted,
                 ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 24),
+          _buildMetricLine('ARCHITECTURE', 'CLEAN/MVC/MVP/MVVM/MODULAR'),
+          _buildMetricLine('DEVELOPMENT', 'MOBILE & WEB APPLICATIONS'),
+          _buildMetricLine('EXPERIENCE', '3 YEARS'),
+          _buildMetricLine('DELIVERABLES', '5+ SHIPPED APPS'),
+          _buildMetricLine('CODE_METRICS', '98.8% TEST PASS'),
+          const Divider(height: 32, color: Colors.white10),
+          Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: Colors.greenAccent,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'STATUS: READY FOR CONTRACTS',
+                style: GoogleFonts.spaceMono(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCircle(Color color) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+
+  Widget _buildMetricLine(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '$label:',
+            style: GoogleFonts.spaceMono(
+              fontSize: 11.5,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white60 : Colors.black54,
+            ),
+          ),
+          Text(
+            value,
+            style: GoogleFonts.spaceMono(
+              fontSize: 11.5,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+        ],
       ),
     );
   }

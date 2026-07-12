@@ -1,252 +1,230 @@
 import 'package:flutter/material.dart';
 
-/// ═════════════════════════════════════════════════════════════════════════════
-/// OBSIDIAN PRISM — Enterprise Portfolio Design System
+/// ═══════════════════════════════════════════════════════════════════════════
+/// SLATE & MONOCHROME — Portfolio Design System v3 (Achromatic Theme)
 ///
-/// Inspired by: Linear, Figma, Raycast, Resend — the pinnacle of dark SaaS UI.
-///
-/// DARK  : Deep indigo-black canvas with violet-to-blue prismatic gradients.
-///         Cards are raised obsidian panes; borders emit a faint violet aura.
-///         Glows, halos, and micro-gradients carry all the visual energy.
-///
-/// LIGHT : Crisp white with a cool indigo tint — clean, confident, corporate.
-///         Accent violet gives hierarchy without aggression.
-///
-/// Accent stack (violet → indigo → cyan): the tri-tone gradient is the
-/// signature. Use individually for hierarchy or as a sweep for hero moments.
-/// ═════════════════════════════════════════════════════════════════════════════
+/// Concept: Pure monochromatic palette using white, grey, and black tones.
+/// High contrast, crisp borders, and premium typography that feels like
+/// a state-of-the-art software product.
+/// ═══════════════════════════════════════════════════════════════════════════
 class BrandColors {
   const BrandColors._();
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // DARK BACKGROUND DEPTH SCALE
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── LIGHT BACKGROUND DEPTH SCALE ─────────────────────────────────────────
 
-  /// Deepest layer — near-black with indigo undertone
-  static const Color darkBackground = Color(0xFF06060F);
+  /// Page canvas — slate off-white
+  static const Color lightBackground = Color(0xFFF8FAFC);
 
-  /// Raised content layer
-  static const Color darkSurface = Color(0xFF0B0B1A);
+  /// Slight depth — section alternating background
+  static const Color lightSurface = Color(0xFFF1F5F9);
 
-  /// Card / panel — obsidian glass
-  static const Color darkCard = Color(0xFF10101E);
+  /// Card/panel background
+  static const Color lightCard = Color(0xFFFFFFFF);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // PRISMATIC ACCENT STACK — violet → indigo → cyan
-  // ───────────────────────────────────────────────────────────────────────────
+  /// Elevated container
+  static const Color lightElevated = Color(0xFFE2E8F0);
 
-  /// Signature violet — primary CTAs, active rings, hero titles
-  static const Color primaryNeon = Color(0xFF7C3AED);
+  // ─── DARK/CONTRAST COUNTERPARTS ───────────────────────────────────────────
+  static const Color darkBackground = Color(0xFF030712);
+  static const Color darkSurface = Color(0xFF0B0F19);
+  static const Color darkCard = Color(0xFF1E293B);
 
-  /// Indigo — secondary hierarchy, underlines, tag fills
-  static const Color secondaryNeon = Color(0xFF4F46E5);
+  // ─── PRIMARY ACCENTS ──────────────────────────────────────────────────────
 
-  /// Electric cyan — tertiary pop, glow halos, dividers
-  static const Color accentNeon = Color(0xFF06B6D4);
+  /// Primary — Slate-700 / dark charcoal
+  static const Color primaryNeon = Color(0xFF334155);
 
-  /// Violet tint — success / confirm (keeps palette clean)
-  static const Color successNeon = Color(0xFF8B5CF6);
+  /// Secondary — Slate-500 / medium grey
+  static const Color secondaryNeon = Color(0xFF64748B);
 
-  /// Amber — warnings only, maximum contrast on dark
-  static const Color warningNeon = Color(0xFFF59E0B);
+  /// Tertiary — Slate-400 / cool grey
+  static const Color accentNeon = Color(0xFF94A3B8);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // TYPOGRAPHY
-  // ───────────────────────────────────────────────────────────────────────────
+  /// Success — Slate-600 / dark grey
+  static const Color successNeon = Color(0xFF475569);
 
-  /// Primary text on light surfaces — near-black indigo ink
-  static const Color textPrimary = Color(0xFF1E1B4B);
+  /// Warning — Slate-300 / light grey
+  static const Color warningNeon = Color(0xFFCBD5E1);
 
-  /// Secondary / body — slate blue-grey
-  static const Color textSecondary = Color(0xFF4B5563);
+  // ─── TYPOGRAPHY ──────────────────────────────────────────────────────────
 
-  /// Muted / placeholders — cool slate
-  static const Color textMuted = Color(0xFF9CA3AF);
+  /// Primary heading/display — Slate-900
+  static const Color textPrimary = Color(0xFF0F172A);
 
-  /// Heading / display on dark surfaces — pure near-white
-  static const Color textDark = Color(0xFFF5F3FF);
+  /// Secondary body — Slate-700
+  static const Color textSecondary = Color(0xFF334155);
 
-  /// Body copy on dark — silver blue-white
-  static const Color textOnDark = Color(0xFFD1D5DB);
+  /// Muted / placeholders — Slate-500
+  static const Color textMuted = Color(0xFF64748B);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // SURFACES & BORDERS
-  // ───────────────────────────────────────────────────────────────────────────
+  /// Heading on dark surfaces
+  static const Color textDark = Color(0xFFF8FAFC);
 
-  /// Border on light surfaces
-  static const Color borderLight = Color(0xFFE5E7EB);
+  /// Body on dark surfaces
+  static const Color textOnDark = Color(0xFFCBD5E1);
 
-  /// Subtle card border — faint violet aura
-  static const Color borderMuted = Color(0x22A78BFA);
+  // ─── SURFACES & BORDERS ──────────────────────────────────────────────────
 
-  /// Light app background — barely-there violet wash
-  static const Color surfaceAlt  = Color(0xFFF9F8FF);
+  /// Border on light surfaces — Slate-200
+  static const Color borderLight = Color(0xFFE2E8F0);
 
-  /// Blue-tinted light surface
-  static const Color surfaceWarm  = Color(0xFFF0EBFF);
+  /// Subtle card border — Slate-300
+  static const Color borderMuted = Color(0xFFCBD5E1);
 
-  /// Sky / cool light surface
-  static const Color surfaceBlue  = Color(0xFFEFF6FF);
+  /// Alt light surface
+  static const Color surfaceAlt = Color(0xFFF8FAFC);
+
+  /// Warm beige surface (fallback / secondary tag)
+  static const Color surfaceWarm = Color(0xFFF1F5F9);
+
+  /// Cool sky surface
+  static const Color surfaceBlue = Color(0xFFF8FAFC);
+
+  static const Color glowGreen = Color.fromARGB(255, 64, 147, 67);
 
   /// Neutral light surface
-  static const Color surfaceMint  = Color(0xFFF8FAFC);
+  static const Color surfaceMint = Color(0xFFF1F5F9);
 
-  /// Cool slate light surface
+  /// Cool slate surface
   static const Color surfaceSlate = Color(0xFFF1F5F9);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // UTILITY PALETTE — mapped to the prism stack
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── UTILITY PALETTE ─────────────────────────────────────────────────────
 
-  static const Color warmBlack  = Color(0xFF1E1B4B);   // indigo-black ink
-  static const Color warmBrown  = Color(0xFF6B7280);   // cool grey
-  static const Color warmMid    = Color(0xFF1C1C3A);   // deep panel fill
-  static const Color warmAccent = Color(0xFF7C3AED);   // violet accent
+  static const Color warmBlack = Color(0xFF0F172A);
+  static const Color warmBrown = Color(0xFF334155);
+  static const Color warmMid = Color(0xFFF1F5F9);
+  static const Color warmAccent = Color(0xFF475569);
 
-  static const Color warmLight  = Color(0xFFC4B5FD);   // light violet
-  static const Color warmGold   = Color(0xFF1A1A3E);   // dark elevated surface
-  static const Color warmAmber  = Color(0xFF312E81);   // deep indigo panel
+  static const Color warmLight = Color(0xFFCBD5E1);
+  static const Color warmGold = Color(0xFFE2E8F0);
+  static const Color warmAmber = Color(0xFF64748B);
 
-  static const Color warmPale   = Color(0xFFEDE9FE);   // pale violet tint
-  static const Color warmCream  = Color(0xFF1C1C38);   // dark card
-  static const Color warmPaper  = Color(0xFF0B0B1A);   // deep surface
-  static const Color warmWhite  = Color(0xFF111127);   // darkest layer token
-  static const Color warmFaint  = Color(0xFF06060F);   // near-black fill
+  static const Color warmPale = Color(0xFFF8FAFC);
+  static const Color warmCream = Color(0xFFF1F5F9);
+  static const Color warmPaper = Color(0xFFF8FAFC);
+  static const Color warmWhite = Color(0xFFFFFFFF);
+  static const Color warmFaint = Color(0xFF64748B);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // HERO SECTION
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── HERO SECTION ────────────────────────────────────────────────────────
 
-  static const Color heroBg1       = Color(0xFF06060F);   // near-black
-  static const Color heroBg2       = Color(0xFF0E0E24);   // indigo-black
+  static const Color heroBg1 = Color(0xFFF8FAFC);
+  static const Color heroBg2 = Color(0xFFF1F5F9);
 
-  /// Violet-indigo halo behind portrait
-  static const Color heroGlowAmber = Color(0xFF4C1D95);
+  /// Grey glow behind portrait
+  static const Color heroGlowAmber = Color(0xFFE2E8F0);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // PROJECT ACCENT PALETTES — unique identity per project
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── PROJECT ACCENT PALETTES (Monochromatic slate/grey/black tones) ───────
 
-  // Kahramaa — teal-cyan industrial palette
-  static const Color kahramaaDark  = Color(0xFF0C1A2E);
-  static const Color kahramaaMid   = Color(0xFF0E7490);
-  static const Color kahramaaLight = Color(0xFF67E8F9);
+  // Kahramaa — Slate Black / Medium Grey
+  static const Color kahramaaDark = Color(0xFF0F172A);
+  static const Color kahramaaMid = Color(0xFF475569);
+  static const Color kahramaaLight = Color(0xFFE2E8F0);
 
-  // Khadoom — violet enterprise palette
-  static const Color khadoomDark   = Color(0xFF1E1B4B);
-  static const Color khadoomMid    = Color(0xFF6D28D9);
-  static const Color khadoomLight  = Color(0xFFC4B5FD);
+  // Khadoom — Dark Grey / Cool Grey
+  static const Color khadoomDark = Color(0xFF1E293B);
+  static const Color khadoomMid = Color(0xFF64748B);
+  static const Color khadoomLight = Color(0xFFCBD5E1);
 
-  // QSW — rose-magenta palette (unique, bold)
-  static const Color qswDark  = Color(0xFF4C0519);
-  static const Color qswMid   = Color(0xFFBE185D);
-  static const Color qswLight = Color(0xFFFDA4AF);
+  // QSW — Slate Grey / Off White
+  static const Color qswDark = Color(0xFF0F172A);
+  static const Color qswMid = Color(0xFF334155);
+  static const Color qswLight = Color(0xFFF8FAFC);
 
-  // Qatar Museums — amber-gold enterprise palette (was green)
-  static const Color museumDark  = Color(0xFF451A03);
-  static const Color museumMid   = Color(0xFFD97706);
-  static const Color museumLight = Color(0xFFFDE68A);
+  // Qatar Museums — Steel Grey
+  static const Color museumDark = Color(0xFF1E293B);
+  static const Color museumMid = Color(0xFF475569);
+  static const Color museumLight = Color(0xFFE2E8F0);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // STATUS / SEMANTIC
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── STATUS / SEMANTIC ───────────────────────────────────────────────────
 
-  static const Color errorRed  = Color(0xFFF87171);
-  static const Color errorDark = Color(0xFFDC2626);
+  static const Color errorRed = Color(0xFF475569);
+  static const Color errorDark = Color(0xFF0F172A);
 
-  static const Color orangeAccent = Color(0xFFF59E0B);   // amber
-  static const Color orangeBright = Color(0xFFFBBF24);   // lighter amber
-  static const Color orangeFlame  = Color(0xFFF97316);   // orange
-  static const Color orangeNeon   = Color(0xFFFED7AA);   // pale orange
+  static const Color orangeAccent = Color(0xFF475569);
+  static const Color orangeBright = Color(0xFF64748B);
+  static const Color orangeFlame = Color(0xFF334155);
+  static const Color orangeNeon = Color(0xFFE2E8F0);
 
-  static const Color emeraldGreen = Color(0xFF8B5CF6);   // remapped → violet
-  static const Color linkBlue     = Color(0xFF38BDF8);   // sky blue link
+  static const Color emeraldGreen = Color(0xFF475569);
+  static const Color linkBlue = Color(0xFF64748B);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // DEPTH SCALE — indigo-black
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── DEPTH SCALE ─────────────────────────────────────────────────────────
 
-  static const Color deepIndigoBlack = Color(0xFF06060F);
-  static const Color deepViolet      = Color(0xFF0B0B1A);
-  static const Color deepPurple      = Color(0xFF10101E);
-  static const Color deepPurpleMid   = Color(0xFF1C1C3A);
-  static const Color deepPurpleCard  = Color(0xFF1A1A38);
-  static const Color deepPurpleMuted = Color(0xFF4B5563);
+  static const Color deepIndigoBlack = Color(0xFF030712);
+  static const Color deepViolet = Color(0xFF0B0F19);
+  static const Color deepPurple = Color(0xFF1E293B);
+  static const Color deepPurpleMid = Color(0xFFE2E8F0);
+  static const Color deepPurpleCard = Color(0xFFFFFFFF);
+  static const Color deepPurpleMuted = Color(0xFF64748B);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // GLASSMORPHISM
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── GLASSMORPHISM ───────────────────────────────────────────────────────
 
-  /// Card glass fill — ultra-thin white
-  static const Color glassWhite  = Color(0x0CFFFFFF);
+  /// Card glass fill — white semi-transparent
+  static const Color glassWhite = Color(0xCCFFFFFF);
 
-  /// Glass border — violet aura at 12% opacity
-  static const Color glassBorder = Color(0x1FA78BFA);
+  /// Glass border — subtle slate tint
+  static const Color glassBorder = Color(0x1A94A3B8);
 
   /// Heavy dark overlay
-  static const Color glassBlack  = Color(0xE006060F);
+  static const Color glassBlack = Color(0xCC030712);
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // SIGNATURE GRADIENTS
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── SIGNATURE GRADIENTS ─────────────────────────────────────────────────
 
-  /// Violet → Indigo — primary CTA, hero name, logo badge
+  /// Dark slate to light grey
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [primaryNeon, secondaryNeon],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  /// Indigo → Cyan — nav active states, section accents
-  static const LinearGradient cyanGradient = LinearGradient(
-    colors: [secondaryNeon, accentNeon],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  /// Violet → Cyan — hero JOEL text, full-sweep prismatic
-  static const LinearGradient neonPinkGradient = LinearGradient(
     colors: [primaryNeon, accentNeon],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  /// Deep navy → violet panel — card backgrounds, section fills
-  static const LinearGradient goldGradient = LinearGradient(
-    colors: [darkCard, deepPurpleMid],
+  /// Medium grey to dark grey
+  static const LinearGradient cyanGradient = LinearGradient(
+    colors: [secondaryNeon, primaryNeon],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  /// Page wash — indigo-black depth ramp
+  /// Light grey to cool grey
+  static const LinearGradient neonPinkGradient = LinearGradient(
+    colors: [accentNeon, secondaryNeon],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Cream → Warm beige — card backgrounds
+  static const LinearGradient goldGradient = LinearGradient(
+    colors: [lightCard, lightSurface],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Page wash — slate ramp
   static const LinearGradient cosmicGradient = LinearGradient(
-    colors: [darkCard, darkSurface, darkCard],
+    colors: [lightBackground, lightSurface, lightBackground],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
 
-  /// Frosted panel glass gradient — top to bottom
+  /// Frosted panel — white glass
   static const LinearGradient glassGradient = LinearGradient(
-    colors: [glassWhite, Color(0x04FFFFFF)],
+    colors: [glassWhite, Color(0xAAFFFFFF)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // EXTENDED GRADIENTS (for hero & section moments)
-  // ───────────────────────────────────────────────────────────────────────────
+  // ─── EXTENDED GRADIENTS ──────────────────────────────────────────────────
 
-  /// Violet → Indigo → Cyan — full spectrum hero sweep
+  /// Sweep from dark slate to light slate grey
   static const LinearGradient prismaticGradient = LinearGradient(
     colors: [primaryNeon, secondaryNeon, accentNeon],
-    stops: [0.0, 0.55, 1.0],
+    stops: [0.0, 0.50, 1.0],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  /// Subtle dark card shimmer — for elevated cards on hover
+  /// Subtle card shimmer
   static const LinearGradient shimmerGradient = LinearGradient(
-    colors: [deepPurple, deepPurpleCard, deepPurpleMid],
+    colors: [lightCard, lightSurface, lightElevated],
     stops: [0.0, 0.5, 1.0],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

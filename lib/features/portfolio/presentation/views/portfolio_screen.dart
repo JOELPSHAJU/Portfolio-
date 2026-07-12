@@ -139,86 +139,94 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                       // makes every scroll feel sluggish.
                       physics: const ClampingScrollPhysics(),
                       child: RepaintBoundary(
-                        child: Column(
-                          children: [
-                            // Home Section
-                            Container(
-                              key: _sectionKeys['home'],
-                              child: FadeInSlide(
-                                direction: -35,
-                                child: HeroSection(
-                                  onExploreWorkPressed: () =>
-                                      _scrollToSection('projects'),
-                                  onContactPressed: () => _scrollToSection('contact'),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 1600),
+                            child: Column(
+                              children: [
+                                // Home Section
+                                Container(
+                                  key: _sectionKeys['home'],
+                                  child: FadeInSlide(
+                                    direction: -35,
+                                    child: HeroSection(
+                                      onExploreWorkPressed: () =>
+                                          _scrollToSection('projects'),
+                                      onContactPressed: () =>
+                                          _scrollToSection('contact'),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
 
-                            // About Section
-                            Container(
-                              key: _sectionKeys['about'],
-                              child: const FadeInSlide(
-                                delay: Duration(milliseconds: 80),
-                                direction: 35,
-                                child: AboutSection(),
-                              ),
-                            ),
-
-                            // Experience Section
-                            Container(
-                              key: _sectionKeys['experience'],
-                              child: FadeInSlide(
-                                delay: const Duration(milliseconds: 100),
-                                direction: -35,
-                                child: ExperienceSection(
-                                  experiences: state.experiences,
+                                // About Section
+                                Container(
+                                  key: _sectionKeys['about'],
+                                  child: const FadeInSlide(
+                                    delay: Duration(milliseconds: 80),
+                                    direction: 35,
+                                    child: AboutSection(),
+                                  ),
                                 ),
-                              ),
-                            ),
 
-                            // Skills Section
-                            Container(
-                              key: _sectionKeys['skills'],
-                              child: FadeInSlide(
-                                delay: const Duration(milliseconds: 100),
-                                direction: 35,
-                                child: SkillsSection(skills: state.skills),
-                              ),
-                            ),
+                                // Experience Section
+                                Container(
+                                  key: _sectionKeys['experience'],
+                                  child: FadeInSlide(
+                                    delay: const Duration(milliseconds: 100),
+                                    direction: -35,
+                                    child: ExperienceSection(
+                                      experiences: state.experiences,
+                                    ),
+                                  ),
+                                ),
 
-                            // Certification Section
-                            const FadeInSlide(
-                              delay: Duration(milliseconds: 100),
-                              direction: -35,
-                              child: CertificationsSection(),
-                            ),
+                                // Skills Section
+                                Container(
+                                  key: _sectionKeys['skills'],
+                                  child: FadeInSlide(
+                                    delay: const Duration(milliseconds: 100),
+                                    direction: 35,
+                                    child: SkillsSection(skills: state.skills),
+                                  ),
+                                ),
 
-                            // Projects Section
-                            Container(
-                              key: _sectionKeys['projects'],
-                              child: FadeInSlide(
-                                delay: const Duration(milliseconds: 100),
-                                direction: 35,
-                                child: ProjectsSection(projects: state.projects),
-                              ),
-                            ),
+                                // Certification Section
+                                const FadeInSlide(
+                                  delay: Duration(milliseconds: 100),
+                                  direction: -35,
+                                  child: CertificationsSection(),
+                                ),
 
-                            // Contact Section
-                            Container(
-                              key: _sectionKeys['contact'],
-                              child: const FadeInSlide(
-                                delay: Duration(milliseconds: 100),
-                                direction: -35,
-                                child: ContactSection(),
-                              ),
-                            ),
+                                // Projects Section
+                                Container(
+                                  key: _sectionKeys['projects'],
+                                  child: FadeInSlide(
+                                    delay: const Duration(milliseconds: 100),
+                                    direction: 35,
+                                    child: ProjectsSection(
+                                      projects: state.projects,
+                                    ),
+                                  ),
+                                ),
 
-                            // Footer
-                            FadeInSlide(
-                              delay: const Duration(milliseconds: 100),
-                              child: _buildFooter(context),
+                                // Contact Section
+                                Container(
+                                  key: _sectionKeys['contact'],
+                                  child: const FadeInSlide(
+                                    delay: Duration(milliseconds: 100),
+                                    direction: -35,
+                                    child: ContactSection(),
+                                  ),
+                                ),
+
+                                // Footer
+                                FadeInSlide(
+                                  delay: const Duration(milliseconds: 100),
+                                  child: _buildFooter(context),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -230,24 +238,31 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                   top: 0,
                   left: 0,
                   right: 0,
-                  child: PortfolioHeader(
-                    activeSection: state.activeSection,
-                    onSectionSelected: _scrollToSection,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1600),
+                      child: PortfolioHeader(
+                        activeSection: state.activeSection,
+                        onSectionSelected: _scrollToSection,
+                      ),
+                    ),
                   ),
                 ),
               ],
             );
           },
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: BrandColors.primaryNeon),
+          loading: () => Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           error: (err, stack) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.error_outline_rounded,
-                  color: BrandColors.accentNeon,
+                  color: Theme.of(context).colorScheme.secondary,
                   size: 48,
                 ),
                 const SizedBox(height: 16),
@@ -264,15 +279,13 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildFooter(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pal = context.palette;
 
-    // Light: pure white bg, near-black title, mid-grey text
-    // Dark: dark grey (not black) bg, silver title, dim grey text
-    final bgColor    = isDark ? const Color(0xFF1C1C1E) : Colors.white;
-    final titleColor = isDark ? const Color(0xFFD1D1D6) : BrandColors.textPrimary;
-    final subColor   = isDark ? const Color(0xFF8E8E93) : BrandColors.warmAccent;
-    final muteColor  = isDark ? const Color(0xFF636366) : BrandColors.textMuted;
-    final logoText   = isDark ? BrandColors.darkBackground : Colors.white;
+    final bgColor = pal.card;
+    final titleColor = pal.textPrimary;
+    final subColor = pal.warmBrown;
+    final muteColor = pal.warmBrown.withOpacity(0.70);
+    final divColor = pal.glassBorder;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 24.0),
@@ -280,32 +293,46 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
       width: double.infinity,
       child: Column(
         children: [
+          Container(
+            height: 1,
+            color: divColor,
+            margin: const EdgeInsets.only(bottom: 28),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   gradient: BrandColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withOpacity(0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                child: Text(
+                child: const Text(
                   'JS',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w900,
                     fontSize: 11,
-                    color: logoText,
+                    color: Colors.white,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
                 'JOEL P SHAJU',
                 style: TextStyle(
                   color: titleColor,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                   fontSize: 13,
-                  letterSpacing: 1.0,
+                  letterSpacing: 1.2,
                 ),
               ),
             ],
@@ -318,7 +345,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            '\u00a9 ${DateTime.now().year} Joel P Shaju. All Rights Reserved.',
+            '© ${DateTime.now().year} Joel P Shaju. All Rights Reserved.',
             style: TextStyle(color: muteColor, fontSize: 10),
           ),
         ],
@@ -337,8 +364,7 @@ class _NoOverscrollBehavior extends ScrollBehavior {
     BuildContext context,
     Widget child,
     ScrollableDetails details,
-  ) =>
-      child; // no glow, no stretch
+  ) => child; // no glow, no stretch
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) =>

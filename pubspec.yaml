@@ -39,6 +39,8 @@ dependencies:
   serverpod_flutter: 3.4.8
   portfolio_client:
     path: ./portfolio/portfolio_client
+  http: ^1.6.0
+  google_fonts: ^8.1.0
 
 dev_dependencies:
   flutter_test:
