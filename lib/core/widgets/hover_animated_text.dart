@@ -117,55 +117,55 @@ class _HoverAnimatedTextState extends State<HoverAnimatedText> with TickerProvid
         animation: _hoverController,
         builder: (context, child) {
           final double hoverVal = _hoverController.value;
-          final double scale = 1.0 + (hoverVal * 0.03); // Premium micro-scale lift
 
-          return Transform.scale(
-            scale: scale,
-            alignment: _getAlignment(widget.textAlign),
-            child: Stack(
-              children: [
-                // Base static text
-                Opacity(
-                  opacity: (1.0 - hoverVal).clamp(0.0, 1.0),
-                  child: Text(
-                    widget.text,
-                    style: widget.style,
-                    textAlign: widget.textAlign,
-                    overflow: widget.overflow,
-                    maxLines: widget.maxLines,
-                  ),
+          return Stack(
+            children: [
+              // Base static text
+              Opacity(
+                opacity: (1.0 - hoverVal).clamp(0.0, 1.0),
+                child: Text(
+                  widget.text,
+                  style: widget.style,
+                  textAlign: widget.textAlign,
+                  overflow: widget.overflow,
+                  maxLines: widget.maxLines,
                 ),
-                // Glowing interactive shallow water layer
-                if (hoverVal > 0.0)
-                  Positioned.fill(
-                    child: Opacity(
-                      opacity: hoverVal,
-                      child: CustomPaint(
-                        painter: _WaterTextPainter(
-                          text: widget.text,
-                          style: widget.style,
-                          textAlign: widget.textAlign,
-                          overflow: widget.overflow,
-                          maxLines: widget.maxLines,
-                          heights: _heights,
-                          velocities: _velocities,
-                          bubbles: _bubbles,
-                          hoverProgress: hoverVal,
-                          mousePos: _mousePos,
-                          prevMousePos: _prevMousePos,
-                          isHovered: _isHovered,
-                          justEntered: _justEntered,
-                          time: _time,
-                          waterColor: widget.liquidColor,
-                          onHandledEntry: () {
-                            _justEntered = false;
-                          },
-                        ),
-                      ),
+              ),
+              // Glowing interactive shallow water layer
+              if (hoverVal > 0.0)
+                Opacity(
+                  opacity: hoverVal,
+                  child: CustomPaint(
+                    painter: _WaterTextPainter(
+                      text: widget.text,
+                      style: widget.style,
+                      textAlign: widget.textAlign,
+                      overflow: widget.overflow,
+                      maxLines: widget.maxLines,
+                      heights: _heights,
+                      velocities: _velocities,
+                      bubbles: _bubbles,
+                      hoverProgress: hoverVal,
+                      mousePos: _mousePos,
+                      prevMousePos: _prevMousePos,
+                      isHovered: _isHovered,
+                      justEntered: _justEntered,
+                      time: _time,
+                      waterColor: widget.liquidColor,
+                      onHandledEntry: () {
+                        _justEntered = false;
+                      },
+                    ),
+                    child: Text(
+                      widget.text,
+                      style: widget.style.copyWith(color: Colors.transparent),
+                      textAlign: widget.textAlign,
+                      overflow: widget.overflow,
+                      maxLines: widget.maxLines,
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           );
         },
       ),
