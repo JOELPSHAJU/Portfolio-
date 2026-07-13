@@ -571,7 +571,7 @@ class _ContactImageHoverState extends State<_ContactImageHover> {
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       child: Container(
-        height: 220,
+        height: 250,
         width: double.infinity,
         decoration: BoxDecoration(
           border: Border.all(
@@ -583,32 +583,12 @@ class _ContactImageHoverState extends State<_ContactImageHover> {
             Positioned.fill(
               child: AnimatedScale(
                 duration: const Duration(milliseconds: 400),
-                scale: _hovered ? 1.05 : 1.0,
+                scale: 1.1,
                 curve: Curves.easeOutCubic,
                 child: Image.asset(
-                  'assets/joel_bw.jpg',
+                  'assets/joel_smiling.jpg',
                   fit: BoxFit.cover,
                   alignment: const Alignment(0, -0.2),
-                ),
-              ),
-            ),
-            // Interactive dark/brand color gradient sweep
-            Positioned.fill(
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      BrandColors.warmBrown.withValues(
-                        alpha: _hovered ? 0.2 : 0.0,
-                      ),
-                      context.palette.surface.withValues(
-                        alpha: _hovered ? 0.8 : 0.4,
-                      ),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
                 ),
               ),
             ),

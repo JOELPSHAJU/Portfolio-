@@ -1,5 +1,7 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
@@ -128,7 +130,7 @@ class _HeroSectionState extends State<HeroSection> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'SYSTEMS ARCHITECT & FLUTTER SPECIALIST',
+                                'FLUTTER SPECIALIST & MOBILE SOLUTION ARCHITECT',
                                 style: GoogleFonts.spaceMono(
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.bold,
@@ -182,65 +184,18 @@ class _HeroSectionState extends State<HeroSection> {
                         const SizedBox(height: 36),
                         Row(
                           children: [
-                            OutlinedButton(
+                            _GradientHoverButton(
+                              text: 'Explore Work',
                               onPressed: widget.onExploreWorkPressed,
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: pal.textPrimary,
-                                side: BorderSide(
-                                  color: pal.textPrimary.withOpacity(0.35),
-                                  width: 1.5,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 28,
-                                  vertical: 18,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Explore Work',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Icon(
-                                    Icons.arrow_forward_rounded,
-                                    size: 16,
-                                  ),
-                                ],
-                              ),
+                              isDark: isDark,
+                              pal: pal,
                             ),
                             const SizedBox(width: 16),
-                            TextButton(
+                            _GradientHoverTextButton(
+                              text: "Let's Connect",
                               onPressed: widget.onContactPressed,
-                              style: TextButton.styleFrom(
-                                foregroundColor: pal.textPrimary.withOpacity(
-                                  0.8,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 18,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Let\'s Connect',
-                                    style: GoogleFonts.outfit(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              isDark: isDark,
+                              pal: pal,
                             ),
                           ],
                         ),
@@ -309,180 +264,229 @@ class _HeroSectionState extends State<HeroSection> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          // 1. Background Image
+          // 1. Interactive Star/Constellation Network (Fluid, interactive, image-less)
+          Positioned.fill(child: InteractiveParticleCanvas(isDark: isDark)),
+
+          // 2. Vector Tech Grid Blueprint Background Overlay
           Positioned.fill(
-            child: Opacity(
-              opacity: isDark ? 1.0 : 0.15,
-              child: Image.asset(
-                'assets/joel_coding.jpg',
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                color: isDark ? null : Colors.black,
-                colorBlendMode: isDark ? null : BlendMode.saturation,
+            child: CustomPaint(
+              painter: _GridPainter(
+                color: isDark ? const Color(0xFF00E5FF) : Colors.black,
               ),
             ),
           ),
 
-          // 2. High-end Scrim Overlay
+          // 3. Content layout
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: isDark
-                      ? [
-                          bgColor.withOpacity(0.65),
-                          bgColor.withOpacity(0.85),
-                          bgColor,
-                        ]
-                      : [
-                          bgColor.withOpacity(0.0),
-                          bgColor.withOpacity(0.60),
-                          bgColor,
-                        ],
-                  stops: const [0.0, 0.60, 1.0],
-                ),
-              ),
-            ),
-          ),
-
-          // 4. Content column
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Monospace Tag
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.06)
-                          : Colors.black.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.12)
-                            : Colors.black.withOpacity(0.1),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 5,
-                          height: 5,
-                          decoration: const BoxDecoration(
-                            color: Colors.greenAccent,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'SYSTEMS ARCHITECT & DEV',
-                          style: GoogleFonts.spaceMono(
-                            fontSize: 8.5,
-                            fontWeight: FontWeight.bold,
-                            color: pal.textPrimary.withOpacity(0.85),
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
+            child: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 24,
                   ),
-                  const SizedBox(height: 18),
-                  HoverAnimatedText(
-                    text: 'JOEL P SHAJU',
-                    style: GoogleFonts.outfit(
-                      textStyle: TextStyle(
-                        fontSize: 44,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.0,
-                        color: pal.textPrimary,
-                        height: 1.1,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Building world-class production mobile apps.',
-                    style: GoogleFonts.outfit(
-                      textStyle: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: pal.textPrimary.withOpacity(0.85),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Focused on Clean Architecture, Riverpod state models, and high-fidelity interaction design.',
-                    style: GoogleFonts.outfit(
-                      textStyle: TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w400,
-                        color: pal.textPrimary.withOpacity(0.65),
-                        height: 1.45,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      OutlinedButton(
-                        onPressed: widget.onExploreWorkPressed,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: pal.textPrimary,
-                          side: BorderSide(
-                            color: pal.textPrimary.withOpacity(0.35),
-                            width: 1.5,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                      // Substantial Top spacing as requested
+                      const SizedBox(height: 80),
+
+                      // Floating Glass Capsule
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 28,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.black.withOpacity(0.25)
+                              : Colors.white.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.08)
+                                : Colors.black.withOpacity(0.06),
+                            width: 1.0,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(
+                                isDark ? 0.15 : 0.03,
+                              ),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Column(
                           children: [
-                            Text(
-                              'Explore Work',
-                              style: GoogleFonts.outfit(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.bold,
+                            // Neon Badge Tag
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: const Color(
+                                  0xFF00E5FF,
+                                ).withOpacity(0.08),
+                              ),
+                              child: Text(
+                                'SYSTEMS ARCHITECT // DEV',
+                                style: GoogleFonts.spaceMono(
+                                  fontSize: 8.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF00E5FF),
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.arrow_forward_rounded, size: 14),
+                            const SizedBox(height: 20),
+
+                            // Name Title (interactive water text fill)
+                            Center(
+                              child: HoverAnimatedText(
+                                text: 'JOEL P SHAJU',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.outfit(
+                                  textStyle: TextStyle(
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -1.0,
+                                    color: pal.textPrimary,
+                                    height: 1.1,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+
+                            // Tagline
+                            Text(
+                              'Building world-class production mobile apps.',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(
+                                textStyle: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                  color: pal.textPrimary.withOpacity(0.9),
+                                  letterSpacing: -0.2,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+
+                            // Detailed Bio Copy
+                            Text(
+                              'Focused on Clean Architecture, Riverpod state models, and high-fidelity interaction design to deliver scalable enterprise systems.',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(
+                                textStyle: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: pal.textPrimary.withOpacity(0.65),
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      TextButton(
-                        onPressed: widget.onContactPressed,
-                        style: TextButton.styleFrom(
-                          foregroundColor: pal.textPrimary.withOpacity(0.8),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        child: Text(
-                          'Let\'s Connect',
-                          style: GoogleFonts.outfit(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
+                      const SizedBox(height: 24),
+
+                      // Clean Mini Stats Cards row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildMiniStat('4+', 'Yrs Exp', isDark, pal),
+                          const SizedBox(width: 8),
+                          _buildMiniStat('20+', 'Projects', isDark, pal),
+                          const SizedBox(width: 8),
+                          _buildMiniStat('99%', 'Quality', isDark, pal),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Action button row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Primary Pill button
+                          GestureDetector(
+                            onTap: widget.onExploreWorkPressed,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 14,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF00E5FF),
+                                    Color(0xFF007AFF),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFF00E5FF,
+                                    ).withOpacity(0.35),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Explore Work',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Icon(
+                                    Icons.arrow_forward_rounded,
+                                    size: 14,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 12),
+                          // Secondary Text Link
+                          TextButton(
+                            onPressed: widget.onContactPressed,
+                            style: TextButton.styleFrom(
+                              foregroundColor: pal.textPrimary,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                            ),
+                            child: Text(
+                              'Let\'s Connect',
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
@@ -516,6 +520,216 @@ class _HeroSectionState extends State<HeroSection> {
       ),
     );
   }
+
+  Widget _buildMiniStat(String value, String label, bool isDark, dynamic pal) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.04)
+            : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.06),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            value,
+            style: GoogleFonts.outfit(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF00E5FF),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: GoogleFonts.spaceMono(
+              fontSize: 8.5,
+              fontWeight: FontWeight.w600,
+              color: pal.textPrimary.withOpacity(0.55),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class InteractiveParticleCanvas extends StatefulWidget {
+  final bool isDark;
+  const InteractiveParticleCanvas({super.key, required this.isDark});
+
+  @override
+  State<InteractiveParticleCanvas> createState() =>
+      _InteractiveParticleCanvasState();
+}
+
+class _InteractiveParticleCanvasState extends State<InteractiveParticleCanvas>
+    with SingleTickerProviderStateMixin {
+  late Ticker _ticker;
+  final List<_Particle> _particles = [];
+  final math.Random _random = math.Random();
+  Offset? _touchPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < 30; i++) {
+      _particles.add(
+        _Particle(
+          x: _random.nextDouble(),
+          y: _random.nextDouble(),
+          vx: (_random.nextDouble() - 0.5) * 0.0025,
+          vy: (_random.nextDouble() - 0.5) * 0.0025,
+          radius: _random.nextDouble() * 2.0 + 1.5,
+        ),
+      );
+    }
+
+    _ticker = createTicker((elapsed) {
+      setState(() {
+        for (var p in _particles) {
+          p.update();
+        }
+      });
+    });
+    _ticker.start();
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (e) => setState(() => _touchPosition = e.localPosition),
+      onPointerMove: (e) => setState(() => _touchPosition = e.localPosition),
+      onPointerUp: (e) => setState(() => _touchPosition = null),
+      onPointerCancel: (e) => setState(() => _touchPosition = null),
+      child: CustomPaint(
+        painter: _ParticlePainter(
+          particles: _particles,
+          touchPosition: _touchPosition,
+          isDark: widget.isDark,
+        ),
+      ),
+    );
+  }
+}
+
+class _Particle {
+  double x;
+  double y;
+  double vx;
+  double vy;
+  double radius;
+
+  _Particle({
+    required this.x,
+    required this.y,
+    required this.vx,
+    required this.vy,
+    required this.radius,
+  });
+
+  void update() {
+    x += vx;
+    y += vy;
+
+    if (x < 0 || x > 1) vx = -vx;
+    if (y < 0 || y > 1) vy = -vy;
+
+    x = x.clamp(0.0, 1.0);
+    y = y.clamp(0.0, 1.0);
+  }
+}
+
+class _ParticlePainter extends CustomPainter {
+  final List<_Particle> particles;
+  final Offset? touchPosition;
+  final bool isDark;
+
+  _ParticlePainter({
+    required this.particles,
+    required this.touchPosition,
+    required this.isDark,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final dotPaint = Paint()
+      ..color = isDark
+          ? const Color(0xFF00E5FF).withOpacity(0.5)
+          : Colors.black.withOpacity(0.2)
+      ..style = PaintingStyle.fill;
+
+    final linePaint = Paint()
+      ..color = isDark
+          ? const Color(0xFF00E5FF).withOpacity(0.08)
+          : Colors.black.withOpacity(0.03)
+      ..strokeWidth = 0.8;
+
+    final offsets = particles
+        .map((p) => Offset(p.x * size.width, p.y * size.height))
+        .toList();
+
+    for (int i = 0; i < offsets.length; i++) {
+      for (int j = i + 1; j < offsets.length; j++) {
+        final dist = (offsets[i] - offsets[j]).distance;
+        if (dist < 100) {
+          canvas.drawLine(offsets[i], offsets[j], linePaint);
+        }
+      }
+    }
+
+    for (int i = 0; i < offsets.length; i++) {
+      canvas.drawCircle(offsets[i], particles[i].radius, dotPaint);
+    }
+
+    if (touchPosition != null && isDark) {
+      final ringPaint = Paint()
+        ..color = const Color(0xFF00E5FF).withOpacity(0.15)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
+      canvas.drawCircle(touchPosition!, 30, ringPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ParticlePainter oldDelegate) => true;
+}
+
+class _GridPainter extends CustomPainter {
+  final Color color;
+  const _GridPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withOpacity(0.04)
+      ..strokeWidth = 0.5;
+
+    const double step = 25.0; // grid size
+    for (double x = 0; x < size.width; x += step) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y < size.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _GridPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 // ─── Infinite Name Ticker Widget ──────────────────────────────────────────────
@@ -703,15 +917,199 @@ class _DeveloperDashboardCard extends StatelessWidget {
               color: isDark ? Colors.white60 : Colors.black54,
             ),
           ),
-          Text(
-            value,
-            style: GoogleFonts.spaceMono(
-              fontSize: 11.5,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : Colors.black87,
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: GoogleFonts.spaceMono(
+                fontSize: 11.5,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GradientHoverButton extends StatefulWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final bool isDark;
+  final AppPalette pal;
+
+  const _GradientHoverButton({
+    required this.text,
+    required this.onPressed,
+    required this.isDark,
+    required this.pal,
+  });
+
+  @override
+  State<_GradientHoverButton> createState() => _GradientHoverButtonState();
+}
+
+class _GradientHoverButtonState extends State<_GradientHoverButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDark;
+    final pal = widget.pal;
+
+    final gradientColors = isDark
+        ? [const Color(0xFF00E5FF), const Color(0xFF007AFF)]
+        : [const Color(0xFF0F172A), const Color(0xFF334155)];
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _isHovered
+                  ? Colors.transparent
+                  : pal.textPrimary.withValues(alpha: 0.35),
+              width: 1.5,
+            ),
+            boxShadow: _isHovered
+                ? [
+                    BoxShadow(
+                      color: (isDark ? const Color(0xFF00E5FF) : Colors.black)
+                          .withValues(alpha: 0.25),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.5),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Hover Gradient (smooth opacity animation)
+                Positioned.fill(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOutCubic,
+                    opacity: _isHovered ? 1.0 : 0.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: gradientColors,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Label Content Row
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 16,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.text,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _isHovered ? Colors.white : pal.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 16,
+                        color: _isHovered ? Colors.white : pal.textPrimary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GradientHoverTextButton extends StatefulWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final bool isDark;
+  final AppPalette pal;
+
+  const _GradientHoverTextButton({
+    required this.text,
+    required this.onPressed,
+    required this.isDark,
+    required this.pal,
+  });
+
+  @override
+  State<_GradientHoverTextButton> createState() => _GradientHoverTextButtonState();
+}
+
+class _GradientHoverTextButtonState extends State<_GradientHoverTextButton> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final pal = widget.pal;
+    final isDark = widget.isDark;
+
+    Widget textWidget = Text(
+      widget.text,
+      style: GoogleFonts.outfit(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        decoration: TextDecoration.underline,
+        color: _isHovered
+            ? (isDark ? Colors.white : pal.textPrimary)
+            : pal.textPrimary.withValues(alpha: 0.8),
+      ),
+    );
+
+    if (_isHovered && isDark) {
+      textWidget = ShaderMask(
+        shaderCallback: (bounds) {
+          return const LinearGradient(
+            colors: [Color(0xFF00E5FF), Color(0xFF007AFF)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+        },
+        child: textWidget,
+      );
+    }
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: textWidget,
+        ),
       ),
     );
   }

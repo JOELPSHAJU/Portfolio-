@@ -3,6 +3,7 @@ import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
 import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
+import 'package:clean_riverpod_template/core/widgets/adaptive_logo.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Cyber-Brutalist About Section ──────────────────────────────────────────────
@@ -176,7 +177,7 @@ class _AboutSectionState extends State<AboutSection> {
           ),
           const SizedBox(height: 32),
           Text(
-            'Joel P Shaju combines abstract design aesthetics with strict coding logic to build high-performance mobile and web ecosystems.\n\nWith experience developing enterprise-grade software like Kahramaa (Qatar Water & Electricity Corp) and Khadoom (ESS Portal), he specializes in clean architectural paradigms, secure state workflows, and modular repositories.\n\nEvery component is planned meticulously to enforce clean concern separation, optimize render cycle metrics, and provide interactive delightful micro-animations that engage the user.',
+            'Joel P Shaju bridges the gap between abstract design aesthetics and rigorous engineering logic to architect high-performance digital ecosystems.\n\nWith a track record of delivering enterprise-grade solutions—including systems for Kahramaa and Khadoom—I specialize in clean architectural paradigms, secure state workflows, and modular repositories.\n\nEvery component I build is engineered to enforce a strict separation of concerns, optimize performance metrics, and deliver delightful, interactive user experiences.',
             style: GoogleFonts.outfit(
               fontSize: 16,
               height: 1.8,
@@ -186,13 +187,9 @@ class _AboutSectionState extends State<AboutSection> {
           ),
           const SizedBox(height: 32),
           // Signature Logo
-          Align(
+          const Align(
             alignment: Alignment.centerRight,
-            child: Image.asset(
-              'assets/logo_transparent.png',
-              height: 120,
-              errorBuilder: (context, error, stackTrace) => const SizedBox(),
-            ),
+            child: AdaptiveLogo(height: 120, floatingInDarkMode: true),
           ),
           const SizedBox(height: 32),
           // Raw Metrics

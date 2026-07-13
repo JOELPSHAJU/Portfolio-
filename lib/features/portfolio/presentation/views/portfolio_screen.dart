@@ -12,8 +12,8 @@ import 'widgets/glow_background.dart';
 import 'widgets/mobile_drawer.dart';
 import 'widgets/navigation_bar.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/widgets/adaptive_logo.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 
 class PortfolioScreen extends ConsumerStatefulWidget {
   const PortfolioScreen({super.key});
@@ -284,7 +284,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     final bgColor = pal.card;
     final titleColor = pal.textPrimary;
     final subColor = pal.warmBrown;
-    final muteColor = pal.warmBrown.withOpacity(0.70);
+    final muteColor = pal.warmBrown.withValues(alpha: 0.70);
     final divColor = pal.glassBorder;
 
     return Container(
@@ -301,30 +301,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(7),
-                decoration: BoxDecoration(
-                  gradient: BrandColors.primaryGradient,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withOpacity(0.25),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Text(
-                  'JS',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 11,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              const AdaptiveLogo(height: 28, floatingInDarkMode: true),
               const SizedBox(width: 10),
               Text(
                 'JOEL P SHAJU',

@@ -17,7 +17,7 @@ class ThemeModeNotifier extends StateNotifier<ThemeMode> {
 
   ThemeModeNotifier(this._prefs)
       : super(
-          _prefs.getString(_key) == 'dark' ? ThemeMode.dark : ThemeMode.light,
+          _prefs.getString(_key) == 'light' ? ThemeMode.light : ThemeMode.dark,
         );
 
   void toggleTheme() {

@@ -538,144 +538,149 @@ class _MinimalLightboxState extends State<_MinimalLightbox> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            children: [
-              // Top control bar
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Column(
                 children: [
-                  // Tabs for Web vs Mobile
-                  Expanded(
-                    child: Wrap(
-                      spacing: 16,
-                      runSpacing: 12,
-                      children: [
-                        if (hasWeb)
-                          _TabBtn(
-                            label: 'WEB PREVIEW',
-                            isActive: _activeTabIdx == 0,
-                            onTap: () => setState(() => _activeTabIdx = 0),
-                          ),
-                        if (hasMobile)
-                          _TabBtn(
-                            label: 'MOBILE PREVIEW',
-                            isActive: hasWeb
-                                ? _activeTabIdx == 1
-                                : _activeTabIdx == 0,
-                            onTap: () =>
-                                setState(() => _activeTabIdx = hasWeb ? 1 : 0),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Close button
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        '✕ CLOSE',
-                        style: GoogleFonts.spaceMono(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  // Top control bar
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Tabs for Web vs Mobile
+                      Expanded(
+                        child: Wrap(
+                          spacing: 16,
+                          runSpacing: 12,
+                          children: [
+                            if (hasWeb)
+                              _TabBtn(
+                                label: 'WEB PREVIEW',
+                                isActive: _activeTabIdx == 0,
+                                onTap: () => setState(() => _activeTabIdx = 0),
+                              ),
+                            if (hasMobile)
+                              _TabBtn(
+                                label: 'MOBILE PREVIEW',
+                                isActive: hasWeb
+                                    ? _activeTabIdx == 1
+                                    : _activeTabIdx == 0,
+                                onTap: () =>
+                                    setState(() => _activeTabIdx = hasWeb ? 1 : 0),
+                              ),
+                          ],
                         ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Close button
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '✕ CLOSE',
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Image display viewport with futuristic switcher
+                  Expanded(
+                    child: Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 600),
+                        switchInCurve: Curves.easeOutQuart,
+                        switchOutCurve: Curves.easeInQuart,
+                        layoutBuilder:
+                            (Widget? currentChild, List<Widget> previousChildren) {
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: <Widget>[
+                                  ...previousChildren,
+                                  if (currentChild != null) currentChild,
+                                ],
+                              );
+                            },
+                        transitionBuilder: (child, animation) {
+                          final isEntering =
+                              child.key == ValueKey('active_tab_$_activeTabIdx');
+
+                          return AnimatedBuilder(
+                            animation: animation,
+                            child: child,
+                            builder: (context, child) {
+                              final progress = animation.value;
+
+                              // entering: scales from 0.82 up to 1.0, tilts back and tilts forward
+                              // exiting: scales down from 1.0 to 0.82, tilts back
+                              final scale = isEntering
+                                  ? 0.82 + (0.18 * progress)
+                                  : 1.0 - (0.18 * (1.0 - progress));
+
+                              final tilt = isEntering
+                                  ? -0.15 * (1.0 - progress)
+                                  : -0.15 * (1.0 - progress);
+
+                              final opacity = progress.clamp(0.0, 1.0);
+
+                              return Transform(
+                                transform: Matrix4.identity()
+                                  ..setEntry(3, 2, 0.001) // perspective
+                                  ..rotateX(tilt)
+                                  ..multiply(
+                                    Matrix4.diagonal3Values(scale, scale, 1.0),
+                                  ),
+                                alignment: Alignment.center,
+                                child: Opacity(opacity: opacity, child: child),
+                              );
+                            },
+                          );
+                        },
+                        child: activeScreens.isEmpty
+                            ? const Text(
+                                'No screen available for this format.',
+                                key: ValueKey('empty'),
+                                style: TextStyle(color: Colors.white60),
+                              )
+                            : PageView.builder(
+                                key: ValueKey('active_tab_$_activeTabIdx'),
+                                itemCount: activeScreens.length,
+                                itemBuilder: (context, idx) {
+                                  return InteractiveViewer(
+                                    maxScale: 3.0,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.asset(
+                                        activeScreens[idx]['asset']!,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
-
-              // Image display viewport with futuristic switcher
-              Expanded(
-                child: Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 600),
-                    switchInCurve: Curves.easeOutQuart,
-                    switchOutCurve: Curves.easeInQuart,
-                    layoutBuilder:
-                        (Widget? currentChild, List<Widget> previousChildren) {
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              ...previousChildren,
-                              if (currentChild != null) currentChild,
-                            ],
-                          );
-                        },
-                    transitionBuilder: (child, animation) {
-                      final isEntering =
-                          child.key == ValueKey('active_tab_$_activeTabIdx');
-
-                      return AnimatedBuilder(
-                        animation: animation,
-                        child: child,
-                        builder: (context, child) {
-                          final progress = animation.value;
-
-                          // entering: scales from 0.82 up to 1.0, tilts back and tilts forward
-                          // exiting: scales down from 1.0 to 0.82, tilts back
-                          final scale = isEntering
-                              ? 0.82 + (0.18 * progress)
-                              : 1.0 - (0.18 * (1.0 - progress));
-
-                          final tilt = isEntering
-                              ? -0.15 * (1.0 - progress)
-                              : -0.15 * (1.0 - progress);
-
-                          final opacity = progress.clamp(0.0, 1.0);
-
-                          return Transform(
-                            transform: Matrix4.identity()
-                              ..setEntry(3, 2, 0.001) // perspective
-                              ..rotateX(tilt)
-                              ..multiply(
-                                Matrix4.diagonal3Values(scale, scale, 1.0),
-                              ),
-                            alignment: Alignment.center,
-                            child: Opacity(opacity: opacity, child: child),
-                          );
-                        },
-                      );
-                    },
-                    child: activeScreens.isEmpty
-                        ? const Text(
-                            'No screen available for this format.',
-                            key: ValueKey('empty'),
-                            style: TextStyle(color: Colors.white60),
-                          )
-                        : PageView.builder(
-                            key: ValueKey('active_tab_$_activeTabIdx'),
-                            itemCount: activeScreens.length,
-                            itemBuilder: (context, idx) {
-                              return InteractiveViewer(
-                                maxScale: 3.0,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.asset(
-                                    activeScreens[idx]['asset']!,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

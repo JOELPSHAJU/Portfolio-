@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/theme/theme_controller.dart';
+import 'package:clean_riverpod_template/core/widgets/adaptive_logo.dart';
 
 class MobileDrawer extends ConsumerWidget {
   final String activeSection;
@@ -20,8 +20,8 @@ class MobileDrawer extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final themeMode = ref.watch(themeModeProvider);
 
-    final drawerBg  = pal.card;
-    final divColor  = pal.glassBorder;
+    final drawerBg = pal.card;
+    final divColor = pal.glassBorder;
 
     final primaryColor = Theme.of(context).colorScheme.primary;
 
@@ -41,11 +41,7 @@ class MobileDrawer extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Image.asset(
-                  'assets/logo.png',
-                  height: 36,
-                  fit: BoxFit.contain,
-                ),
+                const AdaptiveLogo(height: 36, floatingInDarkMode: true),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -73,7 +69,11 @@ class MobileDrawer extends ConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close_rounded, color: pal.warmBrown, size: 20),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: pal.warmBrown,
+                    size: 20,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -85,12 +85,54 @@ class MobileDrawer extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               children: [
-                _item(context, 'Home',       Icons.home_outlined,          'home',       pal, isDark),
-                _item(context, 'About',      Icons.person_outline_rounded, 'about',      pal, isDark),
-                _item(context, 'Experience', Icons.work_outline_rounded,   'experience', pal, isDark),
-                _item(context, 'Skills',     Icons.psychology_outlined,    'skills',     pal, isDark),
-                _item(context, 'Projects',   Icons.code_rounded,           'projects',   pal, isDark),
-                _item(context, 'Contact',    Icons.mail_outline_rounded,   'contact',    pal, isDark),
+                _item(
+                  context,
+                  'Home',
+                  Icons.home_outlined,
+                  'home',
+                  pal,
+                  isDark,
+                ),
+                _item(
+                  context,
+                  'About',
+                  Icons.person_outline_rounded,
+                  'about',
+                  pal,
+                  isDark,
+                ),
+                _item(
+                  context,
+                  'Experience',
+                  Icons.work_outline_rounded,
+                  'experience',
+                  pal,
+                  isDark,
+                ),
+                _item(
+                  context,
+                  'Skills',
+                  Icons.psychology_outlined,
+                  'skills',
+                  pal,
+                  isDark,
+                ),
+                _item(
+                  context,
+                  'Projects',
+                  Icons.code_rounded,
+                  'projects',
+                  pal,
+                  isDark,
+                ),
+                _item(
+                  context,
+                  'Contact',
+                  Icons.mail_outline_rounded,
+                  'contact',
+                  pal,
+                  isDark,
+                ),
               ],
             ),
           ),
@@ -105,9 +147,13 @@ class MobileDrawer extends ConsumerWidget {
 
                 // Theme toggle
                 GestureDetector(
-                  onTap: () => ref.read(themeModeProvider.notifier).toggleTheme(),
+                  onTap: () =>
+                      ref.read(themeModeProvider.notifier).toggleTheme(),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: primaryColor.withOpacity(0.07),
                       borderRadius: BorderRadius.circular(12),
@@ -194,9 +240,9 @@ class MobileDrawer extends ConsumerWidget {
   ) {
     final primaryColor = Theme.of(context).colorScheme.primary;
     final isActive = activeSection == sectionId;
-    final activeBg     = primaryColor.withOpacity(0.10);
-    final activeText   = primaryColor;
-    final inactiveBg   = Colors.transparent;
+    final activeBg = primaryColor.withOpacity(0.10);
+    final activeText = primaryColor;
+    final inactiveBg = Colors.transparent;
     final inactiveText = pal.textPrimary;
 
     return Container(
