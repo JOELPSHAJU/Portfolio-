@@ -4,6 +4,7 @@ import '../../../domain/entities/project.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProjectsSection extends StatefulWidget {
@@ -196,8 +197,8 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                'ARCHITECTING ENTERPRISE SCALE\nDIGITAL REALITIES.',
+              HoverAnimatedText(
+                text: 'ARCHITECTING ENTERPRISE SCALE\nDIGITAL REALITIES.',
                 style: GoogleFonts.anton(
                   fontSize: 48,
                   height: 1.1,
@@ -336,8 +337,8 @@ class _ProjectManifestoCardState extends State<_ProjectManifestoCard> {
               const SizedBox(height: 20),
 
               // Massive Title
-              Text(
-                p.title.toUpperCase(),
+              HoverAnimatedText(
+                text: p.title.toUpperCase(),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.anton(

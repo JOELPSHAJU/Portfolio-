@@ -3,6 +3,7 @@ import '../../../domain/entities/skill.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Technical Specs ────────────────────────────────────────────────────────
@@ -232,8 +233,8 @@ class _SkillsSectionState extends State<SkillsSection> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                'ECOSYSTEM\nSPECIFICATIONS.',
+              HoverAnimatedText(
+                text: 'ECOSYSTEM\nSPECIFICATIONS.',
                 style: GoogleFonts.anton(
                   fontSize: 48,
                   height: 1.1,
@@ -414,8 +415,8 @@ class _SkillsSectionState extends State<SkillsSection> {
                   color: pal.textPrimary.withValues(alpha: 0.8),
                   size: 20,
                 ),
-                title: Text(
-                  cat.name.toUpperCase(),
+                title: HoverAnimatedText(
+                  text: cat.name.toUpperCase(),
                   style: GoogleFonts.anton(
                     fontSize: 20,
                     color: pal.textPrimary,
@@ -449,8 +450,8 @@ class _SkillsSectionState extends State<SkillsSection> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        s.name.toUpperCase(),
+                                      HoverAnimatedText(
+                                        text: s.name.toUpperCase(),
                                         style: GoogleFonts.outfit(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w800,
@@ -624,8 +625,8 @@ class _SkillManifestoCardState extends State<_SkillManifestoCard> {
               ],
             ),
             const SizedBox(height: 16),
-            Text(
-              widget.skill.name.toUpperCase(),
+            HoverAnimatedText(
+              text: widget.skill.name.toUpperCase(),
               style: GoogleFonts.anton(
                 fontSize: 24,
                 height: 1.1,

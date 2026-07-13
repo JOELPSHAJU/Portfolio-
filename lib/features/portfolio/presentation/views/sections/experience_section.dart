@@ -4,6 +4,7 @@ import '../../../domain/entities/experience.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
 
 class ExperienceSection extends StatelessWidget {
   final List<Experience> experiences;
@@ -118,8 +119,8 @@ class ExperienceSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                'BUILDING ENTERPRISE\nDIGITAL ECOSYSTEMS.',
+              HoverAnimatedText(
+                text: 'BUILDING ENTERPRISE\nDIGITAL ECOSYSTEMS.',
                 style: GoogleFonts.anton(
                   fontSize: 48,
                   height: 1.1,
@@ -241,8 +242,8 @@ class _ExperienceEditorialCardState extends State<_ExperienceEditorialCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        widget.exp.role.toUpperCase(),
+                      HoverAnimatedText(
+                        text: widget.exp.role.toUpperCase(),
                         style: GoogleFonts.anton(
                           fontSize: widget.isDesktop ? 36 : 28,
                           height: 1.1,

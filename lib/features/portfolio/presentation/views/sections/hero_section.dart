@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
+import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Hero Section ────────────────────────────────────────────────────────────
@@ -139,8 +140,8 @@ class _HeroSectionState extends State<HeroSection> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Text(
-                          'JOEL P SHAJU',
+                        HoverAnimatedText(
+                          text: 'JOEL P SHAJU',
                           style: GoogleFonts.outfit(
                             textStyle: TextStyle(
                               fontSize: (size.width * 0.055).clamp(52.0, 96.0),
@@ -396,8 +397,8 @@ class _HeroSectionState extends State<HeroSection> {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  Text(
-                    'JOEL P SHAJU',
+                  HoverAnimatedText(
+                    text: 'JOEL P SHAJU',
                     style: GoogleFonts.outfit(
                       textStyle: TextStyle(
                         fontSize: 44,

@@ -6,6 +6,7 @@ import '../../controllers/portfolio_controller.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
 
 class ContactSection extends ConsumerStatefulWidget {
   const ContactSection({super.key});
@@ -169,8 +170,8 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                'CONTACT ME.\nLET\'S BUILD THE FUTURE.',
+              HoverAnimatedText(
+                text: 'CONTACT ME.\nLET\'S BUILD THE FUTURE.',
                 style: GoogleFonts.anton(
                   fontSize: 48,
                   height: 1.1,
@@ -529,8 +530,8 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Text(
-                    value,
+                  HoverAnimatedText(
+                    text: value,
                     style: GoogleFonts.anton(
                       fontSize: 24,
                       color: pal.textPrimary,

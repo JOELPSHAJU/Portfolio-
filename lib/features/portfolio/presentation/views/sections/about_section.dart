@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:clean_riverpod_template/core/theme/app_colors.dart';
 import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
 import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
+import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Cyber-Brutalist About Section ──────────────────────────────────────────────
@@ -124,8 +125,8 @@ class _AboutSectionState extends State<AboutSection> {
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                'NOT JUST WRITING CODE.\nARCHITECTING DIGITAL REALITIES.',
+              HoverAnimatedText(
+                text: 'NOT JUST WRITING CODE.\nARCHITECTING DIGITAL REALITIES.',
                 style: GoogleFonts.anton(
                   fontSize: 48,
                   height: 1.1,
@@ -404,8 +405,8 @@ class _AboutSectionState extends State<AboutSection> {
           ),
         ),
         const SizedBox(height: 24),
-        Text(
-          title,
+        HoverAnimatedText(
+          text: title,
           style: GoogleFonts.anton(fontSize: 28, color: fg, letterSpacing: 1),
         ),
         const SizedBox(height: 8),
