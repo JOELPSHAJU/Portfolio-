@@ -151,7 +151,7 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                           direction: 20,
                           child: SizedBox(
                             width: cardWidth,
-                            height: 380,
+                            height: 330,
                             child: _ProjectManifestoCard(
                               project: project,
                               meta: meta,
@@ -354,7 +354,7 @@ class _ProjectManifestoCardState extends State<_ProjectManifestoCard> {
               Expanded(
                 child: Text(
                   p.description,
-                  maxLines: 4,
+                  maxLines: 6,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.outfit(
                     fontSize: 14.5,
@@ -568,8 +568,9 @@ class _MinimalLightboxState extends State<_MinimalLightbox> {
                                 isActive: hasWeb
                                     ? _activeTabIdx == 1
                                     : _activeTabIdx == 0,
-                                onTap: () =>
-                                    setState(() => _activeTabIdx = hasWeb ? 1 : 0),
+                                onTap: () => setState(
+                                  () => _activeTabIdx = hasWeb ? 1 : 0,
+                                ),
                               ),
                           ],
                         ),
@@ -609,7 +610,10 @@ class _MinimalLightboxState extends State<_MinimalLightbox> {
                         switchInCurve: Curves.easeOutQuart,
                         switchOutCurve: Curves.easeInQuart,
                         layoutBuilder:
-                            (Widget? currentChild, List<Widget> previousChildren) {
+                            (
+                              Widget? currentChild,
+                              List<Widget> previousChildren,
+                            ) {
                               return Stack(
                                 alignment: Alignment.center,
                                 children: <Widget>[
@@ -620,7 +624,8 @@ class _MinimalLightboxState extends State<_MinimalLightbox> {
                             },
                         transitionBuilder: (child, animation) {
                           final isEntering =
-                              child.key == ValueKey('active_tab_$_activeTabIdx');
+                              child.key ==
+                              ValueKey('active_tab_$_activeTabIdx');
 
                           return AnimatedBuilder(
                             animation: animation,

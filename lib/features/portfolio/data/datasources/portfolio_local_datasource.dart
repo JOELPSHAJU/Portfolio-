@@ -21,7 +21,7 @@ class PortfolioLocalDataSourceImpl implements PortfolioLocalDataSource {
         type: 'Official Enterprise Mobile App',
         clientOrOrg: 'Qatar General Electricity & Water Corporation',
         description:
-            'Revamped and modernized the official KAHRAMAA mobile application with high-security, performance optimization, and multilingual support.',
+            'The KAHRAMAA app is the official enterprise mobile application for the Qatar General Electricity & Water Corporation. It’s a comprehensive self-service platform used by citizens and residents to manage their utility services—such as paying bills, submitting move-in/move-out requests, inputting meter readings, and tracking consumption history.',
         technologies: [
           'Flutter',
           'Clean Architecture',
@@ -44,7 +44,7 @@ class PortfolioLocalDataSourceImpl implements PortfolioLocalDataSource {
         type: 'Employee Self-Service (ESS) & MSS Platform',
         clientOrOrg: 'Enterprise HR / Appstation Pvt Ltd',
         description:
-            'Architected a scalable monorepo structure with dynamic schema-driven form generation and secure Microsoft Entra ID authentication.',
+            'Kadoom is the official employee portal for the Qatar Olympic Committee (QOC), providing a centralized platform for HR services, approvals, employee requests, notifications, and AI-powered assistance. Built with Flutter, it supports both mobile and web platforms with a scalable enterprise architecture.',
         technologies: [
           'Flutter',
           'Melos Monorepo',
@@ -67,7 +67,7 @@ class PortfolioLocalDataSourceImpl implements PortfolioLocalDataSource {
         type: 'Official Social Work App',
         clientOrOrg: 'Qatar Foundation for Social Work',
         description:
-            'Built a highly performant application with advanced state management, connectivity fallbacks, streaming capabilities, and map integrations.',
+            'QSW (Qatar Foundation for Social Work) is a bilingual mobile application that serves as a centralized platform for social welfare resources, news, events, research publications, and community services in Qatar. It helps users easily access information and services offered by various social support organizations under QSW.',
         technologies: [
           'Flutter',
           'Clean Architecture',
@@ -90,7 +90,7 @@ class PortfolioLocalDataSourceImpl implements PortfolioLocalDataSource {
         type: 'Official Employee App',
         clientOrOrg: 'Qatar Museums',
         description:
-            'Built a high-performance cross-platform employee services application using MVVM architecture, integrating Microsoft SSO, a rich service catalogue, and a real-time ticket tracking dashboard.',
+            'Qatar Museums is a digital platform that allows users to explore Qatar’s museums, exhibitions, cultural events, and heritage sites. The application provides information about exhibitions, tickets, memberships, events, and museum services, offering a seamless cultural experience for visitors across mobile and web platforms.',
         technologies: [
           'Flutter',
           'MVVM',
