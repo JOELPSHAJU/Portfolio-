@@ -460,149 +460,174 @@ class _SkillsSectionState extends State<SkillsSection> {
             // ─── PANE 1: Directory Classes (Left) ───
             Container(
               width: 260,
-              decoration: BoxDecoration(
-                color: pal.card.withValues(alpha: 0.2),
-                border: Border(right: BorderSide(color: borderCol, width: 1)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      '// DIRECTORY_CLASSES',
-                      style: GoogleFonts.spaceMono(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: pal.textPrimary.withValues(alpha: 0.4),
-                        letterSpacing: 2.0,
-                    ),
-                  ),
+                decoration: BoxDecoration(
+                  color: pal.card.withValues(alpha: 0.2),
+                  border: Border(right: BorderSide(color: borderCol, width: 1)),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: List.generate(_categories.length, (idx) {
-                        final cat = _categories[idx];
-                        final isSelected = _selectedCategoryIdx == idx;
-                        return _TerminalItem(
-                          title: cat.name.toUpperCase(),
-                          icon: cat.icon,
-                          isSelected: isSelected,
-                          pal: pal,
-                          onTap: () {
-                            setState(() {
-                              _selectedCategoryIdx = idx;
-                            });
-                          },
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ─── PANE 2: Skill Grid (Right) ───
-          Expanded(
-            child: Container(
-              color: pal.surface,
-              child: activeSkills.isEmpty
-                  ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(24),
                       child: Text(
-                        'NO_DATA_FOUND',
+                        '// DIRECTORY_CLASSES',
                         style: GoogleFonts.spaceMono(
-                          color: pal.textPrimary.withValues(alpha: 0.3),
-                          letterSpacing: 2,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: pal.textPrimary.withValues(alpha: 0.4),
+                          letterSpacing: 2.0,
                         ),
                       ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(48),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '// ${activeCat.name.toUpperCase()}_SPECIFICATIONS',
-                            style: GoogleFonts.spaceMono(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: pal.textPrimary.withValues(alpha: 0.4),
-                              letterSpacing: 2.0,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          () {
-                            final size = MediaQuery.of(context).size;
-                            final sidePadding = size.width * 0.08;
-                            final availableWidth = size.width - (sidePadding * 2) - 260 - 96;
-                            final crossAxisCount = availableWidth > 600 ? 2 : 1;
-                            final spacing = 16.0;
-
-                            if (crossAxisCount == 1) {
-                              return Column(
-                                children: activeSkills.map((skill) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: spacing),
-                                    child: _SkillManifestoCard(skill: skill),
-                                  );
-                                }).toList(),
-                              );
-                            }
-
-                            // Group skills into pairs for 2-column layout
-                            final List<List<Skill>> rows = [];
-                            for (int i = 0; i < activeSkills.length; i += 2) {
-                              if (i + 1 < activeSkills.length) {
-                                rows.add([
-                                  activeSkills[i],
-                                  activeSkills[i + 1],
-                                ]);
-                              } else {
-                                rows.add([activeSkills[i]]);
-                              }
-                            }
-
-                            return Column(
-                              children: rows.map((rowSkills) {
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: spacing),
-                                  child: IntrinsicHeight(
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Expanded(
-                                          child: _SkillManifestoCard(
-                                            skill: rowSkills[0],
-                                          ),
-                                        ),
-                                        SizedBox(width: spacing),
-                                        Expanded(
-                                          child: rowSkills.length > 1
-                                              ? _SkillManifestoCard(
-                                                  skill: rowSkills[1],
-                                                )
-                                              : const SizedBox.shrink(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(_categories.length, (idx) {
+                            final cat = _categories[idx];
+                            final isSelected = _selectedCategoryIdx == idx;
+                            return _TerminalItem(
+                              title: cat.name.toUpperCase(),
+                              icon: cat.icon,
+                              isSelected: isSelected,
+                              pal: pal,
+                              onTap: () {
+                                setState(() {
+                                  _selectedCategoryIdx = idx;
+                                });
+                              },
                             );
-                          }(),
-                        ],
+                          }),
+                        ),
                       ),
                     ),
-            ),
+                  ],
+                ),
+              ),
+
+              // ─── PANE 2: Skill Grid (Right) ───
+              Expanded(
+                child: Container(
+                  color: pal.surface,
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 350),
+                    reverseDuration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOutCubic,
+                    alignment: Alignment.topCenter,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
+                        return Stack(
+                          alignment: Alignment.topCenter,
+                          children: <Widget>[
+                            ...previousChildren,
+                            if (currentChild != null) currentChild,
+                          ],
+                        );
+                      },
+                      child: activeSkills.isEmpty
+                          ? Center(
+                              key: const ValueKey('no_data'),
+                              child: Padding(
+                                padding: const EdgeInsets.all(48),
+                                child: Text(
+                                  'NO_DATA_FOUND',
+                                  style: GoogleFonts.spaceMono(
+                                    color: pal.textPrimary.withValues(alpha: 0.3),
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Padding(
+                              key: ValueKey(activeCat.id),
+                              padding: const EdgeInsets.all(48),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '// ${activeCat.name.toUpperCase()}_SPECIFICATIONS',
+                                    style: GoogleFonts.spaceMono(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: pal.textPrimary.withValues(alpha: 0.4),
+                                      letterSpacing: 2.0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 32),
+                                  () {
+                                    final size = MediaQuery.of(context).size;
+                                    final sidePadding = size.width * 0.08;
+                                    final availableWidth = size.width - (sidePadding * 2) - 260 - 96;
+                                    final crossAxisCount = availableWidth > 600 ? 2 : 1;
+                                    final spacing = 16.0;
+
+                                    if (crossAxisCount == 1) {
+                                      return Column(
+                                        children: activeSkills.map((skill) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(bottom: spacing),
+                                            child: _SkillManifestoCard(skill: skill),
+                                          );
+                                        }).toList(),
+                                      );
+                                    }
+
+                                    // Group skills into pairs for 2-column layout
+                                    final List<List<Skill>> rows = [];
+                                    for (int i = 0; i < activeSkills.length; i += 2) {
+                                      if (i + 1 < activeSkills.length) {
+                                        rows.add([
+                                          activeSkills[i],
+                                          activeSkills[i + 1],
+                                        ]);
+                                      } else {
+                                        rows.add([activeSkills[i]]);
+                                      }
+                                    }
+
+                                    return Column(
+                                      children: rows.map((rowSkills) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(bottom: spacing),
+                                          child: IntrinsicHeight(
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                Expanded(
+                                                  child: _SkillManifestoCard(
+                                                    skill: rowSkills[0],
+                                                  ),
+                                                ),
+                                                SizedBox(width: spacing),
+                                                Expanded(
+                                                  child: rowSkills.length > 1
+                                                      ? _SkillManifestoCard(
+                                                          skill: rowSkills[1],
+                                                        )
+                                                      : const SizedBox.shrink(),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    );
+                                  }(),
+                                ],
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
   }
 
   // ─── Mobile Accordion Terminal ─────────────────────────────────────────────
