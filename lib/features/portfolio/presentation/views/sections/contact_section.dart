@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../controllers/portfolio_controller.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
-import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/theme/brand_colors.dart';
+import 'package:joel_portfolio/core/widgets/fade_in_slide.dart';
+import 'package:joel_portfolio/core/widgets/hover_animated_text.dart';
 
 class ContactSection extends ConsumerStatefulWidget {
   const ContactSection({super.key});
@@ -38,6 +38,49 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
     } catch (_) {}
   }
 
+  void _showSnackBar(BuildContext context, String message, bool isSuccess) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isSuccess ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+              color: isSuccess ? Colors.green : Colors.red,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: GoogleFonts.spaceMono(
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+          side: BorderSide(
+            color: isSuccess
+                ? Colors.green.withValues(alpha: 0.5)
+                : Colors.red.withValues(alpha: 0.5),
+            width: 1,
+          ),
+        ),
+        margin: const EdgeInsets.all(24),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final success = await ref
@@ -48,10 +91,17 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
             message: _messageController.text.trim(),
           );
 
-      if (success) {
-        _nameController.clear();
-        _emailController.clear();
-        _messageController.clear();
+      if (mounted) {
+        if (success) {
+          _nameController.clear();
+          _emailController.clear();
+          _messageController.clear();
+          _showSnackBar(context, 'MESSAGE_SENT_SUCCESSFULLY', true);
+        } else {
+          final stateVal = ref.read(portfolioControllerProvider).value;
+          final errorMsg = stateVal?.errorMessage ?? 'FAILED_TO_SEND_MESSAGE';
+          _showSnackBar(context, errorMsg, false);
+        }
       }
     }
   }
@@ -193,7 +243,8 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
   ) {
     final pal = context.palette;
     final isSubmitting = status == ContactFormStatus.submitting;
-    final isSuccess = status == ContactFormStatus.success;
+    final isDesktop = MediaQuery.of(context).size.width >= 1024;
+    final isFilled = !isDesktop || _isHoveringSubmit;
 
     return Container(
       padding: const EdgeInsets.all(40),
@@ -219,41 +270,28 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
           children: [
-            Text(
-              '// DIRECT_MESSAGE',
-              style: GoogleFonts.spaceMono(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: pal.textPrimary.withValues(alpha: 0.4),
-                letterSpacing: 2,
-              ),
-            ),
-            const SizedBox(height: 32),
             _buildTextField(
               context: context,
               controller: _nameController,
-              label: 'FULL NAME',
-              hint: 'John Doe',
+              label: '// NAME',
+              hint: 'ENTER_YOUR_NAME',
               isDark: isDark,
-              validator: (val) =>
-                  (val == null || val.trim().isEmpty) ? 'REQUIRED_FIELD' : null,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'NAME_REQUIRED' : null,
             ),
             const SizedBox(height: 24),
             _buildTextField(
               context: context,
               controller: _emailController,
-              label: 'EMAIL ADDRESS',
-              hint: 'john@example.com',
+              label: '// EMAIL',
+              hint: 'ENTER_YOUR_EMAIL',
               isDark: isDark,
               keyboardType: TextInputType.emailAddress,
-              validator: (val) {
-                if (val == null || val.trim().isEmpty) return 'REQUIRED_FIELD';
-                if (!RegExp(
-                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(val.trim()))
-                  return 'INVALID_FORMAT';
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'EMAIL_REQUIRED';
+                final regex = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+                if (!regex.hasMatch(v.trim())) return 'INVALID_EMAIL_FORMAT';
                 return null;
               },
             ),
@@ -261,104 +299,83 @@ class _ContactSectionState extends ConsumerState<ContactSection> {
             _buildTextField(
               context: context,
               controller: _messageController,
-              label: 'MESSAGE',
-              hint: 'Describe the project requirements...',
+              label: '// MESSAGE',
+              hint: 'ENTER_YOUR_MESSAGE_SPECIFICATION',
               isDark: isDark,
               maxLines: 5,
-              validator: (val) =>
-                  (val == null || val.trim().isEmpty) ? 'REQUIRED_FIELD' : null,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'MESSAGE_REQUIRED' : null,
             ),
-            const SizedBox(height: 40),
-
-            if (isSuccess)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: BrandColors.warmBrown.withValues(alpha: 0.10),
-                  border: Border.all(
-                    color: BrandColors.warmBrown.withValues(alpha: 0.5),
+            const SizedBox(height: 32),
+            MouseRegion(
+              onEnter: (_) => setState(() => _isHoveringSubmit = true),
+              onExit: (_) => setState(() => _isHoveringSubmit = false),
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: isSubmitting ? null : _submitForm,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    gradient: isFilled
+                        ? LinearGradient(
+                            colors: isDark
+                                ? [
+                                    const Color(0xFF00E5FF),
+                                    const Color(0xFF007AFF),
+                                  ]
+                                : [
+                                    const Color(0xFF0F172A),
+                                    const Color(0xFF334155),
+                                  ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : null,
+                    color: isFilled ? null : Colors.transparent,
+                    border: isFilled
+                        ? null
+                        : Border.all(
+                            color: isDark
+                                ? const Color(0xFF00E5FF)
+                                : const Color(0xFF0F172A),
+                            width: 2,
+                          ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.check_circle_outline_rounded,
-                      color: BrandColors.warmBrown,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'TRANSMISSION_SUCCESSFUL',
-                      style: GoogleFonts.spaceMono(
-                        color: BrandColors.warmBrown,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              MouseRegion(
-                onEnter: (_) => setState(() => _isHoveringSubmit = true),
-                onExit: (_) => setState(() => _isHoveringSubmit = false),
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: isSubmitting ? null : _submitForm,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: BoxDecoration(
-                      gradient: _isHoveringSubmit
-                          ? LinearGradient(
-                              colors: isDark
-                                  ? [
-                                      const Color(0xFF00E5FF),
-                                      const Color(0xFF007AFF),
-                                    ]
-                                  : [
-                                      const Color(0xFF0F172A),
-                                      const Color(0xFF334155),
-                                    ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            )
-                          : null,
-                      color: _isHoveringSubmit ? null : Colors.transparent,
-                      border: _isHoveringSubmit
-                          ? null
-                          : Border.all(
-                              color: isDark
-                                  ? const Color(0xFF00E5FF)
-                                  : const Color(0xFF0F172A),
-                              width: 2,
+                  child: Center(
+                    child: isSubmitting
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isFilled
+                                    ? Colors.white
+                                    : (isDark
+                                        ? const Color(0xFF00E5FF)
+                                        : const Color(0xFF0F172A)),
+                              ),
                             ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        isSubmitting ? 'SENDING MESSAGE...' : 'SUBMIT MESSAGE',
-                        style: GoogleFonts.spaceMono(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: _isHoveringSubmit
-                              ? Colors.white
-                              : (isDark
-                                    ? const Color(0xFF00E5FF)
-                                    : const Color(0xFF0F172A)),
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
+                          )
+                        : Text(
+                            'SUBMIT MESSAGE',
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: isFilled
+                                  ? Colors.white
+                                  : (isDark
+                                      ? const Color(0xFF00E5FF)
+                                      : const Color(0xFF0F172A)),
+                              letterSpacing: 2,
+                            ),
+                          ),
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),

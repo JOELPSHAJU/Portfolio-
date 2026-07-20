@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:clean_riverpod_template/main.dart';
-import 'package:clean_riverpod_template/features/dashboard/presentation/controllers/dashboard_controller.dart';
+import 'package:joel_portfolio/main.dart';
+import 'package:joel_portfolio/features/dashboard/presentation/controllers/dashboard_controller.dart';
 
 void main() {
   testWidgets('Portfolio UI test with Riverpod provider overrides', (WidgetTester tester) async {

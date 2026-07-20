@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
-import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
-import 'package:clean_riverpod_template/core/widgets/adaptive_logo.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/theme/brand_colors.dart';
+import 'package:joel_portfolio/core/widgets/fade_in_slide.dart';
+import 'package:joel_portfolio/core/widgets/hover_animated_text.dart';
+import 'package:joel_portfolio/core/widgets/adaptive_logo.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Cyber-Brutalist About Section ──────────────────────────────────────────────
@@ -196,8 +196,8 @@ class _AboutSectionState extends State<AboutSection> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildRawMetric('EXP_YRS', '03+', pal),
-              _buildRawMetric('DEPLOYED', '15+', pal),
+              _buildRawMetric('EXP_YRS', '02+', pal),
+              _buildRawMetric('DEPLOYED', '8+', pal),
               _buildRawMetric('CLIENT_SAT', '100', pal),
             ],
           ),

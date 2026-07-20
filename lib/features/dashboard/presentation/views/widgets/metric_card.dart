@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:clean_riverpod_template/core/widgets/glass_container.dart';
+import 'package:joel_portfolio/core/widgets/glass_container.dart';
 
 class MetricCard extends StatelessWidget {
   final String title;

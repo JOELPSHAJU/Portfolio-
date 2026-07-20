@@ -2,9 +2,9 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/theme/brand_colors.dart';
+import 'package:joel_portfolio/core/widgets/hover_animated_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Hero Section ────────────────────────────────────────────────────────────
@@ -400,9 +400,9 @@ class _HeroSectionState extends State<HeroSection> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildMiniStat('4+', 'Yrs Exp', isDark, pal),
+                          _buildMiniStat('2+', 'Yrs Exp', isDark, pal),
                           const SizedBox(width: 8),
-                          _buildMiniStat('20+', 'Projects', isDark, pal),
+                          _buildMiniStat('8+', 'Projects', isDark, pal),
                           const SizedBox(width: 8),
                           _buildMiniStat('99%', 'Quality', isDark, pal),
                         ],
@@ -1064,7 +1064,8 @@ class _GradientHoverTextButton extends StatefulWidget {
   });
 
   @override
-  State<_GradientHoverTextButton> createState() => _GradientHoverTextButtonState();
+  State<_GradientHoverTextButton> createState() =>
+      _GradientHoverTextButtonState();
 }
 
 class _GradientHoverTextButtonState extends State<_GradientHoverTextButton> {

@@ -1,4 +1,4 @@
-import 'package:clean_riverpod_template/features/portfolio/presentation/views/sections/certification_section.dart';
+import 'package:joel_portfolio/features/portfolio/presentation/views/sections/certification_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../controllers/portfolio_controller.dart';
@@ -11,9 +11,9 @@ import 'sections/skills_section.dart';
 import 'widgets/glow_background.dart';
 import 'widgets/mobile_drawer.dart';
 import 'widgets/navigation_bar.dart';
-import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
-import 'package:clean_riverpod_template/core/widgets/adaptive_logo.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/widgets/fade_in_slide.dart';
+import 'package:joel_portfolio/core/widgets/adaptive_logo.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
 
 class PortfolioScreen extends ConsumerStatefulWidget {
   const PortfolioScreen({super.key});

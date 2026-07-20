@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/theme_controller.dart';
-import 'package:clean_riverpod_template/core/widgets/adaptive_logo.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/theme/theme_controller.dart';
+import 'package:joel_portfolio/core/widgets/adaptive_logo.dart';
 
 class MobileDrawer extends ConsumerWidget {
   final String activeSection;

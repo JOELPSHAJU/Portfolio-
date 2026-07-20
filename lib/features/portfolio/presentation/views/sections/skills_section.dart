@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../domain/entities/skill.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/widgets/fade_in_slide.dart';
-import 'package:clean_riverpod_template/core/widgets/hover_animated_text.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/theme/brand_colors.dart';
+import 'package:joel_portfolio/core/widgets/fade_in_slide.dart';
+import 'package:joel_portfolio/core/widgets/hover_animated_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ─── Technical Specs ────────────────────────────────────────────────────────

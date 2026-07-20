@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
-import 'package:clean_riverpod_template/core/theme/app_colors.dart';
+import 'package:joel_portfolio/core/theme/brand_colors.dart';
+import 'package:joel_portfolio/core/theme/app_colors.dart';
 
 /// A minimalist, premium background.
 /// Features a completely plain surface color illuminated by ultra-soft,

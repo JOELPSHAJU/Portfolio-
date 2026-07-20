@@ -1,4 +1,4 @@
-package com.example.clean_riverpod_template
+package com.example.joel_portfolio
 
 import io.flutter.embedding.android.FlutterActivity
 

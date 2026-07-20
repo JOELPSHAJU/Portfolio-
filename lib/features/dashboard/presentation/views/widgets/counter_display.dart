@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:clean_riverpod_template/core/theme/brand_colors.dart';
+import 'package:joel_portfolio/core/theme/brand_colors.dart';
 
 class CounterDisplay extends StatelessWidget {
   final int count;
