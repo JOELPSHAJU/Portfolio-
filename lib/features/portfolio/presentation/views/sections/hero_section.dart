@@ -219,32 +219,33 @@ class _HeroSectionState extends State<HeroSection> {
             ),
           ),
 
-          // 6. Right Side Scroll Down Hint
-          Positioned(
-            right: size.width * 0.08,
-            bottom: size.height * 0.08,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Scroll down',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: pal.textPrimary.withOpacity(0.7),
-                    fontFamily: 'Outfit',
-                    letterSpacing: 0.2,
+          // 6. Right Side Scroll Down Hint (Large screens only)
+          if (size.width >= 1200)
+            Positioned(
+              right: size.width * 0.08,
+              bottom: size.height * 0.08,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Scroll down',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: pal.textPrimary.withOpacity(0.7),
+                      fontFamily: 'Outfit',
+                      letterSpacing: 0.2,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Icon(
-                  Icons.arrow_downward_rounded,
-                  size: 20,
-                  color: pal.textPrimary.withOpacity(0.7),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Icon(
+                    Icons.arrow_downward_rounded,
+                    size: 20,
+                    color: pal.textPrimary.withOpacity(0.7),
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -865,7 +866,7 @@ class _DeveloperDashboardCard extends StatelessWidget {
           _buildMetricLine('ARCHITECTURE', 'CLEAN/MVC/MVP/MVVM/MODULAR'),
           _buildMetricLine('DEVELOPMENT', 'MOBILE & WEB APPLICATIONS'),
           _buildMetricLine('EXPERIENCE', '3 YEARS'),
-          _buildMetricLine('DELIVERABLES', '5+ SHIPPED APPS'),
+          _buildMetricLine('DELIVERABLES', '8+ SHIPPED APPS'),
           _buildMetricLine('CODE_METRICS', '98.8% TEST PASS'),
           const Divider(height: 32, color: Colors.white10),
           Row(

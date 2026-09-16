@@ -245,45 +245,51 @@ class MobileDrawer extends ConsumerWidget {
     final inactiveBg = Colors.transparent;
     final inactiveText = pal.textPrimary;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 3),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Material(
         color: isActive ? activeBg : inactiveBg,
-        border: isActive
-            ? Border.all(color: primaryColor.withOpacity(0.25))
-            : null,
-      ),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        leading: Icon(
-          icon,
-          color: isActive ? activeText : pal.warmBrown,
-          size: 19,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isActive ? activeText : inactiveText,
-            fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 14.5,
-            letterSpacing: 0.2,
-          ),
-        ),
-        trailing: isActive
-            ? Container(
-                width: 5,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  shape: BoxShape.circle,
-                ),
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        shape: isActive
+            ? RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: primaryColor.withOpacity(0.25)),
               )
-            : null,
-        onTap: () {
-          Navigator.pop(context);
-          onSectionSelected(sectionId);
-        },
+            : RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+        child: ListTile(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          leading: Icon(
+            icon,
+            color: isActive ? activeText : pal.warmBrown,
+            size: 19,
+          ),
+          title: Text(
+            title,
+            style: TextStyle(
+              color: isActive ? activeText : inactiveText,
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+              fontSize: 14.5,
+              letterSpacing: 0.2,
+            ),
+          ),
+          trailing: isActive
+              ? Container(
+                  width: 5,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                )
+              : null,
+          onTap: () {
+            Navigator.pop(context);
+            onSectionSelected(sectionId);
+          },
+        ),
       ),
     );
   }

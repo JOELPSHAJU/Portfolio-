@@ -647,11 +647,11 @@ class _SkillsSectionState extends State<SkillsSection> {
                 .toList()
               ..sort((a, b) => b.level.compareTo(a.level));
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16.0),
-          decoration: BoxDecoration(
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Material(
             color: pal.card.withValues(alpha: 0.1),
-            border: Border(
+            shape: Border(
               left: BorderSide(
                 color: isSelected
                     ? BrandColors.warmBrown
@@ -671,9 +671,8 @@ class _SkillsSectionState extends State<SkillsSection> {
                 width: 1,
               ),
             ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
+            clipBehavior: Clip.antiAlias,
+            child: Column(
             children: [
               ListTile(
                 contentPadding: const EdgeInsets.symmetric(
@@ -761,9 +760,10 @@ class _SkillsSectionState extends State<SkillsSection> {
               ),
             ],
           ),
-        );
-      }),
-    );
+        ),
+      );
+    }),
+  );
   }
 }
 

@@ -196,7 +196,7 @@ class _AboutSectionState extends State<AboutSection> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildRawMetric('EXP_YRS', '02+', pal),
+              _buildRawMetric('EXP_YRS', '3', pal),
               _buildRawMetric('DEPLOYED', '8+', pal),
               _buildRawMetric('CLIENT_SAT', '100', pal),
             ],
