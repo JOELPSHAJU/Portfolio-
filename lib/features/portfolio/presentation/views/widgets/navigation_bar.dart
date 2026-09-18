@@ -111,6 +111,13 @@ class PortfolioHeader extends ConsumerWidget {
                         pal,
                       ),
                       _NavLink(
+                        'WORKAREA',
+                        'workarea',
+                        activeSection,
+                        onSectionSelected,
+                        pal,
+                      ),
+                      _NavLink(
                         'CONTACT',
                         'contact',
                         activeSection,

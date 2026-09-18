@@ -8,6 +8,7 @@ import 'sections/experience_section.dart';
 import 'sections/hero_section.dart';
 import 'sections/projects_section.dart';
 import 'sections/skills_section.dart';
+import 'sections/workarea_section.dart';
 import 'widgets/glow_background.dart';
 import 'widgets/mobile_drawer.dart';
 import 'widgets/navigation_bar.dart';
@@ -32,6 +33,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     'experience': GlobalKey(),
     'skills': GlobalKey(),
     'projects': GlobalKey(),
+    'workarea': GlobalKey(),
     'contact': GlobalKey(),
   };
 
@@ -206,6 +208,16 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                     child: ProjectsSection(
                                       projects: state.projects,
                                     ),
+                                  ),
+                                ),
+
+                                // Workarea Section
+                                Container(
+                                  key: _sectionKeys['workarea'],
+                                  child: const FadeInSlide(
+                                    delay: Duration(milliseconds: 100),
+                                    direction: -35,
+                                    child: WorkareaSection(),
                                   ),
                                 ),
 

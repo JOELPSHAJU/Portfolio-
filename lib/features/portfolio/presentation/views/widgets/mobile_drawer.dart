@@ -127,6 +127,14 @@ class MobileDrawer extends ConsumerWidget {
                 ),
                 _item(
                   context,
+                  'Workarea',
+                  Icons.widgets_outlined,
+                  'workarea',
+                  pal,
+                  isDark,
+                ),
+                _item(
+                  context,
                   'Contact',
                   Icons.mail_outline_rounded,
                   'contact',
