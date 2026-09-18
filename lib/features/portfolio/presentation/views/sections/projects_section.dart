@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:joel_portfolio/features/portfolio/presentation/views/widgets/app_image.dart';
 import '../../../domain/entities/project.dart';
 import 'package:joel_portfolio/core/theme/app_colors.dart';
 import 'package:joel_portfolio/core/theme/brand_colors.dart';
@@ -672,9 +673,10 @@ class _MinimalLightboxState extends State<_MinimalLightbox> {
                                     maxScale: 3.0,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
-                                      child: Image.asset(
-                                        activeScreens[idx]['asset']!,
+                                      child: AppImage(
+                                        assetPath: activeScreens[idx]['asset']!,
                                         fit: BoxFit.contain,
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                   );
