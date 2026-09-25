@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:joel_portfolio/core/theme/app_colors.dart';
 import 'package:joel_portfolio/core/theme/brand_colors.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/pages/autovista_website_screen.dart';
+import 'package:joel_portfolio/features/portfolio/presentation/views/pages/purelis_website_screen.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/widgets/app_image.dart';
 
 class WorkareaSection extends StatefulWidget {
@@ -16,6 +17,16 @@ class _WorkareaSectionState extends State<WorkareaSection> {
   final ScrollController _scrollController = ScrollController();
 
   final List<Map<String, dynamic>> _workItems = [
+    {
+      'id': 'purelis',
+      'title': 'PURELIS SKINCARE',
+      'subtitle':
+          'Organic Luxury Botanical & Clinical Skincare E-Commerce Platform',
+      'category': 'Skincare E-Commerce',
+      'image': 'assets/purelis_cover.png',
+      'tags': ['Flutter Web', 'E-Commerce', 'Luxury Showcase', 'Editorial Design'],
+      'builder': (BuildContext context) => const PurelisWebsiteScreen(),
+    },
     {
       'id': 'godrive',
       'title': 'GO DRIVE',
@@ -37,8 +48,8 @@ class _WorkareaSectionState extends State<WorkareaSection> {
     final sidePadding = isDesktop
         ? 80.0
         : isTablet
-            ? 40.0
-            : 24.0;
+        ? 40.0
+        : 24.0;
 
     return Container(
       width: double.infinity,
@@ -75,11 +86,7 @@ class _WorkareaSectionState extends State<WorkareaSection> {
       children: [
         Row(
           children: [
-            Container(
-              width: 24,
-              height: 2,
-              color: BrandColors.warmBrown,
-            ),
+            Container(width: 24, height: 2, color: BrandColors.warmBrown),
             const SizedBox(width: 12),
             Text(
               '// SYSTEM LABS',
@@ -119,10 +126,7 @@ class _WorkItemCard extends StatefulWidget {
   final Map<String, dynamic> item;
   final AppPalette pal;
 
-  const _WorkItemCard({
-    required this.item,
-    required this.pal,
-  });
+  const _WorkItemCard({required this.item, required this.pal});
 
   @override
   State<_WorkItemCard> createState() => _WorkItemCardState();
@@ -149,8 +153,8 @@ class _WorkItemCardState extends State<_WorkItemCard> {
                   item['builder'](context),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
+                    return FadeTransition(opacity: animation, child: child);
+                  },
               transitionDuration: const Duration(milliseconds: 400),
             ),
           );
@@ -218,11 +222,16 @@ class _WorkItemCardState extends State<_WorkItemCard> {
                         left: 16,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.75),
                             border: Border.all(
-                                color: BrandColors.warmBrown.withValues(alpha: 0.6)),
+                              color: BrandColors.warmBrown.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
                           child: Text(
                             item['category'].toString().toUpperCase(),
@@ -278,7 +287,9 @@ class _WorkItemCardState extends State<_WorkItemCard> {
                         children: (item['tags'] as List<String>).map((tag) {
                           return Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: pal.textPrimary.withValues(alpha: 0.05),
                               border: Border.all(
