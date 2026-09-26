@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:joel_portfolio/core/theme/app_colors.dart';
 import 'package:joel_portfolio/core/theme/brand_colors.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/pages/autovista_website_screen.dart';
+import 'package:joel_portfolio/features/portfolio/presentation/views/pages/luxury_hotel_website_screen.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/pages/purelis_website_screen.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/widgets/app_image.dart';
 
@@ -17,6 +18,16 @@ class _WorkareaSectionState extends State<WorkareaSection> {
   final ScrollController _scrollController = ScrollController();
 
   final List<Map<String, dynamic>> _workItems = [
+    {
+      'id': 'lumina_palace',
+      'title': 'THE LUMINA PALACE',
+      'subtitle':
+          'Ultra-Luxury 5-Star Hotel Resort, Private Suites & Scroll-Driven Video Experience',
+      'category': 'Luxury Hospitality UI',
+      'image': 'assets/hotel_cover.jpg',
+      'tags': ['Flutter Web', 'Scroll Video Engine', 'Suite Booking', 'Concierge & Spa', 'Haute Cuisine'],
+      'builder': (BuildContext context) => const LuxuryHotelWebsiteScreen(),
+    },
     {
       'id': 'purelis',
       'title': 'PURELIS SKINCARE',
