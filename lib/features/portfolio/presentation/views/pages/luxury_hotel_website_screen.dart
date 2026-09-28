@@ -45,6 +45,7 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
   double _lastScrollOffset = 0.0;
   int _targetMs = 0;
   Timer? _scrollDebounceTimer;
+  bool _isAutoTourRunning = false;
 
   // Selected suite filter
   String _selectedCategory = 'all';
@@ -73,6 +74,23 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
     super.initState();
     _initVideo();
     _scrollController.addListener(_handleScrollListener);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage('assets/hotel_cover.jpg'), context);
+    precacheImage(
+      const AssetImage('assets/hotel_suite_penthouse.jpg'),
+      context,
+    );
+    precacheImage(const AssetImage('assets/hotel_suite_platinum.jpg'), context);
+    precacheImage(const AssetImage('assets/hotel_suite_villa.jpg'), context);
+    precacheImage(
+      const AssetImage('assets/hotel_dining_michelin.jpg'),
+      context,
+    );
+    precacheImage(const AssetImage('assets/hotel_spa_wellness.jpg'), context);
   }
 
   Future<void> _initVideo() async {
@@ -200,7 +218,7 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
           _forwardController.play();
         }
       } else if (diff <= 0) {
-        _forwardController.pause();
+        // Reached or passed target
       }
     } else {
       // ── Scrolling Backward (Up) ───────────────────────────────────────────
@@ -256,6 +274,64 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
     });
   }
 
+  void _toggleAutoTour() {
+    if (_isAutoTourRunning) {
+      _stopAutoTour();
+    } else {
+      _startAutoTour();
+    }
+  }
+
+  void _startAutoTour() {
+    if (!_scrollController.hasClients || !_isInitialized || _hasError) return;
+    final totalDuration = _forwardController.value.duration;
+    final int totalMs = totalDuration.inMilliseconds > 0
+        ? totalDuration.inMilliseconds
+        : 8000;
+
+    final double currentOffset = _scrollController.offset;
+    if (currentOffset >= kVideoScrollDistance) {
+      _scrollController.jumpTo(0.0);
+    }
+
+    setState(() {
+      _isAutoTourRunning = true;
+    });
+
+    final double startOffset = _scrollController.offset;
+    final double remainingFraction =
+        ((kVideoScrollDistance - startOffset) / kVideoScrollDistance).clamp(
+          0.05,
+          1.0,
+        );
+    final int animDurationMs = (totalMs * remainingFraction).round();
+
+    _scrollController
+        .animateTo(
+          kVideoScrollDistance,
+          duration: Duration(milliseconds: animDurationMs),
+          curve: Curves.linear,
+        )
+        .then((_) {
+          if (mounted) {
+            setState(() {
+              _isAutoTourRunning = false;
+            });
+          }
+        });
+  }
+
+  void _stopAutoTour() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.offset);
+    }
+    if (mounted) {
+      setState(() {
+        _isAutoTourRunning = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_handleScrollListener);
@@ -286,7 +362,7 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
   void _scrollToNextSection(double screenHeight) {
     _scrollController.animateTo(
       kVideoScrollDistance + screenHeight,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1400),
       curve: Curves.easeInOutCubic,
     );
   }
@@ -470,142 +546,209 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
                 1.0,
               );
 
-              return Transform.translate(
-                offset: Offset(0, translateY),
-                child: SizedBox(
-                  width: screenSize.width,
-                  height: screenSize.height,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      // Video Player (Dual-Video Native 60FPS Hardware Engine)
-                      if (_isInitialized && !_hasError)
-                        FittedBox(
-                          fit: BoxFit.cover,
-                          clipBehavior: Clip.hardEdge,
-                          child: SizedBox(
-                            width: _forwardController.value.size.width > 0
-                                ? _forwardController.value.size.width
-                                : 1920,
-                            height: _forwardController.value.size.height > 0
-                                ? _forwardController.value.size.height
-                                : 1080,
-                            child: ValueListenableBuilder<bool>(
-                              valueListenable: _isReversingNotifier,
-                              builder: (context, isReversing, _) {
-                                return Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Opacity(
-                                      opacity: isReversing ? 0.0 : 1.0,
-                                      child: VideoPlayer(_forwardController),
-                                    ),
-                                    Opacity(
-                                      opacity: isReversing ? 1.0 : 0.0,
-                                      child: VideoPlayer(_reverseController),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        )
-                      else
-                        Container(
-                          color: kObsidian,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: kGold,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        ),
-
-                      // Scrim Overlays
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withValues(alpha: 0.65),
-                              Colors.black.withValues(alpha: 0.35),
-                              Colors.black.withValues(alpha: 0.80),
-                            ],
-                            stops: const [0.0, 0.45, 1.0],
-                          ),
-                        ),
-                      ),
-
-                      // Vignette
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            center: Alignment.center,
-                            radius: 1.25,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.50),
-                            ],
-                            stops: const [0.55, 1.0],
-                          ),
-                        ),
-                      ),
-
-                      // Progressive Staged Overlays (Change as user scrubs)
-                      _buildTimedOverlays(progress, isDesktop),
-
-                      // Subtle Scroll Cue Indicator (NO video controls) - fades out after initial hero
-                      if (progress < 0.22)
-                        Positioned(
-                          bottom: 28,
-                          left: 0,
-                          right: 0,
-                          child: Opacity(
-                            opacity: (1.0 - progress / 0.22).clamp(0.0, 1.0),
-                            child: Center(
-                              child: InkWell(
-                                onTap: () =>
-                                    _scrollToNextSection(screenSize.height),
-                                borderRadius: BorderRadius.circular(30),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 18,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.55),
-                                    borderRadius: BorderRadius.circular(30),
-                                    border: Border.all(
-                                      color: kGold.withValues(alpha: 0.35),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+              return RepaintBoundary(
+                child: Transform.translate(
+                  offset: Offset(0, translateY),
+                  child: SizedBox(
+                    width: screenSize.width,
+                    height: screenSize.height,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Video Player (Dual-Video Native 60FPS Hardware Engine)
+                        if (_isInitialized && !_hasError)
+                          FittedBox(
+                            fit: BoxFit.cover,
+                            clipBehavior: Clip.hardEdge,
+                            child: SizedBox(
+                              width: _forwardController.value.size.width > 0
+                                  ? _forwardController.value.size.width
+                                  : 1920,
+                              height: _forwardController.value.size.height > 0
+                                  ? _forwardController.value.size.height
+                                  : 1080,
+                              child: ValueListenableBuilder<bool>(
+                                valueListenable: _isReversingNotifier,
+                                builder: (context, isReversing, _) {
+                                  return Stack(
+                                    fit: StackFit.expand,
                                     children: [
-                                      Text(
-                                        'SCROLL TO EXPLORE EXPERIENCE',
-                                        style: GoogleFonts.spaceMono(
-                                          color: kIvory,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 2,
-                                        ),
+                                      Opacity(
+                                        opacity: isReversing ? 0.0 : 1.0,
+                                        child: VideoPlayer(_forwardController),
                                       ),
-                                      const SizedBox(width: 8),
-                                      const Icon(
-                                        Icons.keyboard_arrow_down_rounded,
-                                        color: kGold,
-                                        size: 18,
+                                      Opacity(
+                                        opacity: isReversing ? 1.0 : 0.0,
+                                        child: VideoPlayer(_reverseController),
                                       ),
                                     ],
-                                  ),
+                                  );
+                                },
+                              ),
+                            ),
+                          )
+                        else
+                          Container(
+                            color: kObsidian,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: kGold,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+
+                        // Scrim Overlays
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withValues(alpha: 0.65),
+                                Colors.black.withValues(alpha: 0.35),
+                                Colors.black.withValues(alpha: 0.80),
+                              ],
+                              stops: const [0.0, 0.45, 1.0],
+                            ),
+                          ),
+                        ),
+
+                        // Vignette
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: RadialGradient(
+                              center: Alignment.center,
+                              radius: 1.25,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.50),
+                              ],
+                              stops: const [0.55, 1.0],
+                            ),
+                          ),
+                        ),
+
+                        // Progressive Staged Overlays (Change as user scrubs)
+                        _buildTimedOverlays(progress, isDesktop),
+
+                        // Subtle Scroll Cue & Autoplay Directive Controls
+                        if (progress < 0.22)
+                          Positioned(
+                            bottom: 28,
+                            left: 0,
+                            right: 0,
+                            child: Opacity(
+                              opacity: (1.0 - progress / 0.22).clamp(0.0, 1.0),
+                              child: Center(
+                                child: Wrap(
+                                  alignment: WrapAlignment.center,
+                                  spacing: 12,
+                                  runSpacing: 10,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => _scrollToNextSection(
+                                        screenSize.height,
+                                      ),
+                                      borderRadius: BorderRadius.circular(30),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.55,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
+                                          border: Border.all(
+                                            color: kGold.withValues(
+                                              alpha: 0.35,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'SCROLL TO EXPLORE (START TO FINISH)',
+                                              style: GoogleFonts.spaceMono(
+                                                color: kIvory,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 2,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Icon(
+                                              Icons.keyboard_arrow_down_rounded,
+                                              color: kGold,
+                                              size: 18,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: _toggleAutoTour,
+                                      borderRadius: BorderRadius.circular(30),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: _isAutoTourRunning
+                                              ? kGold
+                                              : Colors.black.withValues(
+                                                  alpha: 0.55,
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
+                                          border: Border.all(
+                                            color: kGold.withValues(alpha: 0.6),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              _isAutoTourRunning
+                                                  ? Icons.pause_rounded
+                                                  : Icons.play_arrow_rounded,
+                                              color: _isAutoTourRunning
+                                                  ? kObsidian
+                                                  : kGold,
+                                              size: 16,
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              _isAutoTourRunning
+                                                  ? 'PAUSE TOUR'
+                                                  : 'AUTOPLAY FULL EXPERIENCE',
+                                              style: GoogleFonts.spaceMono(
+                                                color: _isAutoTourRunning
+                                                    ? kObsidian
+                                                    : kIvory,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: 1.5,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -622,6 +765,9 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
           //   moving together as one contiguous vertical document without ever overlapping on top!
           SingleChildScrollView(
             controller: _scrollController,
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -629,50 +775,62 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
                 SizedBox(height: kVideoScrollDistance + screenSize.height),
 
                 // SECTION 1: DIRECT RESERVATION BAR
-                _buildInstantBookingBar(isDesktop, isTablet),
+                RepaintBoundary(
+                  child: _buildInstantBookingBar(isDesktop, isTablet),
+                ),
 
                 // SECTION 2: THE SUITE COLLECTION (Rooms & Real High-Res Images)
-                Container(
-                  key: _suitesKey,
-                  child: _buildSuitesSection(isDesktop, isTablet),
+                RepaintBoundary(
+                  child: Container(
+                    key: _suitesKey,
+                    child: _buildSuitesSection(isDesktop, isTablet),
+                  ),
                 ),
 
                 // SECTION 3: EPICUREAN DINING & GASTRONOMY
-                Container(
-                  key: _diningKey,
-                  child: _buildDiningSection(isDesktop, isTablet),
+                RepaintBoundary(
+                  child: Container(
+                    key: _diningKey,
+                    child: _buildDiningSection(isDesktop, isTablet),
+                  ),
                 ),
 
                 // SECTION 4: THE SOMA THALASSO SPA & WELLNESS
-                Container(
-                  key: _spaKey,
-                  child: _buildSpaSection(isDesktop, isTablet),
+                RepaintBoundary(
+                  child: Container(
+                    key: _spaKey,
+                    child: _buildSpaSection(isDesktop, isTablet),
+                  ),
                 ),
 
                 // SECTION 5: BESPOKE CONCIERGE & FLEET PRIVILEGES
-                Container(
-                  key: _conciergeKey,
-                  child: _buildConciergeSection(isDesktop, isTablet),
+                RepaintBoundary(
+                  child: Container(
+                    key: _conciergeKey,
+                    child: _buildConciergeSection(isDesktop, isTablet),
+                  ),
                 ),
 
                 // SECTION 6: WORLD ACCOLADES & FORBES RATINGS
-                _buildAccoladesSection(isDesktop, isTablet),
+                RepaintBoundary(
+                  child: _buildAccoladesSection(isDesktop, isTablet),
+                ),
 
                 // SECTION 7: GRAND LUXURY EDITORIAL FOOTER
-                _buildLuxuryFooter(isDesktop, isTablet),
+                RepaintBoundary(child: _buildLuxuryFooter(isDesktop, isTablet)),
               ],
             ),
           ),
 
           // ── 3. Sticky Top Floating Navigation Bar ─────────────────────────
-          _buildFloatingNavBar(isDesktop),
+          RepaintBoundary(child: _buildFloatingNavBar(isDesktop)),
 
           // ── 4. Floating Back to Portfolio Pill ────────────────────────────
-          Positioned(
-            top: 16,
-            left: 16,
-            child: SafeArea(child: _buildBackToPortfolioButton()),
-          ),
+          // Positioned(
+          //   top: 16,
+          //   left: 16,
+          //   child: SafeArea(child: _buildBackToPortfolioButton()),
+          // ),
         ],
       ),
     );
@@ -1447,10 +1605,7 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
       onTap: () => _openBookingDialog(context),
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: compact ? 4 : 8,
-          vertical: 4,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: compact ? 4 : 8, vertical: 4),
         child: Row(
           children: [
             Container(
@@ -2863,6 +3018,7 @@ class _LuxuryHotelWebsiteScreenState extends State<LuxuryHotelWebsiteScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildBackToPortfolioButton() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(30),
@@ -3461,8 +3617,9 @@ class _CompactLuxurySanctuaryCardState
   Widget build(BuildContext context) {
     final s = widget.suite;
     final isPremier = s['id'] == 'royal_penthouse';
-    final double cardHeight =
-        widget.isDesktop ? 520.0 : (widget.isTablet ? 480.0 : 470.0);
+    final double cardHeight = widget.isDesktop
+        ? 520.0
+        : (widget.isTablet ? 480.0 : 470.0);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -3530,12 +3687,12 @@ class _CompactLuxurySanctuaryCardState
                     color: _isHovered
                         ? _LuxuryHotelWebsiteScreenState.kGold
                         : (isPremier
-                            ? _LuxuryHotelWebsiteScreenState.kGold.withValues(
-                                alpha: 0.45,
-                              )
-                            : _LuxuryHotelWebsiteScreenState.kGold.withValues(
-                                alpha: 0.20,
-                              )),
+                              ? _LuxuryHotelWebsiteScreenState.kGold.withValues(
+                                  alpha: 0.45,
+                                )
+                              : _LuxuryHotelWebsiteScreenState.kGold.withValues(
+                                  alpha: 0.20,
+                                )),
                     width: _isHovered ? 1.8 : 1.2,
                   ),
                 ),
@@ -3567,7 +3724,7 @@ class _CompactLuxurySanctuaryCardState
                                 color: isPremier
                                     ? _LuxuryHotelWebsiteScreenState.kGold
                                     : _LuxuryHotelWebsiteScreenState.kGold
-                                        .withValues(alpha: 0.40),
+                                          .withValues(alpha: 0.40),
                                 width: 1.0,
                               ),
                             ),
@@ -3588,10 +3745,13 @@ class _CompactLuxurySanctuaryCardState
                                         ? 'SANCTUARY ${widget.sanctuaryNumber}  •  ${s['badge']}'
                                         : '0${widget.sanctuaryNumber} • ${s['badge']}',
                                     style: GoogleFonts.spaceMono(
-                                      color: _LuxuryHotelWebsiteScreenState.kGold,
+                                      color:
+                                          _LuxuryHotelWebsiteScreenState.kGold,
                                       fontSize: widget.isDesktop ? 10 : 8.5,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: widget.isDesktop ? 1.5 : 0.8,
+                                      letterSpacing: widget.isDesktop
+                                          ? 1.5
+                                          : 0.8,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
@@ -3745,7 +3905,8 @@ class _CompactLuxurySanctuaryCardState
                               Text(
                                 '${s['category'].toString().toUpperCase()} SANCTUARY',
                                 style: GoogleFonts.spaceMono(
-                                  color: _LuxuryHotelWebsiteScreenState.kGoldLight,
+                                  color:
+                                      _LuxuryHotelWebsiteScreenState.kGoldLight,
                                   fontSize: widget.isDesktop ? 10 : 8.5,
                                   letterSpacing: widget.isDesktop ? 2 : 1.2,
                                   fontWeight: FontWeight.bold,
@@ -3885,7 +4046,8 @@ class _CompactLuxurySanctuaryCardState
                                   vertical: 12,
                                 ),
                                 elevation: 6,
-                                shadowColor: _LuxuryHotelWebsiteScreenState.kGold
+                                shadowColor: _LuxuryHotelWebsiteScreenState
+                                    .kGold
                                     .withValues(alpha: 0.4),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
@@ -3925,8 +4087,9 @@ class _CompactLuxurySanctuaryCardState
                                     color: _LuxuryHotelWebsiteScreenState.kGold
                                         .withValues(alpha: 0.45),
                                   ),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -3950,8 +4113,9 @@ class _CompactLuxurySanctuaryCardState
                                       _LuxuryHotelWebsiteScreenState.kGold,
                                   foregroundColor:
                                       _LuxuryHotelWebsiteScreenState.kObsidian,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
                                   elevation: 4,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),

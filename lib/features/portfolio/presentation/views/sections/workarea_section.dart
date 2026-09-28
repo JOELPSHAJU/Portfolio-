@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:joel_portfolio/core/theme/app_colors.dart';
 import 'package:joel_portfolio/core/theme/brand_colors.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/pages/autovista_website_screen.dart';
+import 'package:joel_portfolio/features/portfolio/presentation/views/pages/js_constructions_website_screen.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/pages/luxury_hotel_website_screen.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/pages/purelis_website_screen.dart';
 import 'package:joel_portfolio/features/portfolio/presentation/views/widgets/app_image.dart';
@@ -15,9 +16,23 @@ class WorkareaSection extends StatefulWidget {
 }
 
 class _WorkareaSectionState extends State<WorkareaSection> {
-  final ScrollController _scrollController = ScrollController();
-
   final List<Map<String, dynamic>> _workItems = [
+    {
+      'id': 'js_constructions',
+      'title': 'JS CONSTRUCTIONS',
+      'subtitle':
+          'Global EPC Engineering, Supertall Commercial Towers & Parametric Megaprojects',
+      'category': 'Construction & Civil Engineering UI',
+      'image': 'assets/construction_hero_cover.jpg',
+      'tags': [
+        'Flutter Web',
+        'Scroll Video Engine',
+        'Supertall Towers',
+        'Civil Megaprojects',
+        'Interactive RFP Tender'
+      ],
+      'builder': (BuildContext context) => const JsConstructionsWebsiteScreen(),
+    },
     {
       'id': 'lumina_palace',
       'title': 'THE LUMINA PALACE',
@@ -72,19 +87,34 @@ class _WorkareaSectionState extends State<WorkareaSection> {
           _buildEditorialHeader(pal),
           const SizedBox(height: 40),
 
-          // ── Horizontal Scrollable List ─────────────────────────────────────
-          SizedBox(
-            height: 480,
-            child: ListView.separated(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              itemCount: _workItems.length,
-              separatorBuilder: (context, index) => const SizedBox(width: 24),
-              itemBuilder: (context, index) {
-                final item = _workItems[index];
-                return _WorkItemCard(item: item, pal: pal);
-              },
-            ),
+          // ── 3-Column GridView ──────────────────────────────────────────────
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final int crossAxisCount;
+              if (constraints.maxWidth >= 840) {
+                crossAxisCount = 3;
+              } else if (constraints.maxWidth >= 540) {
+                crossAxisCount = 2;
+              } else {
+                crossAxisCount = 1;
+              }
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _workItems.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 24,
+                  mainAxisSpacing: 24,
+                  mainAxisExtent: 500,
+                ),
+                itemBuilder: (context, index) {
+                  final item = _workItems[index];
+                  return _WorkItemCard(item: item, pal: pal);
+                },
+              );
+            },
           ),
         ],
       ),
@@ -173,7 +203,6 @@ class _WorkItemCardState extends State<_WorkItemCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutCubic,
-          width: 380,
           decoration: BoxDecoration(
             color: _isHovered
                 ? pal.card.withValues(alpha: 0.8)
@@ -199,7 +228,7 @@ class _WorkItemCardState extends State<_WorkItemCard> {
             children: [
               // Image Thumbnail with subtle hover scale
               Expanded(
-                flex: 6,
+                flex: 5,
                 child: ClipRRect(
                   child: Stack(
                     children: [
@@ -262,7 +291,7 @@ class _WorkItemCardState extends State<_WorkItemCard> {
 
               // Card Content
               Expanded(
-                flex: 5,
+                flex: 6,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -279,6 +308,8 @@ class _WorkItemCardState extends State<_WorkItemCard> {
                               letterSpacing: 1,
                               color: pal.textPrimary,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -287,6 +318,8 @@ class _WorkItemCardState extends State<_WorkItemCard> {
                               fontSize: 13,
                               color: pal.textPrimary.withValues(alpha: 0.7),
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),

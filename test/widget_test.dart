@@ -33,9 +33,9 @@ void main() {
     expect(find.textContaining(RegExp('Joel P Shaju', caseSensitive: false)), findsAtLeastNWidgets(1));
 
     // Verify section headers exist
-    expect(find.text('Professional Experience'), findsOneWidget);
-    expect(find.text('Technical Capabilities'), findsOneWidget);
-    expect(find.text('Featured Projects'), findsOneWidget);
+    expect(find.textContaining('EXPERIENCE_SYS'), findsOneWidget);
+    expect(find.textContaining('03 / SKILLS'), findsOneWidget);
+    expect(find.textContaining('PROJECT_SYS'), findsOneWidget);
 
     // Clean up physical size overrides
     addTearDown(tester.view.resetPhysicalSize);

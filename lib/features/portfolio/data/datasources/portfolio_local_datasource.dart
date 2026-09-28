@@ -142,9 +142,9 @@ class PortfolioLocalDataSourceImpl implements PortfolioLocalDataSource {
     return [
       // Languages
       const SkillModel(name: 'Dart', category: 'Languages', level: 0.95),
-      const SkillModel(name: 'C', category: 'Languages', level: 0.70),
-      const SkillModel(name: 'C++', category: 'Languages', level: 0.75),
       const SkillModel(name: 'SQL', category: 'Languages', level: 0.80),
+      const SkillModel(name: 'C++', category: 'Languages', level: 0.75),
+      const SkillModel(name: 'C', category: 'Languages', level: 0.70),
 
       // Mobile Development
       const SkillModel(
