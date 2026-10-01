@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Modern Family Residence",
+    "location": "Kozhikode, Kerala",
+    "desc": "A contemporary home designed for comfort, space and timeless elegance.",
+    "image": "assets/house_stage3_framing.jpg",
+    "status": "IN PROGRESS",
+    "statusColor": "0xFF3B82F6"
+  },
+  {
+    "title": "Luxury Villa",
+    "location": "Trivandrum, Kerala",
+    "desc": "A premium villa with modern aesthetics, premium finishes and serene surroundings.",
+    "image": "assets/villa_construction_site.jpg",
+    "status": "COMPLETED",
+    "statusColor": "0xFF16A34A"
+  },
+  {
+    "title": "Commercial Complex",
+    "location": "Kochi, Kerala",
+    "desc": "A state-of-the-art commercial space built for businesses to grow.",
+    "image": "assets/construction_project_tower.jpg",
+    "status": "COMPLETED",
+    "statusColor": "0xFF16A34A"
+  },
+  {
+    "title": "Residential Apartments",
+    "location": "Thrissur, Kerala",
+    "desc": "Modern apartments with world-class amenities and sustainable design.",
+    "image": "assets/construction_project_residential.jpg",
+    "status": "IN PROGRESS",
+    "statusColor": "0xFF3B82F6"
+  }
+]

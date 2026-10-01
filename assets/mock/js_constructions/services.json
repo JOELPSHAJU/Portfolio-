@@ -1,0 +1,20 @@
+[
+  {
+    "id": "earthworks_excavation",
+    "title": "Earthworks & Excavation",
+    "description": "Site preparation and excavation with modern equipment and skilled operators.",
+    "icon": "excavator"
+  },
+  {
+    "id": "skilled_workforce",
+    "title": "Skilled Workforce",
+    "description": "Experienced professionals dedicated to quality and timely delivery.",
+    "icon": "worker"
+  },
+  {
+    "id": "safety_first",
+    "title": "Safety First",
+    "description": "We maintain strict safety standards on every site, every day.",
+    "icon": "safety_shield"
+  }
+]

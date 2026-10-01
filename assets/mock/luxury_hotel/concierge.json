@@ -1,0 +1,22 @@
+[
+  {
+    "icon": "airplanemode_active_rounded",
+    "title": "AgustaWestland Helipad",
+    "desc": "Direct private landing strip connecting Nice, Cannes, and Monaco in under 12 minutes."
+  },
+  {
+    "icon": "directions_boat_rounded",
+    "title": "Private Superyacht Marina",
+    "desc": "Deep-water moorings accommodating vessels up to 85m with bespoke onboard provisioning."
+  },
+  {
+    "icon": "directions_car_filled_rounded",
+    "title": "Rolls-Royce Chauffeur",
+    "desc": "Complimentary on-demand Phantom and Ghost airport transfers and coastal excursions."
+  },
+  {
+    "icon": "wine_bar_rounded",
+    "title": "Private Island Degustation",
+    "desc": "Secluded tender excursions uninhabited coves with your private chef and sommelier."
+  }
+]

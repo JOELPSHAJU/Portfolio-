@@ -1,0 +1,86 @@
+[
+  {
+    "id": "royal_penthouse",
+    "category": "presidential",
+    "title": "The Royal Imperial Penthouse",
+    "tagline": "450 m² • 360° Ocean Vista • Private Plunge Pool & Helipad Pier",
+    "price": "$4,800",
+    "period": "/ night",
+    "badge": "PREMIER MASTERWORK",
+    "image": "assets/hotel_suite_penthouse.jpg",
+    "sqm": "450 m²",
+    "guests": "Up to 6 Guests",
+    "view": "Panoramic Azure Horizon",
+    "features": [
+      "Private heated cliffside infinity plunge pool",
+      "24/7 Dedicated Royal Butler & Private Chef",
+      "Hermès Paris bespoke bath amenities",
+      "Temperature-controlled sommelier wine cellar",
+      "Bang & Olufsen Beolab 90 acoustic sanctuary"
+    ],
+    "description": "Suspended between azure sea and open sky, the Royal Imperial Penthouse commands the entire crown floor. Sculpted marble floors, private sunset sundeck, dual master wings, and unconditional white-glove butler service create the pinnacle of private Mediterranean sanctuary."
+  },
+  {
+    "id": "platinum_suite",
+    "category": "presidential",
+    "title": "The Platinum Ocean Suite",
+    "tagline": "280 m² • Wraparound Teak Terrace • Carved Marble Soaking Spa",
+    "price": "$2,950",
+    "period": "/ night",
+    "badge": "SIGNATURE SANCTUARY",
+    "image": "assets/hotel_suite_platinum.jpg",
+    "sqm": "280 m²",
+    "guests": "Up to 4 Guests",
+    "view": "Unobstructed Sunrise Bay",
+    "features": [
+      "Curved Mediterranean sunrise terrace",
+      "Custom hand-stitched silk and velvet bedding",
+      "Direct elevator connection to Thalasso Spa",
+      "Complimentary Dom Pérignon vintage on arrival",
+      "Italian walnut dressing parlor with bespoke vanity"
+    ],
+    "description": "Embodying classic Riviera glamour with contemporary architectural quietude, the Platinum Ocean Suite surrounds you with warm walnut millwork, handcrafted furnishings, and gentle ocean breezes across an expansive private terrace."
+  },
+  {
+    "id": "lagoon_villa",
+    "category": "villas",
+    "title": "The Azure Lagoon Villa",
+    "tagline": "320 m² • Direct Overwater Access • Secluded Tropical Garden",
+    "price": "$3,400",
+    "period": "/ night",
+    "badge": "PRIVATE OVERWATER",
+    "image": "assets/hotel_suite_villa.jpg",
+    "sqm": "320 m²",
+    "guests": "Up to 4 Guests",
+    "view": "Private Lagoon & Coral Garden",
+    "features": [
+      "Private teak boardwalk with secluded catamaran berth",
+      "Outdoor rain grotto shower amidst exotic palms",
+      "Crystal glass floor observation panel",
+      "Nightly private sunset dinner setup on the pier",
+      "In-villa signature spa massages by appointment"
+    ],
+    "description": "Tucked along our private crystalline cove, the Azure Lagoon Villa provides absolute seclusion. Step directly from your private infinity sundeck into the sparkling waters, surrounded by lush native botanical gardens and whispering palms."
+  },
+  {
+    "id": "horizon_ocean",
+    "category": "oceanfront",
+    "title": "Grand Horizon Suite",
+    "tagline": "190 m² • Floor-to-Ceiling Glass • Private Sunset Firepit",
+    "price": "$1,950",
+    "period": "/ night",
+    "badge": "COASTAL VISTA",
+    "image": "assets/hotel_suite_penthouse.jpg",
+    "sqm": "190 m²",
+    "guests": "Up to 3 Guests",
+    "view": "Western Sunset Coastline",
+    "features": [
+      "Floor-to-ceiling motorized acoustic glass facade",
+      "Artisan espresso & private cocktail bar",
+      "Rainfall wet room with heated limestone benches",
+      "Evening starlight turndown & aromatherapy selection",
+      "Complimentary chauffeured Rolls-Royce transfers"
+    ],
+    "description": "Watch the sun dissolve into the Mediterranean from your private cliffside lounge. Featuring open-concept spatial proportions, state-of-the-art smart environmental controls, and unmatched serenity."
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "venues": [
+    {
+      "name": "L'Étoile Céeste",
+      "stars": "★★★ MICHELIN GUIDE",
+      "chef": "Chef Patron Alexandre Valmont",
+      "cuisine": "Haute French Coastal Gastronomy",
+      "hours": "18:30 – 23:00 • Formal Attire",
+      "highlight": "18,000 Vintage Wine Vault with Head Sommelier Pairings"
+    },
+    {
+      "name": "The Mirage Lounge & Raw Bar",
+      "stars": "COCKTAIL & RAW ARTISTRY",
+      "chef": "Master Omakase Shunsuke Mori",
+      "cuisine": "Edomae Sushi & Rare Botanical Mixology",
+      "hours": "12:00 – 01:00 • Smart Casual",
+      "highlight": "Suspended Glass Deck Overilluminated Evening Waves"
+    },
+    {
+      "name": "The Pergola Caviar Courtyard",
+      "stars": "AL FRESCO DEGUSTATION",
+      "chef": "Chef de Cuisine Hélène Rostand",
+      "cuisine": "Black Truffle, Caviar & Champagne Flight",
+      "hours": "11:00 – 19:00 • Resort Chic",
+      "highlight": "Private Olive Grove Pergolas with Live Cello Harmony"
+    }
+  ]
+}

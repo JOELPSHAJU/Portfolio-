@@ -1,0 +1,22 @@
+{
+  "treatments": [
+    {
+      "title": "Swiss Cellular Bio-Regeneration",
+      "time": "90 MIN",
+      "price": "$550",
+      "desc": "Targeted cellular infusion utilizing Swiss alpine glacier peptides and pure collagen masks to revitalize youthfulness."
+    },
+    {
+      "title": "Deep Grotto Marine Hydrotherapy",
+      "time": "120 MIN",
+      "price": "$680",
+      "desc": "Immersion in heated subterranean mineral pools, followed by dead sea salt exfoliation and pressure point reflexology."
+    },
+    {
+      "title": "Twilight Starlight Couple Ritual",
+      "time": "150 MIN",
+      "price": "$1,100",
+      "desc": "Private night access to the cave plunge pools, dual hot stone botanical oil massage, finished with Dom Pérignon."
+    }
+  ]
+}

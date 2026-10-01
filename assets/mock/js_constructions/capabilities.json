@@ -1,0 +1,42 @@
+[
+  {
+    "num": "01",
+    "code": "SYS-BIM-LIDAR",
+    "title": "Autonomous Drone LiDAR & Digital Twin",
+    "desc": "Daily centimeter-accurate point-cloud scans integrated with BIM Level 3 D timeline simulation.",
+    "icon": "track_changes_rounded",
+    "spec": "TOLERANCE ±2mm · RTK GPS",
+    "corner": "topLeft",
+    "hasOrangeAccent": false
+  },
+  {
+    "num": "02",
+    "code": "SYS-STL-METALLURGY",
+    "title": "High-Tensile Structural Steelwork",
+    "desc": "Robotic flux-cored arc welding and automated ultrasonic non-destructive testing for supertall nodes.",
+    "icon": "handyman_rounded",
+    "spec": "GRADE 65 · ASTM A992 SPEC",
+    "corner": "topRight",
+    "hasOrangeAccent": true
+  },
+  {
+    "num": "03",
+    "code": "SYS-CNC-POST-TENSION",
+    "title": "Post-Tensioned Concrete & Pre-Cast",
+    "desc": "Self-consolidating high-performance concrete with internal fiber reinforcement for 100+ year design life.",
+    "icon": "view_in_ar_rounded",
+    "spec": "C50/60 · CO2-MINERALIZED",
+    "corner": "topLeft",
+    "hasOrangeAccent": false
+  },
+  {
+    "num": "04",
+    "code": "SYS-HYD-SEISMIC",
+    "title": "Seismic Viscous & Tuned Mass Dampers",
+    "desc": "Advanced hydraulic sway mitigation absorbing wind drift on towers up to 600m height.",
+    "icon": "monitor_heart_rounded",
+    "spec": "CAT 5 HURRICANE · ZONE 4",
+    "corner": "topRight",
+    "hasOrangeAccent": true
+  }
+]

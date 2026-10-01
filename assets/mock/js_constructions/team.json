@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Marcus Vance, PE, CEng",
+    "role": "CHIEF STRUCTURAL ENGINEER",
+    "cred": "Ex-Arup Lead • 32 Supertalls Delivered",
+    "badgeId": "CORPS-PE-01",
+    "icon": "engineering_rounded"
+  },
+  {
+    "name": "Elena Rostova, Ph.D.",
+    "role": "HEAD OF ADVANCED METALLURGY",
+    "cred": "High-Tensile Alloy & Fatigue Specialist",
+    "badgeId": "CORPS-MET-02",
+    "icon": "psychology_rounded"
+  },
+  {
+    "name": "Devon Sterling",
+    "role": "VP OF GLOBAL PROCUREMENT & LOGISTICS",
+    "cred": "Heavy Maritime Heavy-Lift Operations",
+    "badgeId": "CORPS-LOG-03",
+    "icon": "local_shipping_rounded"
+  },
+  {
+    "name": "Tariq Al-Mansoor",
+    "role": "DIRECTOR OF CIVIL MEGAPROJECTS",
+    "cred": "Mega-Tunneling & Deep Harbor Infrastructure",
+    "badgeId": "CORPS-CIV-04",
+    "icon": "domain_rounded"
+  }
+]
