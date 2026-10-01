@@ -1,0 +1,456 @@
+{
+  "popularCars": [
+    {
+      "id": "bmw_5",
+      "tag": "Popular",
+      "tagColor": "0xFFE50914",
+      "name": "BMW 5 Series",
+      "specs": "2024 | Automatic | Unlimited Miles",
+      "price": "₹16,500",
+      "period": "/ day",
+      "image": "assets/car_bmw_5.jpg"
+    },
+    {
+      "id": "range_rover",
+      "tag": "Luxury SUV",
+      "tagColor": "0xFF2C3038",
+      "name": "Range Rover Sport",
+      "specs": "2022 | All-Wheel Drive | 5 Seats",
+      "price": "₹14,250",
+      "period": "/ day",
+      "image": "assets/car_range_rover.jpg"
+    },
+    {
+      "id": "audi_a6",
+      "tag": "Instant Book",
+      "tagColor": "0xFFE50914",
+      "name": "Audi A6",
+      "specs": "2024 | Automatic | GPS Navigation",
+      "price": "₹15,500",
+      "period": "/ day",
+      "image": "assets/car_audi_a6.jpg"
+    },
+    {
+      "id": "mercedes_e",
+      "tag": "Executive",
+      "tagColor": "0xFF2C3038",
+      "name": "Mercedes-Benz E-Class",
+      "specs": "2023 | Automatic | Premium Sound",
+      "price": "₹13,780",
+      "period": "/ day",
+      "image": "assets/car_mercedes_e.jpg"
+    }
+  ],
+  "fleetCars": [
+    {
+      "id": "bmw_5",
+      "tag": "Popular Sedan",
+      "tagColor": "0xFFE50914",
+      "name": "BMW 5 Series M-Sport",
+      "category": "Luxury Sedans",
+      "specs": "2024 | Automatic | Twin-Turbo | 5 Seats",
+      "price": "₹16,500",
+      "period": "/ day",
+      "image": "assets/car_bmw_5.jpg",
+      "rating": "4.95",
+      "trips": "142 trips",
+      "speed": "250 km/h"
+    },
+    {
+      "id": "range_rover",
+      "tag": "Luxury 4x4",
+      "tagColor": "0xFF2C3038",
+      "name": "Range Rover Sport HSE",
+      "category": "Performance SUVs",
+      "specs": "2023 | All-Wheel Drive | Panoramic Sunroof",
+      "price": "₹14,250",
+      "period": "/ day",
+      "image": "assets/car_range_rover.jpg",
+      "rating": "4.98",
+      "trips": "98 trips",
+      "speed": "235 km/h"
+    },
+    {
+      "id": "porsche_911",
+      "tag": "Flagship Supercar",
+      "tagColor": "0xFFE50914",
+      "name": "Porsche 911 Carrera GTS",
+      "category": "Sports & Exotics",
+      "specs": "2024 | PDK Automatic | 473 HP | Sport Exhaust",
+      "price": "₹42,000",
+      "period": "/ day",
+      "image": "assets/autovista_hero_porsche.jpg",
+      "rating": "5.00",
+      "trips": "64 trips",
+      "speed": "312 km/h"
+    },
+    {
+      "id": "audi_a6",
+      "tag": "Instant Book",
+      "tagColor": "0xFFE50914",
+      "name": "Audi A6 Matrix LED",
+      "category": "Luxury Sedans",
+      "specs": "2024 | Quattro AWD | Virtual Cockpit",
+      "price": "₹15,500",
+      "period": "/ day",
+      "image": "assets/car_audi_a6.jpg",
+      "rating": "4.91",
+      "trips": "119 trips",
+      "speed": "250 km/h"
+    },
+    {
+      "id": "mercedes_e",
+      "tag": "Executive VIP",
+      "tagColor": "0xFF2C3038",
+      "name": "Mercedes-Benz E-Class AMG",
+      "category": "Luxury Sedans",
+      "specs": "2023 | 9G-Tronic | Burmester Audio",
+      "price": "₹13,780",
+      "period": "/ day",
+      "image": "assets/car_mercedes_e.jpg",
+      "rating": "4.96",
+      "trips": "156 trips",
+      "speed": "240 km/h"
+    },
+    {
+      "id": "macan_gts",
+      "tag": "Performance SUV",
+      "tagColor": "0xFF2C3038",
+      "name": "Porsche Macan GTS",
+      "category": "Performance SUVs",
+      "specs": "2023 | Twin-Turbo V6 | Air Suspension",
+      "price": "₹28,500",
+      "period": "/ day",
+      "image": "assets/autovista_test_drive.jpg",
+      "rating": "4.97",
+      "trips": "82 trips",
+      "speed": "272 km/h"
+    },
+    {
+      "id": "bmw_m4",
+      "tag": "Track Star",
+      "tagColor": "0xFFE50914",
+      "name": "BMW M4 Competition Coupé",
+      "category": "Sports & Exotics",
+      "specs": "2024 | 503 HP | M Carbon Buckets",
+      "price": "₹38,000",
+      "period": "/ day",
+      "image": "assets/autovista_newsletter_car.jpg",
+      "rating": "4.99",
+      "trips": "53 trips",
+      "speed": "290 km/h"
+    },
+    {
+      "id": "mercedes_eqs",
+      "tag": "Zero Emission",
+      "tagColor": "0xFF107C41",
+      "name": "Mercedes EQS 580 4MATIC",
+      "category": "Electric & Hybrid",
+      "specs": "2024 | Electric | 700km Range | Hyperscreen",
+      "price": "₹24,000",
+      "period": "/ day",
+      "image": "assets/car_mercedes_e.jpg",
+      "rating": "4.94",
+      "trips": "45 trips",
+      "speed": "210 km/h"
+    }
+  ],
+  "dealsCars": [
+    {
+      "id": "bmw_5_deal",
+      "tag": "Weekend Special",
+      "tagColor": "0xFFE50914",
+      "name": "BMW 5 Series M-Sport",
+      "discount": "25% OFF",
+      "originalPrice": "₹22,000",
+      "dealPrice": "₹16,500",
+      "period": "/ day",
+      "savings": "Save ₹5,500/day",
+      "image": "assets/car_bmw_5.jpg",
+      "badge": "Limited Availability"
+    },
+    {
+      "id": "range_rover_deal",
+      "tag": "SUV Getaway",
+      "tagColor": "0xFF2C3038",
+      "name": "Range Rover Sport HSE",
+      "discount": "27% OFF",
+      "originalPrice": "₹19,500",
+      "dealPrice": "₹14,250",
+      "period": "/ day",
+      "savings": "Save ₹5,250/day",
+      "image": "assets/car_range_rover.jpg",
+      "badge": "Top Rated"
+    },
+    {
+      "id": "macan_gts_deal",
+      "tag": "Power Pass",
+      "tagColor": "0xFFE50914",
+      "name": "Porsche Macan GTS",
+      "discount": "20% OFF",
+      "originalPrice": "₹35,500",
+      "dealPrice": "₹28,500",
+      "period": "/ day",
+      "savings": "Save ₹7,000/day",
+      "image": "assets/autovista_test_drive.jpg",
+      "badge": "Instant Confirmation"
+    },
+    {
+      "id": "mercedes_e_deal",
+      "tag": "Corporate Flash",
+      "tagColor": "0xFF2C3038",
+      "name": "Mercedes-Benz E-Class AMG",
+      "discount": "23% OFF",
+      "originalPrice": "₹18,000",
+      "dealPrice": "₹13,780",
+      "period": "/ day",
+      "savings": "Save ₹4,220/day",
+      "image": "assets/car_mercedes_e.jpg",
+      "badge": "Free Airport Delivery"
+    }
+  ],
+  "hubs": [
+    {
+      "city": "Kochi",
+      "name": "Cochin International Airport (COK)",
+      "terminal": "Terminal 3 VIP Arrivals Lounge",
+      "address": "Airport Road, Nedumbassery, Kochi, Kerala 683111",
+      "type": "Airport Hubs",
+      "hours": "Open 24 Hours / 7 Days",
+      "fleet": "42 Vehicles Available",
+      "phone": "+91 98470 11001",
+      "is24x7": true
+    },
+    {
+      "city": "Mumbai",
+      "name": "Chhatrapati Shivaji International T2 (BOM)",
+      "terminal": "Level P4 Premium Valet Lounge",
+      "address": "Sahar, Andheri East, Mumbai, Maharashtra 400099",
+      "type": "Airport Hubs",
+      "hours": "Open 24 Hours / 7 Days",
+      "fleet": "58 Vehicles Available",
+      "phone": "+91 98470 11002",
+      "is24x7": true
+    },
+    {
+      "city": "Mumbai",
+      "name": "Bandra Kurla Complex (BKC) Flagship",
+      "terminal": "Maker Maxity, North Avenue",
+      "address": "Bandra Kurla Complex, Bandra East, Mumbai 400051",
+      "type": "City Centers",
+      "hours": "8:00 AM – 11:00 PM",
+      "fleet": "34 Vehicles Available",
+      "phone": "+91 98470 11003",
+      "is24x7": false
+    },
+    {
+      "city": "Bengaluru",
+      "name": "Kempegowda International Airport (BLR)",
+      "terminal": "Terminal 1 & 2 Car Rental Concourse",
+      "address": "KIAL Rd, Devanahalli, Bengaluru, Karnataka 560300",
+      "type": "Airport Hubs",
+      "hours": "Open 24 Hours / 7 Days",
+      "fleet": "46 Vehicles Available",
+      "phone": "+91 98470 11004",
+      "is24x7": true
+    },
+    {
+      "city": "Delhi NCR",
+      "name": "Indira Gandhi International T3 (DEL)",
+      "terminal": "Aerocity Hospitality District, Worldmark 1",
+      "address": "Aerocity, New Delhi, Delhi 110037",
+      "type": "Airport Hubs",
+      "hours": "Open 24 Hours / 7 Days",
+      "fleet": "50 Vehicles Available",
+      "phone": "+91 98470 11005",
+      "is24x7": true
+    },
+    {
+      "city": "Goa",
+      "name": "Manohar International Airport Mopa (GOX)",
+      "terminal": "North Goa Express Rental Lounge",
+      "address": "Mopa, Pernem, Goa 403512",
+      "type": "Airport Hubs",
+      "hours": "Open 24 Hours / 7 Days",
+      "fleet": "30 Vehicles Available",
+      "phone": "+91 98470 11006",
+      "is24x7": true
+    },
+    {
+      "city": "Dubai",
+      "name": "Downtown Boulevard & DXB T3",
+      "terminal": "Sheikh Zayed Road & Terminal 3 VIP Concierge",
+      "address": "Financial Centre Road, Downtown Dubai, UAE",
+      "type": "City Centers",
+      "hours": "Open 24 Hours / 7 Days",
+      "fleet": "65 Vehicles Available",
+      "phone": "+971 4 800 5634",
+      "is24x7": true
+    }
+  ],
+  "services": [
+    {
+      "title": "Airport Delivery",
+      "sub": "Direct delivery to terminal gate",
+      "icon": "flight_takeoff_rounded"
+    },
+    {
+      "title": "Chauffeur Drive",
+      "sub": "Executive chauffeured transport",
+      "icon": "airline_seat_recline_extra_rounded"
+    },
+    {
+      "title": "Doorstep Drop-off",
+      "sub": "Delivered right to your hotel or home",
+      "icon": "home_work_outlined"
+    },
+    {
+      "title": "Long-Term Rental",
+      "sub": "Flexible weekly & monthly discounts",
+      "icon": "calendar_month_outlined"
+    }
+  ],
+  "coupons": [
+    {
+      "code": "AUTOVISTA20",
+      "discount": "20% OFF",
+      "title": "Luxury Sedans Discount",
+      "desc": "Valid on bookings of 2 days or more across all BMW and Audi models."
+    },
+    {
+      "code": "FIRSTDRIVE",
+      "discount": "₹2,500 OFF",
+      "title": "First-Time Driver Gift",
+      "desc": "Instant discount on your first verified rental reservation."
+    },
+    {
+      "code": "MONTHLYPRO",
+      "discount": "40% OFF",
+      "title": "Long-Term Subscription",
+      "desc": "Special privilege rates for 30+ day vehicle bookings with concierge."
+    }
+  ],
+  "detailedServices": [
+    {
+      "title": "Executive Chauffeur Drive",
+      "sub": "Professional, multilingual chauffeurs in sharp business attire. Trained in diplomatic etiquette, privacy, and smooth navigation.",
+      "icon": "airline_seat_recline_extra_rounded",
+      "features": [
+        "English-speaking certified chauffeurs",
+        "Complimentary onboard Wi-Fi & water",
+        "Flight delay tracking & airport pickup"
+      ]
+    },
+    {
+      "title": "Airport VIP Meet & Greet",
+      "sub": "Direct curbside terminal delivery. Step off your aircraft and straight into the driver’s seat with zero waiting at rental desks.",
+      "icon": "flight_takeoff_rounded",
+      "features": [
+        "Curbside terminal departure & arrival",
+        "Luggage concierge assistance",
+        "Fast-track digital paperwork verification"
+      ]
+    },
+    {
+      "title": "Wedding & Gala Convoys",
+      "sub": "Coordinated luxury convoys and decorated flagship vehicles for weddings, VIP film sets, and high-profile private delegations.",
+      "icon": "celebration_rounded",
+      "features": [
+        "Bespoke ribbon and floral styling",
+        "Synchronized multi-car arrival logistics",
+        "Dedicated backup automobile on standby"
+      ]
+    },
+    {
+      "title": "Corporate Long-Term Fleet",
+      "sub": "Flexible 1 to 24-month corporate leasing solutions without balance-sheet liabilities, depreciation losses, or servicing downtime.",
+      "icon": "business_center_rounded",
+      "features": [
+        "Tax-deductible commercial invoicing",
+        "Scheduled doorstep maintenance service",
+        "Immediate loaner car during maintenance"
+      ]
+    },
+    {
+      "title": "Doorstep Express Delivery",
+      "sub": "Handover at your private residence, hotel lobby, or airstrip hanger. Delivered cleaned, detailed, and fueled in under 90 minutes.",
+      "icon": "home_work_rounded",
+      "features": [
+        "90-minute rapid doorstep dispatch",
+        "Contactless digital key handover",
+        "Live GPS delivery tracking to your door"
+      ]
+    },
+    {
+      "title": "Weekend Supercar Track Experience",
+      "sub": "Unleash high-horsepower precision on private circuits and curated scenic mountain passes with escort pilots and route planning.",
+      "icon": "speed_rounded",
+      "features": [
+        "Professional telemetry telemetry briefing",
+        "Lead & chase support vehicle escort",
+        "GoPro 4K video recording bundle included"
+      ]
+    }
+  ],
+  "insurancePlans": [
+    {
+      "tier": "Silver Standard",
+      "cost": "Included Free",
+      "excess": "₹25,000 max liability",
+      "isFeatured": false,
+      "items": [
+        "Third-party bodily injury & property liability",
+        "Basic collision damage waiver (CDW)",
+        "24/7 National roadside breakdown support",
+        "Towing coverage up to 50 km"
+      ]
+    },
+    {
+      "tier": "Gold Comprehensive",
+      "cost": "₹1,499 / day",
+      "excess": "₹5,000 reduced excess",
+      "isFeatured": false,
+      "items": [
+        "Reduced collision liability to just ₹5,000",
+        "Windscreen and glass crack coverage",
+        "Tyre puncture and alloy wheel scuff repair",
+        "Personal accident cover for all passengers"
+      ]
+    },
+    {
+      "tier": "Platinum Zero-Excess",
+      "cost": "₹2,999 / day",
+      "excess": "₹0 ZERO EXCESS (Full Shield)",
+      "isFeatured": true,
+      "items": [
+        "100% Zero Deductible / Zero Customer Excess",
+        "Key loss replacement & emergency locksmith",
+        "Interior leather accidental stain cover",
+        "Free additional companion driver license",
+        "Instant replacement car dispatch guarantee"
+      ]
+    }
+  ],
+  "valueProps": [
+    {
+      "title": "Sanitized Fleet",
+      "sub": "100% clean, inspected vehicles",
+      "icon": "verified_outlined"
+    },
+    {
+      "title": "Best Rate Guarantee",
+      "sub": "Transparent pricing, no hidden fees",
+      "icon": "military_tech_outlined"
+    },
+    {
+      "title": "24/7 Roadside Assist",
+      "sub": "Always on call for your trip",
+      "icon": "headset_mic_outlined"
+    },
+    {
+      "title": "Flexible Rental Terms",
+      "sub": "Free cancellation up to 24h",
+      "icon": "credit_card_outlined"
+    }
+  ]
+}
