@@ -1,0 +1,38 @@
+[
+  {
+    "id": "prod_facewash",
+    "name": "Calming Green Tea Face Wash",
+    "price": 499,
+    "formattedPrice": "₹499",
+    "image": "assets/purelis_prod_facewash.jpg",
+    "description": "Enriched with soothing green tea extract & chamomile to cleanse without stripping natural moisture.",
+    "size": "150 ml e 5.07 fl oz"
+  },
+  {
+    "id": "prod_serum",
+    "name": "Vitamin C Brightening Serum",
+    "price": 799,
+    "formattedPrice": "₹799",
+    "image": "assets/purelis_prod_serum.jpg",
+    "description": "Potent antioxidant formula with 15% Vitamin C, Kakadu Plum & Hyaluronic Acid for radiant glowing skin.",
+    "size": "30 ml e 1.0 fl oz"
+  },
+  {
+    "id": "prod_moisturizer",
+    "name": "Hydra Barrier Moisturizer",
+    "price": 649,
+    "formattedPrice": "₹649",
+    "image": "assets/purelis_prod_moisturizer.jpg",
+    "description": "Restorative ceramide gel cream that locks in 48-hour hydration while strengthening the skin barrier.",
+    "size": "50 g e 1.7 oz"
+  },
+  {
+    "id": "prod_lipbalm",
+    "name": "Tinted Lip Balm SPF 50",
+    "price": 299,
+    "formattedPrice": "₹299",
+    "image": "assets/purelis_prod_lipbalm.png",
+    "description": "Nourishing sheer rose tint with mineral SPF 20 defense and organic botanical oils.",
+    "size": "4.5 g e 0.16 oz"
+  }
+]

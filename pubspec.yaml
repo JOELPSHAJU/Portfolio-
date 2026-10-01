@@ -67,6 +67,7 @@ flutter:
     - assets/mock/js_constructions/
     - assets/mock/luxury_hotel/
     - assets/mock/autovista/
+    - assets/mock/purelis/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

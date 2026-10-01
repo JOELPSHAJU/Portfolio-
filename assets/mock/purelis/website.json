@@ -1,0 +1,55 @@
+{
+  "valuePropositions": [
+    {
+      "icon": "eco_outlined",
+      "title": "Natural Ingredients",
+      "subtitle": "Safe & toxin-free"
+    },
+    {
+      "icon": "science_outlined",
+      "title": "Clinically Tested",
+      "subtitle": "Dermatologically proven"
+    },
+    {
+      "icon": "pets_outlined",
+      "title": "Cruelty Free",
+      "subtitle": "We never test on animals"
+    },
+    {
+      "icon": "water_drop_outlined",
+      "title": "For All Skin Types",
+      "subtitle": "Gentle & effective care"
+    }
+  ],
+  "trustBadges": [
+    {
+      "icon": "local_shipping_outlined",
+      "title": "FREE SHIPPING",
+      "subtitle": "On orders over ₹499"
+    },
+    {
+      "icon": "cached_rounded",
+      "title": "EASY RETURNS",
+      "subtitle": "14 days return policy"
+    },
+    {
+      "icon": "verified_user_outlined",
+      "title": "SECURE PAYMENT",
+      "subtitle": "100% secure checkout"
+    }
+  ],
+  "ecoBadges": [
+    {
+      "icon": "spa_outlined",
+      "text": "Clean Beauty"
+    },
+    {
+      "icon": "autorenew_rounded",
+      "text": "Sustainable"
+    },
+    {
+      "icon": "inventory_2_outlined",
+      "text": "Eco-Friendly Packaging"
+    }
+  ]
+}

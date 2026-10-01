@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cleansers",
+    "title": "CLEANSERS",
+    "image": "assets/purelis_cat_cleansers.jpg"
+  },
+  {
+    "id": "serums",
+    "title": "SERUMS",
+    "image": "assets/purelis_cat_serums.jpg"
+  },
+  {
+    "id": "moisturizers",
+    "title": "MOISTURIZERS",
+    "image": "assets/purelis_cat_moisturizers.jpg"
+  },
+  {
+    "id": "suncare",
+    "title": "SUN CARE",
+    "image": "assets/purelis_cat_suncare.jpg"
+  },
+  {
+    "id": "kits",
+    "title": "SKIN CARE KITS",
+    "image": "assets/purelis_cat_kits.jpg"
+  },
+  {
+    "id": "bestsellers",
+    "title": "BEST SELLERS",
+    "image": "assets/purelis_cat_bestsellers.jpg"
+  }
+]
