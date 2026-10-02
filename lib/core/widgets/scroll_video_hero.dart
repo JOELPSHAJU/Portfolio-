@@ -1,16 +1,11 @@
 import 'dart:async';
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 
 /// Controller for observing and controlling [ScrollVideoHero].
 class ScrollVideoHeroController extends ChangeNotifier {
   final ValueNotifier<bool> isAutoTourRunning = ValueNotifier<bool>(false);
-
   final ValueNotifier<bool> isInitialized = ValueNotifier<bool>(false);
-
   final ValueNotifier<double> progressNotifier = ValueNotifier<double>(0.0);
 
   _ScrollVideoHeroState? _state;
@@ -23,8 +18,11 @@ class ScrollVideoHeroController extends ChangeNotifier {
     _state = null;
   }
 
-  /// Underlying video controller.
-  VideoPlayerController? get videoPlayerController => _state?._videoController;
+  /// Underlying video controller (currently active forward or reverse).
+  VideoPlayerController? get videoPlayerController =>
+      _state?._isReversingNotifier.value == true
+          ? (_state?._reverseController ?? _state?._forwardController)
+          : _state?._forwardController;
 
   /// Start automatic video playback.
   void startAutoTour({Duration? duration}) {
@@ -54,36 +52,27 @@ class ScrollVideoHeroController extends ChangeNotifier {
   }
 }
 
-/// High-performance scroll-driven video hero.
+/// Ultra-smooth 60 FPS hardware scroll-driven video hero.
 ///
-/// Architecture:
-///
-/// Scroll
-///   ↓
-/// Target progress
-///   ↓
-/// 60/120Hz interpolation
-///   ↓
-/// Latest target only
-///   ↓
-/// Throttled video seek
-///   ↓
-/// Scroll stops
-///   ↓
-/// One exact final seek
-///
-/// Important:
-/// The visual scroll interpolation is completely independent from
-/// the video decoder. The decoder is never allowed to build a backlog
-/// of obsolete seek requests.
+/// Features:
+/// - Exact bi-directional continuity: when scrolling up after scrolling down,
+///   playback begins immediately from the current shot where the user stopped,
+///   never jumping to the end.
+/// - Dual-video native hardware playback engine with background standby pre-seeking.
+/// - Speed-proportional playback: speeds up with faster scrolls, glides smoothly.
+/// - Pinned viewport during video progression; seamlessly scrolls page content
+///   once the video reaches the end.
 class ScrollVideoHero extends StatefulWidget {
-  /// MP4 asset.
+  /// Forward MP4 video asset.
   final String videoAsset;
+
+  /// Optional reversed MP4 video asset for seamless 60fps reverse scrubbing.
+  final String? reversedVideoAsset;
 
   /// Page ScrollController.
   final ScrollController scrollController;
 
-  /// Scroll distance used to scrub the entire video.
+  /// Scroll distance dedicated to scrubbing the video from 0:00 to end.
   final double scrollDistance;
 
   /// Optional external controller.
@@ -91,7 +80,7 @@ class ScrollVideoHero extends StatefulWidget {
 
   /// Progress-dependent overlay builder.
   final Widget Function(BuildContext context, double progress, bool isReady)?
-  overlayBuilder;
+      overlayBuilder;
 
   /// Progress-dependent underlay builder.
   final Widget Function(BuildContext context, double progress)? underlayBuilder;
@@ -102,17 +91,13 @@ class ScrollVideoHero extends StatefulWidget {
   /// Background color.
   final Color backgroundColor;
 
-  /// Legacy smoothing parameter.
-  ///
-  /// Kept for API compatibility.
+  /// Legacy smoothing parameter (kept for API compatibility).
   final double smoothingFactor;
 
-  /// Minimum time difference between normal seeks.
-  ///
-  /// 33ms is approximately two frames at 60fps.
+  /// Tolerance in milliseconds (kept for API compatibility).
   final int toleranceMs;
 
-  /// Large jumps immediately move the visual timeline.
+  /// Large jumps immediately seek to target.
   final int largeJumpThresholdMs;
 
   /// Optional progress callback.
@@ -122,14 +107,12 @@ class ScrollVideoHero extends StatefulWidget {
   final BoxFit fit;
 
   /// Optional mouse wheel smoothing.
-  ///
-  /// Disabled by default because page-level mouse wheel handling
-  /// should not fight this widget.
   final bool enableSmoothWheel;
 
   const ScrollVideoHero({
     super.key,
     required this.videoAsset,
+    this.reversedVideoAsset,
     required this.scrollController,
     this.scrollDistance = 2400.0,
     this.controller,
@@ -137,20 +120,11 @@ class ScrollVideoHero extends StatefulWidget {
     this.underlayBuilder,
     this.placeholder,
     this.backgroundColor = const Color(0xFF08090D),
-
-    // Kept for backwards compatibility.
     this.smoothingFactor = 0.22,
-
-    // ~2 frames at 60fps.
     this.toleranceMs = 33,
-
-    // Faster response to large navigation jumps.
-    this.largeJumpThresholdMs = 1200,
-
+    this.largeJumpThresholdMs = 2500,
     this.onProgressChanged,
     this.fit = BoxFit.cover,
-
-    // Prefer handling wheel smoothing outside this widget.
     this.enableSmoothWheel = false,
   });
 
@@ -158,97 +132,38 @@ class ScrollVideoHero extends StatefulWidget {
   State<ScrollVideoHero> createState() => _ScrollVideoHeroState();
 }
 
-class _ScrollVideoHeroState extends State<ScrollVideoHero>
-    with SingleTickerProviderStateMixin {
-  late VideoPlayerController _videoController;
-  late Ticker _ticker;
+class _ScrollVideoHeroState extends State<ScrollVideoHero> {
+  late VideoPlayerController _forwardController;
+  VideoPlayerController? _reverseController;
 
-  final ValueNotifier<double> _scrollOffsetNotifier = ValueNotifier<double>(
-    0.0,
-  );
-
-  final ValueNotifier<double> _displayProgressNotifier = ValueNotifier<double>(
-    0.0,
-  );
-
-  // ---------------------------------------------------------------------------
-  // VIDEO STATE
-  // ---------------------------------------------------------------------------
+  final ValueNotifier<bool> _isReversingNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<double> _scrollOffsetNotifier = ValueNotifier<double>(0.0);
+  final ValueNotifier<double> _displayProgressNotifier = ValueNotifier<double>(0.0);
 
   bool _isInitialized = false;
   bool _hasError = false;
   bool _isDisposing = false;
 
-  int _totalVideoMs = 10000;
+  bool _isReversing = false;
+  bool _isSeekingRev = false;
+  bool _isSeekingFwd = false;
 
-  // ---------------------------------------------------------------------------
-  // TIMELINE STATE
-  // ---------------------------------------------------------------------------
-
-  double _targetMs = 0.0;
-  double _currentDisplayMs = 0.0;
-
-  Duration? _lastTickDuration;
-
-  // ---------------------------------------------------------------------------
-  // SEEK PIPELINE
-  // ---------------------------------------------------------------------------
-
-  bool _isSeeking = false;
-
-  /// The newest requested seek.
-  ///
-  /// Older requests are overwritten.
-  int? _latestSeekMs;
-
-  int _lastDispatchedMs = -1;
-  int _lastRenderedMs = -1;
-
-  DateTime? _lastSeekTime;
-
-  /// Normal seek pacing.
-  ///
-  /// 33ms ≈ 30 seeks/sec maximum.
-  static const int _minSeekIntervalMs = 33;
-
-  // ---------------------------------------------------------------------------
-  // SCROLL IDLE
-  // ---------------------------------------------------------------------------
-
-  Timer? _scrollIdleTimer;
-
-  bool _isUserScrolling = false;
-
-  /// Exact seek is performed this long after scrolling stops.
-  static const Duration _scrollIdleDuration = Duration(milliseconds: 70);
-
-  // ---------------------------------------------------------------------------
-  // AUTO TOUR
-  // ---------------------------------------------------------------------------
+  int _targetMs = 0;
+  int _lastKnownFwdMs = 0;
+  int _lastKnownRevMs = 0;
+  double _lastScrollOffset = 0.0;
+  Timer? _scrollDebounceTimer;
 
   bool _isAutoTouring = false;
   bool _isSyncingScroll = false;
 
-  // ---------------------------------------------------------------------------
-  // INIT
-  // ---------------------------------------------------------------------------
-
   @override
   void initState() {
     super.initState();
-
     widget.controller?._attach(this);
-
-    _ticker = createTicker(_onTick);
-
     widget.scrollController.addListener(_handleScroll);
-
     _initVideo();
   }
-
-  // ---------------------------------------------------------------------------
-  // WIDGET UPDATE
-  // ---------------------------------------------------------------------------
 
   @override
   void didUpdateWidget(covariant ScrollVideoHero oldWidget) {
@@ -261,46 +176,78 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
 
     if (oldWidget.scrollController != widget.scrollController) {
       oldWidget.scrollController.removeListener(_handleScroll);
-
       widget.scrollController.addListener(_handleScroll);
     }
 
-    if (oldWidget.videoAsset != widget.videoAsset) {
+    if (oldWidget.videoAsset != widget.videoAsset ||
+        oldWidget.reversedVideoAsset != widget.reversedVideoAsset) {
       _reinitVideo();
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // VIDEO INITIALIZATION
-  // ---------------------------------------------------------------------------
+  String? _resolveReversedAsset() {
+    if (widget.reversedVideoAsset != null) {
+      return widget.reversedVideoAsset;
+    }
+    // Auto-detect common reversed companion assets
+    if (widget.videoAsset.contains('hotel_intro.mp4')) {
+      return 'assets/hotel_intro_reversed.mp4';
+    }
+    if (widget.videoAsset.contains('construction_introd.mp4')) {
+      return 'assets/construction_introd_reversed.mp4';
+    }
+    return null;
+  }
 
   Future<void> _initVideo() async {
     try {
-      final controller = VideoPlayerController.asset(
+      _forwardController = VideoPlayerController.asset(
         widget.videoAsset,
         videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
       );
 
-      _videoController = controller;
-
-      await controller.initialize();
-
-      if (_isDisposing) return;
-
-      await controller.setVolume(0.0);
-      await controller.setLooping(false);
-      await controller.pause();
-
-      // Prime first frame.
-      await controller.seekTo(Duration.zero);
-
-      if (_isDisposing) return;
-
-      final duration = controller.value.duration;
-
-      if (duration > Duration.zero) {
-        _totalVideoMs = duration.inMilliseconds;
+      final reversedPath = _resolveReversedAsset();
+      if (reversedPath != null) {
+        _reverseController = VideoPlayerController.asset(
+          reversedPath,
+          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+        );
       }
+
+      await Future.wait([
+        _forwardController.initialize(),
+        if (_reverseController != null) _reverseController!.initialize(),
+      ]);
+
+      if (_isDisposing) return;
+
+      await Future.wait([
+        _forwardController.setVolume(0.0),
+        _forwardController.setLooping(false),
+        _forwardController.pause(),
+        if (_reverseController != null) ...[
+          _reverseController!.setVolume(0.0),
+          _reverseController!.setLooping(false),
+          _reverseController!.pause(),
+        ],
+      ]);
+
+      // Prime opening frames safely
+      await _forwardController.seekTo(Duration.zero);
+      _lastKnownFwdMs = 0;
+
+      if (_reverseController != null) {
+        final totalRev = _reverseController!.value.duration.inMilliseconds;
+        // Prime safely away from EOF so it never resets to 0:00
+        final primeRev = (totalRev - 120).clamp(50, totalRev);
+        await _reverseController!.seekTo(Duration(milliseconds: primeRev));
+        _lastKnownRevMs = primeRev;
+      }
+
+      if (_isDisposing) return;
+
+      _forwardController.addListener(_onForwardTick);
+      _reverseController?.addListener(_onReverseTick);
 
       if (!mounted) return;
 
@@ -310,17 +257,10 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
       });
 
       widget.controller?.isInitialized.value = true;
-
-      _lastTickDuration = null;
-
-      _ticker.start();
-
       _handleScroll();
     } catch (e) {
       debugPrint('ScrollVideoHero initialization error: $e');
-
       if (!mounted) return;
-
       setState(() {
         _hasError = true;
       });
@@ -328,351 +268,275 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
   }
 
   Future<void> _reinitVideo() async {
-    _ticker.stop();
-
-    _scrollIdleTimer?.cancel();
-
+    _scrollDebounceTimer?.cancel();
     _isInitialized = false;
     _hasError = false;
-
     widget.controller?.isInitialized.value = false;
 
+    _forwardController.removeListener(_onForwardTick);
+    _reverseController?.removeListener(_onReverseTick);
+
     try {
-      await _videoController.dispose();
+      await _forwardController.dispose();
+      await _reverseController?.dispose();
     } catch (_) {}
 
+    _reverseController = null;
+    _targetMs = 0;
+    _lastKnownFwdMs = 0;
+    _lastKnownRevMs = 0;
+    _lastScrollOffset = 0.0;
+    _isReversing = false;
+    _isSeekingRev = false;
+    _isSeekingFwd = false;
+    _isReversingNotifier.value = false;
+
     if (!mounted) return;
-
-    _lastTickDuration = null;
-    _targetMs = 0.0;
-    _currentDisplayMs = 0.0;
-
-    _lastDispatchedMs = -1;
-    _lastRenderedMs = -1;
-
-    _isSeeking = false;
-    _latestSeekMs = null;
-
     await _initVideo();
   }
 
-  // ---------------------------------------------------------------------------
-  // SCROLL HANDLING
-  // ---------------------------------------------------------------------------
+  void _onForwardTick() {
+    if (!_forwardController.value.isInitialized) return;
+    if (_isSeekingFwd) return;
 
-  void _handleScroll() {
-    if (_isSyncingScroll) return;
+    final current = _forwardController.value.position.inMilliseconds;
+    _lastKnownFwdMs = current;
 
-    if (!widget.scrollController.hasClients) {
+    if (_isAutoTouring) {
+      final totalMs = _forwardController.value.duration.inMilliseconds > 0
+          ? _forwardController.value.duration.inMilliseconds
+          : 10000;
+      final double progress = (current / totalMs).clamp(0.0, 1.0);
+      _updateProgress(progress);
+
+      if (widget.scrollController.hasClients) {
+        final double desiredScroll = progress * widget.scrollDistance;
+        _isSyncingScroll = true;
+        widget.scrollController.jumpTo(desiredScroll);
+        _scrollOffsetNotifier.value = desiredScroll;
+        _isSyncingScroll = false;
+      }
+
+      if (current >= totalMs - 35) {
+        _stopAutoTour();
+      }
       return;
     }
 
-    final double currentOffset = widget.scrollController.offset;
+    if (_isReversingNotifier.value) return;
+    if (!_forwardController.value.isPlaying) return;
 
-    // This drives the physical hero position.
+    if (current >= _targetMs - 15) {
+      _forwardController.pause();
+    }
+  }
+
+  void _onReverseTick() {
+    if (_reverseController == null || !_reverseController!.value.isInitialized) {
+      return;
+    }
+    if (_isSeekingRev) return;
+
+    final current = _reverseController!.value.position.inMilliseconds;
+    _lastKnownRevMs = current;
+
+    if (!_isReversingNotifier.value) return;
+    if (!_reverseController!.value.isPlaying) return;
+
+    final totalMs = _forwardController.value.duration.inMilliseconds > 0
+        ? _forwardController.value.duration.inMilliseconds
+        : 10000;
+    final revTargetMs = (totalMs - _targetMs).clamp(50, totalMs - 50);
+
+    if (current >= revTargetMs - 15) {
+      _reverseController!.pause();
+    }
+  }
+
+  void _handleScroll() {
+    if (_isSyncingScroll) return;
+    if (!widget.scrollController.hasClients) return;
+
+    final double currentOffset = widget.scrollController.offset;
     _scrollOffsetNotifier.value = currentOffset;
 
-    // Manual scroll interrupts auto-tour.
     if (_isAutoTouring) {
       _stopAutoTour();
     }
 
-    if (!_isInitialized || _hasError || _totalVideoMs <= 0) {
-      return;
-    }
+    if (!_isInitialized || _hasError) return;
+
+    final totalDuration = _forwardController.value.duration;
+    if (totalDuration == Duration.zero) return;
+    final int totalMs = totalDuration.inMilliseconds > 0
+        ? totalDuration.inMilliseconds
+        : 10000;
 
     final double progress = (currentOffset / widget.scrollDistance).clamp(
       0.0,
       1.0,
     );
+    final int newTargetMs = (totalMs * progress).round().clamp(0, totalMs);
+    final bool isScrollingDown = currentOffset >= _lastScrollOffset;
+    _lastScrollOffset = currentOffset;
+    _targetMs = newTargetMs;
 
-    // This is the ONLY target the video needs to know about.
-    _targetMs = progress * _totalVideoMs;
+    _updateProgress(progress);
 
-    _isUserScrolling = true;
+    if (isScrollingDown) {
+      // ── Scrolling Forward (Down) ──────────────────────────────────────────
+      _isReversing = false;
 
-    // Restart idle timer.
-    _scrollIdleTimer?.cancel();
+      if (_reverseController != null && _isReversingNotifier.value) {
+        // Was reversing -> switch seamlessly to forward from the EXACT current shot
+        _reverseController!.pause();
+        final revPos = _reverseController!.value.position.inMilliseconds;
+        final currentRev = revPos > 0 ? revPos : _lastKnownRevMs;
+        final startFwd = (totalMs - currentRev).clamp(0, totalMs - 50);
 
-    _scrollIdleTimer = Timer(_scrollIdleDuration, _finishScroll);
-  }
-
-  // ---------------------------------------------------------------------------
-  // SCROLL FINISHED
-  // ---------------------------------------------------------------------------
-
-  void _finishScroll() {
-    if (!mounted || !_isInitialized || _hasError) {
-      return;
-    }
-
-    _isUserScrolling = false;
-
-    final int finalTarget = _targetMs.round().clamp(0, _totalVideoMs);
-
-    // Remove obsolete intermediate request.
-    _latestSeekMs = null;
-
-    // Exact final frame.
-    _requestSeek(finalTarget, isResting: true);
-  }
-
-  // ---------------------------------------------------------------------------
-  // MAIN 60/120HZ TICKER
-  // ---------------------------------------------------------------------------
-
-  void _onTick(Duration elapsed) {
-    if (!_isInitialized || _hasError || _totalVideoMs <= 0) {
-      return;
-    }
-
-    // -------------------------------------------------------------------------
-    // AUTO TOUR
-    // -------------------------------------------------------------------------
-
-    if (_isAutoTouring) {
-      if (!_videoController.value.isPlaying) {
-        _stopAutoTour();
-        return;
+        final fwdCurrent = _forwardController.value.position.inMilliseconds;
+        if ((fwdCurrent - startFwd).abs() < 120) {
+          _isReversingNotifier.value = false;
+          _lastKnownFwdMs = startFwd;
+          _applyForwardPlayback(newTargetMs);
+        } else {
+          // Keep reverse video visible on screen until forward seek completes
+          _isSeekingFwd = true;
+          _lastKnownFwdMs = startFwd;
+          _forwardController.seekTo(Duration(milliseconds: startFwd)).then((_) {
+            if (!mounted || _isReversing) return;
+            _isSeekingFwd = false;
+            _lastKnownFwdMs = startFwd;
+            _isReversingNotifier.value = false;
+            _applyForwardPlayback(_targetMs);
+          });
+        }
+      } else {
+        if (!_isSeekingFwd) {
+          _applyForwardPlayback(newTargetMs);
+        }
       }
-
-      final double currentMs = _videoController.value.position.inMilliseconds
-          .toDouble();
-
-      _currentDisplayMs = currentMs;
-      _targetMs = currentMs;
-
-      final double progress = (currentMs / _totalVideoMs).clamp(0.0, 1.0);
-
-      _updateProgress(progress);
-
-      // Keep page scroll synchronized.
-      if (widget.scrollController.hasClients) {
-        final double desiredScroll = progress * widget.scrollDistance;
-
-        _isSyncingScroll = true;
-
-        widget.scrollController.jumpTo(desiredScroll);
-
-        _scrollOffsetNotifier.value = desiredScroll;
-
-        _isSyncingScroll = false;
-      }
-
-      if (currentMs >= _totalVideoMs - 35) {
-        _stopAutoTour();
-      }
-
-      return;
-    }
-
-    // -------------------------------------------------------------------------
-    // FRAME-RATE INDEPENDENT VISUAL INTERPOLATION
-    // -------------------------------------------------------------------------
-
-    final double dt = _lastTickDuration == null
-        ? 1.0 / 60.0
-        : ((elapsed - _lastTickDuration!).inMicroseconds / 1000000.0).clamp(
-            0.001,
-            0.05,
-          );
-
-    _lastTickDuration = elapsed;
-
-    final double diff = _targetMs - _currentDisplayMs;
-
-    final bool visuallySettled = diff.abs() < 0.5;
-
-    if (visuallySettled) {
-      _currentDisplayMs = _targetMs;
-    } else if (diff.abs() > widget.largeJumpThresholdMs) {
-      // Large navigation jumps should not spend
-      // hundreds of frames catching up.
-      _currentDisplayMs = _targetMs;
     } else {
-      // -----------------------------------------------------------------------
-      // HIGH-RESPONSE EXPONENTIAL SMOOTHING
-      // -----------------------------------------------------------------------
+      // ── Scrolling Backward (Up) ───────────────────────────────────────────
+      _isReversing = true;
 
-      final double normalizedSpeed = (diff.abs() / _totalVideoMs).clamp(
-        0.0,
-        1.0,
-      );
+      if (_reverseController != null) {
+        final revTargetMs = (totalMs - _targetMs).clamp(50, totalMs - 50);
 
-      final double lambda = 26.0 + normalizedSpeed * 30.0;
+        if (!_isReversingNotifier.value) {
+          // Was forwarding -> switch seamlessly to reverse from the EXACT current shot
+          _forwardController.pause();
+          final fwdPos = _forwardController.value.position.inMilliseconds;
+          final currentFwd = fwdPos > 0 ? fwdPos : _lastKnownFwdMs;
+          final startRev = (totalMs - currentFwd).clamp(50, totalMs - 50);
 
-      final double factor = 1.0 - math.exp(-lambda * dt);
-
-      _currentDisplayMs += diff * factor;
-    }
-
-    final double displayProgress = (_currentDisplayMs / _totalVideoMs).clamp(
-      0.0,
-      1.0,
-    );
-
-    // UI animation runs independently of decoder.
-    _updateProgress(displayProgress);
-
-    // -------------------------------------------------------------------------
-    // VIDEO SEEK
-    // -------------------------------------------------------------------------
-
-    final int desiredSeekMs = _currentDisplayMs.round().clamp(0, _totalVideoMs);
-
-    _requestSeek(desiredSeekMs, isResting: false);
-  }
-
-  // ---------------------------------------------------------------------------
-  // PROGRESS
-  // ---------------------------------------------------------------------------
-
-  void _updateProgress(double displayProgress) {
-    if ((_displayProgressNotifier.value - displayProgress).abs() > 0.0003) {
-      _displayProgressNotifier.value = displayProgress;
-
-      widget.controller?.progressNotifier.value = displayProgress;
-
-      widget.onProgressChanged?.call(displayProgress);
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-  // SEEK REQUEST
-  // ---------------------------------------------------------------------------
-
-  void _requestSeek(int targetMs, {required bool isResting}) {
-    if (!_isInitialized || _hasError || _isDisposing) {
-      return;
-    }
-
-    targetMs = targetMs.clamp(0, _totalVideoMs);
-
-    // -------------------------------------------------------------------------
-    // FINAL EXACT SEEK
-    // -------------------------------------------------------------------------
-
-    if (isResting) {
-      // If a seek is already happening, replace its queued target.
-      if (_isSeeking) {
-        _latestSeekMs = targetMs;
-        return;
-      }
-
-      if (_lastDispatchedMs == targetMs && _lastRenderedMs == targetMs) {
-        return;
-      }
-
-      _dispatchSeek(targetMs, isResting: true);
-
-      return;
-    }
-
-    // -------------------------------------------------------------------------
-    // NORMAL SCROLL SEEK
-    // -------------------------------------------------------------------------
-
-    final DateTime now = DateTime.now();
-
-    if (_lastSeekTime != null) {
-      final int elapsed = now.difference(_lastSeekTime!).inMilliseconds;
-
-      if (elapsed < _minSeekIntervalMs) {
-        // Do NOT create a queue.
-        //
-        // Just remember the newest target.
-        _latestSeekMs = targetMs;
-        return;
-      }
-    }
-
-    // If decoder is busy, replace old target.
-    if (_isSeeking) {
-      _latestSeekMs = targetMs;
-      return;
-    }
-
-    final int delta = (targetMs - _lastDispatchedMs).abs();
-
-    if (delta < widget.toleranceMs) {
-      return;
-    }
-
-    _dispatchSeek(targetMs, isResting: false);
-  }
-
-  // ---------------------------------------------------------------------------
-  // ACTUAL VIDEO SEEK
-  // ---------------------------------------------------------------------------
-
-  void _dispatchSeek(int targetMs, {required bool isResting}) {
-    if (_isSeeking || !_isInitialized || _isDisposing) {
-      _latestSeekMs = targetMs;
-      return;
-    }
-
-    _isSeeking = true;
-
-    _lastSeekTime = DateTime.now();
-
-    _lastDispatchedMs = targetMs;
-
-    _videoController
-        .seekTo(Duration(milliseconds: targetMs))
-        .then((_) {
-          if (_isDisposing) {
-            return;
-          }
-
-          _isSeeking = false;
-
-          _lastRenderedMs = targetMs;
-
-          if (!mounted) {
-            return;
-          }
-
-          // -----------------------------------------------------------------------
-          // IMPORTANT:
-          //
-          // Only process the newest target.
-          //
-          // All obsolete intermediate positions are discarded.
-          // -----------------------------------------------------------------------
-
-          final int? latest = _latestSeekMs;
-
-          _latestSeekMs = null;
-
-          if (latest == null) {
-            return;
-          }
-
-          if (latest == _lastDispatchedMs) {
-            return;
-          }
-
-          // If the user is still scrolling,
-          // obey normal seek throttling.
-          //
-          // If scrolling has stopped, this becomes
-          // the exact final seek.
-          final bool shouldExactSeek = !_isUserScrolling;
-
-          if (shouldExactSeek) {
-            _requestSeek(latest, isResting: true);
+          final revCurrent = _reverseController!.value.position.inMilliseconds;
+          if ((revCurrent - startRev).abs() < 120) {
+            _isReversingNotifier.value = true;
+            _lastKnownRevMs = startRev;
+            _applyReversePlayback(revTargetMs);
           } else {
-            _requestSeek(latest, isResting: false);
+            // Keep forward video visibly paused on current shot until reverse seek finishes
+            _isSeekingRev = true;
+            _lastKnownRevMs = startRev;
+            _reverseController!.seekTo(Duration(milliseconds: startRev)).then((_) {
+              if (!mounted || !_isReversing) return;
+              _isSeekingRev = false;
+              _lastKnownRevMs = startRev;
+              _isReversingNotifier.value = true;
+              final currentRevTarget = (totalMs - _targetMs).clamp(50, totalMs - 50);
+              _applyReversePlayback(currentRevTarget);
+            });
           }
-        })
-        .catchError((_) {
-          _isSeeking = false;
-        });
+        } else {
+          if (!_isSeekingRev) {
+            _applyReversePlayback(revTargetMs);
+          }
+        }
+      } else {
+        // Fallback without companion reverse video
+        _forwardController.seekTo(Duration(milliseconds: _targetMs));
+        _lastKnownFwdMs = _targetMs;
+      }
+    }
+
+    _scheduleDebounceCheck(totalMs);
   }
 
-  // ---------------------------------------------------------------------------
-  // AUTO TOUR
-  // ---------------------------------------------------------------------------
+  void _applyForwardPlayback(int targetMs) {
+    if (_isDisposing || !_isInitialized) return;
+    final diff = targetMs - _lastKnownFwdMs;
+
+    if (diff > widget.largeJumpThresholdMs) {
+      _forwardController.seekTo(Duration(milliseconds: targetMs));
+      _forwardController.pause();
+      _lastKnownFwdMs = targetMs;
+    } else if (diff > 15) {
+      final double speed = (diff / 150.0).clamp(0.75, 3.5);
+      _forwardController.setPlaybackSpeed(speed);
+      if (!_forwardController.value.isPlaying) {
+        _forwardController.play();
+      }
+    } else if (diff <= 0) {
+      _forwardController.pause();
+    }
+  }
+
+  void _applyReversePlayback(int revTargetMs) {
+    if (_isDisposing || !_isInitialized || _reverseController == null) return;
+    final diff = revTargetMs - _lastKnownRevMs;
+
+    if (diff > widget.largeJumpThresholdMs) {
+      _reverseController!.seekTo(Duration(milliseconds: revTargetMs));
+      _reverseController!.pause();
+      _lastKnownRevMs = revTargetMs;
+    } else if (diff > 15) {
+      final double speed = (diff / 150.0).clamp(0.75, 3.5);
+      _reverseController!.setPlaybackSpeed(speed);
+      if (!_reverseController!.value.isPlaying) {
+        _reverseController!.play();
+      }
+    } else if (diff <= 0) {
+      _reverseController!.pause();
+    }
+  }
+
+  void _scheduleDebounceCheck(int totalMs) {
+    _scrollDebounceTimer?.cancel();
+    _scrollDebounceTimer = Timer(const Duration(milliseconds: 50), () {
+      if (!mounted || !_isInitialized) return;
+
+      if (!_isReversing) {
+        _forwardController.pause();
+        // Background pre-seek standby reverse controller to exact current frame
+        if (_reverseController != null && !_isSeekingRev) {
+          final fwdPos = _forwardController.value.position.inMilliseconds;
+          final exactFwd = fwdPos > 0 ? fwdPos : _lastKnownFwdMs;
+          final prepRev = (totalMs - exactFwd).clamp(50, totalMs - 50);
+          _reverseController!.seekTo(Duration(milliseconds: prepRev));
+          _lastKnownRevMs = prepRev;
+        }
+      } else if (_reverseController != null) {
+        _reverseController!.pause();
+        // Background pre-seek standby forward controller to exact current frame
+        if (!_isSeekingFwd) {
+          final revPos = _reverseController!.value.position.inMilliseconds;
+          final exactRev = revPos > 0 ? revPos : _lastKnownRevMs;
+          final prepFwd = (totalMs - exactRev).clamp(0, totalMs - 50);
+          _forwardController.seekTo(Duration(milliseconds: prepFwd));
+          _lastKnownFwdMs = prepFwd;
+        }
+      }
+    });
+  }
+
+  void _updateProgress(double progress) {
+    if ((_displayProgressNotifier.value - progress).abs() > 0.0005) {
+      _displayProgressNotifier.value = progress;
+      widget.controller?.progressNotifier.value = progress;
+      widget.onProgressChanged?.call(progress);
+    }
+  }
 
   void _startAutoTour({Duration? overrideDuration}) {
     if (!widget.scrollController.hasClients || !_isInitialized || _hasError) {
@@ -680,53 +544,33 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
     }
 
     final double currentOffset = widget.scrollController.offset;
-
     if (currentOffset >= widget.scrollDistance) {
       widget.scrollController.jumpTo(0.0);
-
       _scrollOffsetNotifier.value = 0.0;
-
-      _targetMs = 0.0;
-      _currentDisplayMs = 0.0;
-
-      _lastDispatchedMs = 0;
-      _lastRenderedMs = 0;
+      _targetMs = 0;
+      _lastKnownFwdMs = 0;
+      _forwardController.seekTo(Duration.zero);
     }
 
-    _scrollIdleTimer?.cancel();
-
+    _scrollDebounceTimer?.cancel();
     _isAutoTouring = true;
-
+    _isReversing = false;
+    _isReversingNotifier.value = false;
+    _reverseController?.pause();
     widget.controller?.isAutoTourRunning.value = true;
 
-    // -------------------------------------------------------------------------
-    // Native video playback.
-    //
-    // If an override duration is supplied, we intentionally don't manipulate
-    // playback speed here because video_player's setPlaybackSpeed can produce
-    // inconsistent results across platforms.
-    // -------------------------------------------------------------------------
-
-    _videoController.play();
+    _forwardController.setPlaybackSpeed(1.0);
+    _forwardController.play();
   }
 
   void _stopAutoTour() {
-    if (!_isAutoTouring) {
-      return;
-    }
-
+    if (!_isAutoTouring) return;
     _isAutoTouring = false;
-
     widget.controller?.isAutoTourRunning.value = false;
-
     if (_isInitialized) {
-      _videoController.pause();
+      _forwardController.pause();
     }
   }
-
-  // ---------------------------------------------------------------------------
-  // BUILD
-  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -741,10 +585,7 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
           translateY = -(scrollOffset - widget.scrollDistance);
         }
 
-        // ---------------------------------------------------------------------
-        // PERFORMANCE CULLING
-        // ---------------------------------------------------------------------
-
+        // Performance culling when video has fully scrolled off top
         if (translateY <= -screenSize.height) {
           return const SizedBox.shrink();
         }
@@ -758,11 +599,9 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // ===========================================================
-                  // VIDEO
-                  // ===========================================================
+                  // 1. Dual-Video Native 60 FPS Hardware Playback Engine
                   if (_isInitialized && !_hasError)
-                    _buildVideo()
+                    _buildVideoDisplay()
                   else
                     widget.placeholder ??
                         Container(
@@ -775,9 +614,7 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
                           ),
                         ),
 
-                  // ===========================================================
-                  // PROGRESS-DRIVEN OVERLAYS
-                  // ===========================================================
+                  // 2. Progress-Driven Dynamic Overlays and Underlays
                   ValueListenableBuilder<double>(
                     valueListenable: _displayProgressNotifier,
                     builder: (context, displayProgress, _) {
@@ -786,7 +623,6 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
                         children: [
                           if (widget.underlayBuilder != null)
                             widget.underlayBuilder!(context, displayProgress),
-
                           if (widget.overlayBuilder != null)
                             widget.overlayBuilder!(
                               context,
@@ -806,16 +642,13 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // VIDEO WIDGET
-  // ---------------------------------------------------------------------------
-
-  Widget _buildVideo() {
-    final double aspectRatio = _videoController.value.aspectRatio;
-
-    if (aspectRatio <= 0) {
-      return VideoPlayer(_videoController);
-    }
+  Widget _buildVideoDisplay() {
+    final double width = _forwardController.value.size.width > 0
+        ? _forwardController.value.size.width
+        : 1920;
+    final double height = _forwardController.value.size.height > 0
+        ? _forwardController.value.size.height
+        : 1080;
 
     return ClipRect(
       child: SizedBox.expand(
@@ -823,37 +656,49 @@ class _ScrollVideoHeroState extends State<ScrollVideoHero>
           fit: widget.fit,
           clipBehavior: Clip.hardEdge,
           child: SizedBox(
-            width: _videoController.value.size.width,
-            height: _videoController.value.size.height,
-            child: VideoPlayer(_videoController),
+            width: width,
+            height: height,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _isReversingNotifier,
+              builder: (context, isReversing, _) {
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Opacity(
+                      opacity: isReversing ? 0.0 : 1.0,
+                      child: VideoPlayer(_forwardController),
+                    ),
+                    if (_reverseController != null)
+                      Opacity(
+                        opacity: isReversing ? 1.0 : 0.0,
+                        child: VideoPlayer(_reverseController!),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // DISPOSE
-  // ---------------------------------------------------------------------------
-
   @override
   void dispose() {
     _isDisposing = true;
-
-    _scrollIdleTimer?.cancel();
-
+    _scrollDebounceTimer?.cancel();
     widget.controller?._detach();
-
     widget.scrollController.removeListener(_handleScroll);
-
-    _ticker.stop();
-    _ticker.dispose();
 
     _scrollOffsetNotifier.dispose();
     _displayProgressNotifier.dispose();
+    _isReversingNotifier.dispose();
 
     if (_isInitialized) {
-      _videoController.dispose();
+      _forwardController.removeListener(_onForwardTick);
+      _reverseController?.removeListener(_onReverseTick);
+      _forwardController.dispose();
+      _reverseController?.dispose();
     }
 
     super.dispose();

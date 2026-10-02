@@ -3,6 +3,7 @@ class LuxuryHotelAssets {
 
   static const String hotelCover = 'assets/hotel_cover.jpg';
   static const String hotelIntroVideo = 'assets/hotel_intro.mp4';
+  static const String hotelIntroReversedVideo = 'assets/hotel_intro_reversed.mp4';
   static const String suitePenthouse = 'assets/hotel_suite_penthouse.jpg';
   static const String suitePlatinum = 'assets/hotel_suite_platinum.jpg';
   static const String suiteVilla = 'assets/hotel_suite_villa.jpg';

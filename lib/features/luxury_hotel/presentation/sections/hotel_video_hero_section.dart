@@ -26,6 +26,7 @@ class HotelVideoHeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScrollVideoHero(
       videoAsset: LuxuryHotelAssets.hotelIntroVideo,
+      reversedVideoAsset: LuxuryHotelAssets.hotelIntroReversedVideo,
       scrollController: scrollController,
       scrollDistance: LuxuryHotelDimensions.videoScrollDistance,
       controller: videoHeroController,

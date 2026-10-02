@@ -28,6 +28,7 @@ class JsConstructionHero extends StatelessWidget {
 
     return ScrollVideoHero(
       videoAsset: 'assets/construction_introd.mp4',
+      reversedVideoAsset: 'assets/construction_introd_reversed.mp4',
       scrollController: scrollController,
       scrollDistance: JsConstructionTheme.kVideoScrollDistance,
       enableSmoothWheel: false,
