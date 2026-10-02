@@ -140,9 +140,7 @@ class _JsConstructionsPageState extends ConsumerState<JsConstructionsPage>
           // ── 2. The Continuous Construction Site Progression ───────────────
           SingleChildScrollView(
             controller: _scrollController,
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
+            physics: const ClampingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

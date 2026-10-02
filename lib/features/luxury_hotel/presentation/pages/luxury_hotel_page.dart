@@ -140,9 +140,7 @@ class _LuxuryHotelPageState extends ConsumerState<LuxuryHotelPage> {
           // ── 2. The Main Page Scrollable Content ───────────────────────────
           SingleChildScrollView(
             controller: _scrollController,
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
+            physics: const ClampingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
